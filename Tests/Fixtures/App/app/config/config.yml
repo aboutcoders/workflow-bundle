@@ -1,0 +1,65 @@
+imports:
+    - { resource: services.yml }
+
+framework:
+    secret: Hell yeah!
+    router: { resource: "%kernel.root_dir%/config/routing.yml" }
+    form: true
+    csrf_protection: true
+    templating:
+        engines: ['twig']
+    session: ~
+    default_locale: en
+    translator: { fallback: en }
+    profiler: { only_exceptions: false }
+
+monolog:
+    handlers:
+        main:
+            type:     stream
+            path:     "%kernel.logs_dir%/%kernel.environment%.log"
+            level:    debug
+        abc_job:
+            type:     stream
+            path:     "%kernel.logs_dir%/abc_job_%kernel.environment%.log"
+            channels: [abc.job]
+
+# Twig Configuration
+twig:
+    debug:            "%kernel.debug%"
+    strict_variables: "%kernel.debug%"
+
+doctrine:
+    dbal:
+        driver:   "pdo_sqlite"
+        path:     "%kernel.cache_dir%/sqlite.db"
+        types:
+            json: Sonata\Doctrine\Types\JsonType
+            status: Abc\Bundle\JobBundle\Doctrine\Types\StatusType
+            serializable: Abc\Bundle\JobBundle\Doctrine\Types\SerializableType
+
+    orm:
+        auto_generate_proxy_classes: true
+        auto_mapping: true
+
+swiftmailer:
+    disable_delivery: true
+
+sonata_notification:
+    consumers:
+        register_default: false
+
+yz_supervisor:
+    default_environment: dev
+    servers:
+        dev:
+            locahost:
+                host:     127.0.0.1
+                username: username
+                password: password
+                port:     9001
+
+abc_job:
+  db_driver: orm
+  job_logs_dir: "%kernel.logs_dir%"
+  #job_logs_dir: "%kernel.logs_dir%"

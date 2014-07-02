@@ -1,0 +1,11 @@
+<div class="alert alert-success alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <strong>{{ 'Success!'|trans }}</strong> {{ 'Task updated'|trans }}
+</div>
+
+<div id="update-task-data" data-id="{{ task.id }}">
+    <h4 class="item-title">{{ task.type }}</h4>
+    {% if task.disabled %}<span
+            class="label label-default pull-right">{{ 'Disabled'|trans }}</span>{% endif %}
+    <div class="item-description">{{ task.description }}</div>
+</div>

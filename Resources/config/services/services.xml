@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+
+    <parameters>
+        <parameter key="abc.workflow.task.form.mailer.class">Abc\Bundle\WorkflowBundle\Form\Task\MailerType</parameter>
+        <parameter key="abc.workflow.executable.workflow.class">Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutable</parameter>
+    </parameters>
+
+    <services>
+        <service id="abc.workflow.task.form.mailer" class="%abc.workflow.task.form.mailer.class%">
+            <tag name="abc.workflow.task.form" />
+        </service>
+        <service id="abc.workflow.executable.workflow" class="%abc.workflow.executable.workflow.class%">
+            <argument type="service" id="abc_workflow.task_manager" />
+            <tag name="abc.job.listener" type="workflow" level="debug" />
+        </service>
+    </services>
+</container>

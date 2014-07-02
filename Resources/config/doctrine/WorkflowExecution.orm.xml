@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                    http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+
+    <entity name="Abc\Bundle\WorkflowBundle\Entity\WorkflowExecution" table="abc_workflow_execution">
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+        <field name="ticket" column="job_ticket" type="string" length="255"/>
+        <field name="workflowId" column="workflow_id" type="integer"/>
+        <field name="createdAt" column="created_at" type="datetime">
+            <gedmo:timestampable on="create"/>
+        </field>
+        <field name="updatedAt" column="updated_at" type="datetime">
+            <gedmo:timestampable on="update"/>
+        </field>
+        <one-to-one field="job" target-entity="Abc\Bundle\JobBundle\Entity\Job">
+            <join-column name="job_ticket" referenced-column-name="id"/>
+        </one-to-one>
+        <many-to-one field="workflow" target-entity="Abc\Bundle\WorkflowBundle\Entity\Workflow"
+                     inversed-by="executions">
+            <join-column name="workflow_id" referenced-column-name="id"/>
+        </many-to-one>
+    </entity>
+</doctrine-mapping>

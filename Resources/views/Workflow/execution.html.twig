@@ -1,0 +1,48 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>{{ include('AbcWorkflowBundle:Workflow:executionStatusLink.html.twig', { item: entity}) }}</h1>
+    <div class="btn-group">
+        <a href="{{ path('workflow_show', { 'id': entity.workflowId }) }}" class="btn btn-default"><span
+                    class="glyphicon glyphicon-list"></span> {{ 'Back to Workflow'|trans }}</a>
+    </div>
+    <hr>
+    <div class="progress">
+        <div class="progress-bar" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0"
+             aria-valuemax="100" style="width: {{ progress }}%;">
+            {{ progress }}%
+        </div>
+    </div>
+    <table class="table">
+        <tbody>
+        <tr>
+            <th>{{ 'Id'|trans }}</th>
+            <td>{{ entity.id }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'Execution time'|trans }}</th>
+            <td>{{ report.executionTime }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'Job'|trans }}</th>
+            <td>{{ entity.job.id }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'Created'|trans }}</th>
+            <td>{{ entity.createdAt|date('Y-m-d H:i:s') }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'Updated'|trans }}</th>
+            <td>{{ entity.updatedAt|date('Y-m-d H:i:s') }}</td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{ 'Logs'|trans }}</h3>
+        </div>
+        <div class="panel-body pre-scrollable">
+            <samp style="font-size: 11px;">{{ report.log|nl2br }}</samp>
+        </div>
+    </div>
+{% endblock %}

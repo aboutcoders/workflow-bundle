@@ -1,0 +1,23 @@
+#task-list-container li {
+    padding-left: 26px;
+    cursor: pointer;
+}
+
+#task-list-container li .handle {
+    background: url("../images/handle.gif") repeat scroll 0 0 rgba(0, 0, 0, 0);
+    bottom: 9px;
+    content: "";
+    left: 8px;
+    position: absolute;
+    top: 10px;
+    width: 12px;
+    cursor: move;
+}
+
+#task-list-container li h4.item-title {
+    width: 95%;
+    margin-top: 0;
+}
+#task-list-container li .item-description {
+    color: darkgray;
+}

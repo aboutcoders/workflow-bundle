@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                    http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+
+    <entity name="Abc\Bundle\WorkflowBundle\Entity\Task" table="abc_workflow_task">
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+        <field name="workflowId" column="workflow_id" type="integer"/>
+        <field name="description" column="description" type="string" length="255"/>
+        <field name="typeId" column="type_id" type="integer"/>
+        <field name="parameters" type="serializable" nullable="true"/>
+        <field name="disabled" column="is_disabled" type="boolean"/>
+        <field name="createdAt" column="created_at" type="datetime">
+            <gedmo:timestampable on="create"/>
+        </field>
+        <field name="updatedAt" column="updated_at" type="datetime">
+            <gedmo:timestampable on="update"/>
+        </field>
+        <field name="position" type="integer">
+            <gedmo:sortable-position/>
+        </field>
+        <many-to-one field="workflow" target-entity="Abc\Bundle\WorkflowBundle\Entity\Workflow" inversed-by="tasks">
+            <join-column name="workflow_id" referenced-column-name="id"/>
+        </many-to-one>
+        <many-to-one field="type" target-entity="Abc\Bundle\WorkflowBundle\Entity\TaskType">
+            <join-column name="type_id" referenced-column-name="id"/>
+        </many-to-one>
+    </entity>
+</doctrine-mapping>

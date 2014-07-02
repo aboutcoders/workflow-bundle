@@ -1,0 +1,35 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>{{ 'Wokrflows'|trans }}</h1>
+    <a href="{{ path('workflow_new') }}" class="btn btn-primary btn-lg"><span
+                class="glyphicon glyphicon-plus"></span> {{ 'New item'|trans }}</a>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>{{ 'Name'|trans }}</th>
+            <th>{{ 'Description'|trans }}</th>
+            <th>{{ 'Created'|trans }}</th>
+            <th>{{ 'Updated'|trans }}</th>
+            <th>{{ 'Actions'|trans }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>{{ entity.name }} {% if entity.disabled %}<span
+                            class="label label-default">{{ 'Disabled'|trans }}</span>{% endif %}</td>
+                <td>{{ entity.description }}</td>
+                <td>{% if entity.createdAt %}{{ entity.createdAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if entity.updatedAt %}{{ entity.updatedAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>
+                    <a href="{{ path('workflow_show', { 'id': entity.id }) }}" class="btn btn-info"><span
+                                class="glyphicon glyphicon-eye-open"></span> {{ 'Show'|trans }}</a>
+                    <a href="{{ path('workflow_edit', { 'id': entity.id }) }}" class="btn btn-warning"><span
+                                class="glyphicon glyphicon-pencil"></span> {{ 'Edit'|trans }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>{{ 'Add workflow'|trans }}</h1>
+    {{ form_start(form) }}
+    {{ form_row(form.name) }}
+    {{ form_rest(form) }}
+    <div class="form-group">
+        <div class="col-lg-offset-2 col-lg-10">
+            <a href="{{ path('workflow') }}" class="btn">{{ 'Cancel'|trans }}</a>
+            <button type="submit" class="btn btn-primary">{{ 'Save'|trans }}</button>
+        </div>
+    </div>
+    {{ form_end(form) }}
+
+{% endblock %}

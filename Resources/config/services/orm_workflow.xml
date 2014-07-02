@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="abc_workflow.workflow_manager.class">Abc\Bundle\WorkflowBundle\Doctrine\WorkflowManager</parameter>
+        <parameter key="abc_workflow.workflow_execution_manager.class">Abc\Bundle\WorkflowBundle\Doctrine\WorkflowExecutionManager</parameter>
+        <parameter key="abc_workflow.model.workflow.class">Abc\Bundle\WorkflowBundle\Entity\Workflow</parameter>
+        <parameter key="abc_workflow.model.workflow_execution.class">Abc\Bundle\WorkflowBundle\Entity\WorkflowExecution</parameter>
+    </parameters>
+
+    <services>
+        <service id="abc_workflow.workflow_manager.default" class="%abc_workflow.workflow_manager.class%"
+                 public="false">
+            <argument type="service" id="abc_workflow.entity_manager"/>
+            <argument>%abc_workflow.model.workflow.class%</argument>
+        </service>
+        <service id="abc_workflow.workflow_execution_manager.default"
+                 class="%abc_workflow.workflow_execution_manager.class%" public="false">
+            <argument type="service" id="abc_workflow.entity_manager"/>
+            <argument>%abc_workflow.model.workflow_execution.class%</argument>
+        </service>
+    </services>
+
+</container>
