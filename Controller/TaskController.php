@@ -35,11 +35,7 @@ class TaskController extends Controller
     public function configureAction($id)
     {
         $workflowManager = $this->getWorkflowManager();
-        $taskManager     = $this->getTaskManager();
-        $tasTypeManager  = $this->getTaskTypeManager();
         $entity          = $workflowManager->findOneBy(array('id' => $id));
-        $types           = $tasTypeManager->findAll();
-        $tasks           = $taskManager->findWorkflowTasks($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Workflow entity.');
@@ -47,8 +43,6 @@ class TaskController extends Controller
 
         return array(
             'entity' => $entity,
-            'types'  => $types,
-            'tasks'  => $tasks
         );
     }
 

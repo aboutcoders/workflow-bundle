@@ -1,66 +1,61 @@
-<div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog" aria-labelledby="addTaskModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="addTaskModalLabel">{{ 'Select task  type'|trans }}</h4>
-            </div>
-            <div class="modal-body">
-                <div class="well" style="max-width: 400px; margin: 0 auto 10px;">
-                    {% for type in types %}
-                        <a href="{{ path('task_new', { 'id': entity.id, 'type': type.id }) }}"
-                           class="btn btn-primary btn-lg btn-block">{{ type.name }}</a>
-                    {% endfor %}
+{% block workflow -%}
+    <div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog" aria-labelledby="addTaskModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="addTaskModalLabel">{{ 'Select task  type'|trans }}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="well" style="max-width: 400px; margin: 0 auto 10px;">
+                        {% for type in types %}
+                            <a href="{{ path('task_new', { 'id': entity.id, 'type': type.id }) }}"
+                               class="btn btn-primary btn-lg btn-block">{{ type.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'Close'|trans }}</button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'Close'|trans }}</button>
-            </div>
         </div>
     </div>
-</div>
 
-<h1>{{ entity.name }}</h1>
-<div class="btn-group">
-    <a href="{{ path('workflow_show', { 'id': entity.id }) }}" class="btn btn-default"><span
-                class="glyphicon glyphicon-list"></span> {{ 'Back to Workflow'|trans }}</a>
-</div>
-<hr>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">{{ 'Tasks'|trans }}</h3>
-    </div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-md-4">
-                <ul class="ui-sortable list-group" id="task-list-container">
-                    {% for task in tasks %}
-                    <li id="item-{{ task.id }}" data-item-id="{{ task.id }}" class="list-group-item">
-                        <div class="handle"></div>
-                        {{ delete_with_confirmation (task.id, path('task_delete', { 'id': task.id }), '&times;', 'close') }}
-                        <div id="task-data-{{ task.id }}">
-                            <h4 class="item-title">{{ task.type }}</h4>
-                            {% if task.disabled %}<span
-                                    class="label label-default pull-right">{{ 'Disabled'|trans }}</span>{% endif %}
-                            <div class="item-description">{{ task.description }}</div>
-                        </div>
-                        {% endfor %}
-                    </li>
-                </ul>
-                <button class="btn btn-default" data-toggle="modal" data-target="#addTaskModal">
-                    <span class="glyphicon glyphicon-plus"></span> {{ 'Add task'|trans }}
-                </button>
-            </div>
-            <div class="col-md-8" id="form-content-container">
-                {{ include('AbcWorkflowBundle:Task:emptyTask.html.twig') }}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{ 'Tasks'|trans }}</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <ul class="ui-sortable list-group" id="task-list-container">
+                        {% for task in tasks %}
+                        <li id="item-{{ task.id }}" data-item-id="{{ task.id }}" class="list-group-item">
+                            <div class="handle"></div>
+                            {{ delete_with_confirmation (task.id, path('task_delete', { 'id': task.id }), '&times;', 'close') }}
+                            <div id="task-data-{{ task.id }}">
+                                <h4 class="item-title">{{ task.type }}</h4>
+                                {% if task.disabled %}<span
+                                        class="label label-default pull-right">{{ 'Disabled'|trans }}</span>{% endif %}
+                                <div class="item-description">{{ task.description }}</div>
+                            </div>
+                            {% endfor %}
+                        </li>
+                    </ul>
+                    <button class="btn btn-default" data-toggle="modal" data-target="#addTaskModal">
+                        <span class="glyphicon glyphicon-plus"></span> {{ 'Add task'|trans }}
+                    </button>
+                </div>
+                <div class="col-md-8" id="form-content-container">
+                    {{ include('AbcWorkflowBundle:Task:emptyTask.html.twig') }}
+                </div>
             </div>
         </div>
     </div>
-</div>
+{% endblock %}
 
 {% block javascripts %}
-    {{ parent() }}
     {{ confirmation_js (
     'jQuery("#item-"+element.attr("data-id")).remove();jQuery("#task-form-contents").replaceWith(jQuery("#empty-task").removeClass("hidden"));',
     {placement: 'left', title : 'Are you sure?'|trans,btnCancelLabel: 'Cancel'|trans , btnOkLabel: 'Delete'|trans }) }}

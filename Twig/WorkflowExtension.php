@@ -1,6 +1,8 @@
 <?php
 namespace Abc\Bundle\WorkflowBundle\Twig;
 
+use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
+use Abc\Bundle\WorkflowBundle\Model\TaskTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -26,10 +28,18 @@ class WorkflowExtension extends \Twig_Extension
 
     public function workflowConfiguration($entity)
     {
+        $taskManager    = $this->getTaskManager();
+        $tasTypeManager = $this->getTaskTypeManager();
+
+        $types = $tasTypeManager->findAll();
+        $tasks = $taskManager->findWorkflowTasks($entity->getId());
+
         return $this->container->get('templating')
             ->render("AbcWorkflowBundle:Task:configureWorkflow.html.twig",
                 array(
                     'entity' => $entity,
+                    'types'  => $types,
+                    'tasks'  => $tasks
                 )
             );
     }
@@ -37,5 +47,21 @@ class WorkflowExtension extends \Twig_Extension
     public function getName()
     {
         return 'workflow_extension';
+    }
+
+    /**
+     * @return TaskManagerInterface
+     */
+    protected function getTaskManager()
+    {
+        return $this->container->get('abc_workflow.task_manager');
+    }
+
+    /**
+     * @return TaskTypeManagerInterface
+     */
+    protected function getTaskTypeManager()
+    {
+        return $this->container->get('abc_workflow.task_type_manager');
     }
 } 
