@@ -64,7 +64,7 @@ abc_workflow:
 
 ## Usage
 
-Display workflow GUI
+Display workflow configuration GUI
 
 ``` twig
 {{ workflow_configuration(workflowEntity) }}
