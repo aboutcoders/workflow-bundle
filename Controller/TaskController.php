@@ -79,14 +79,14 @@ class TaskController extends Controller
         }
         $entity->setWorkflow($workflow);
 
-        if ($form->isValid() && !$request->isXmlHttpRequest()) {
+        if ($form->isValid()) {
 
             $taskManager->update($entity);
             //Update date in workflow object
             $workflow->setUpdatedAt(new \DateTime());
             $workflowManager->update($workflow);
 
-            return $this->redirect($this->generateUrl('task_configure', array('id' => $workflow->getId())));
+            return $this->render('AbcWorkflowBundle:Task:editSuccess.html.twig', array('task' => $entity));
         }
 
         return array(
@@ -132,8 +132,8 @@ class TaskController extends Controller
         $editForm = $this->createEditForm($entity);
 
         return array(
-            'entity'    => $entity,
-            'edit_form' => $editForm->createView()
+            'entity' => $entity,
+            'form'   => $editForm->createView()
         );
     }
 
@@ -182,8 +182,8 @@ class TaskController extends Controller
         }
 
         return array(
-            'entity'    => $entity,
-            'edit_form' => $editForm->createView()
+            'entity' => $entity,
+            'form'   => $editForm->createView()
         );
     }
 

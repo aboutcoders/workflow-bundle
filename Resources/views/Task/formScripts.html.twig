@@ -1,0 +1,51 @@
+<div id="empty-task" class="hidden">
+    {{ include('AbcWorkflowBundle:Task:emptyTask.html.twig') }}
+</div>
+<script>
+    function postForm($form, callback) {
+        var values = {};
+        jQuery.each($form.serializeArray(), function (i, field) {
+            values[field.name] = field.value;
+        });
+
+        jQuery.ajax({
+            type: $form.attr('method'),
+            url: $form.attr('action'),
+            data: values,
+            success: function (data) {
+                callback(data);
+            }
+        });
+    }
+
+    jQuery(document).ready(function () {
+        jQuery('.cancel').click(function () {
+            jQuery('#task-form-contents').replaceWith(jQuery('#empty-task').removeClass('hidden'));
+        });
+
+        var forms = [
+            '[ name="{{ form.vars.full_name }}"]'
+        ];
+
+        jQuery(forms.join(',')).submit(function (e) {
+            e.preventDefault();
+            var $submit = jQuery('#submit-task');
+            $submit.button('loading');
+            postForm(jQuery(this), function (response) {
+                $submit.button('reset');
+                var taskData = jQuery(response).filter('.list-group-item').get(0);
+                var info = jQuery(response).filter('.alert').get(0);
+                taskData = jQuery(taskData);
+
+                var $replacement = jQuery('#item-' + taskData.attr('data-item-id'));
+                if ($replacement.length > 0) {
+                    $replacement.replaceWith(taskData);
+                } else {
+                    jQuery('#task-list-container').append(taskData);
+                }
+                jQuery('#task-form-contents').replaceWith(info);
+            });
+            return false;
+        });
+    });
+</script>

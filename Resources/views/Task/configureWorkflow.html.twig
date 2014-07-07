@@ -11,7 +11,7 @@
                     <div class="well" style="max-width: 400px; margin: 0 auto 10px;">
                         {% for type in types %}
                             <a href="{{ path('task_new', { 'id': entity.id, 'type': type.id }) }}"
-                               class="btn btn-primary btn-lg btn-block">{{ type.name }}</a>
+                               class="btn btn-primary btn-lg btn-block new-task">{{ type.name }}</a>
                         {% endfor %}
                     </div>
                 </div>
@@ -31,17 +31,8 @@
                 <div class="col-md-4">
                     <ul class="ui-sortable list-group" id="task-list-container">
                         {% for task in tasks %}
-                        <li id="item-{{ task.id }}" data-item-id="{{ task.id }}" class="list-group-item">
-                            <div class="handle"></div>
-                            {{ delete_with_confirmation (task.id, path('task_delete', { 'id': task.id }), '&times;', 'close') }}
-                            <div id="task-data-{{ task.id }}">
-                                <h4 class="item-title">{{ task.type }}</h4>
-                                {% if task.disabled %}<span
-                                        class="label label-default pull-right">{{ 'Disabled'|trans }}</span>{% endif %}
-                                <div class="item-description">{{ task.description }}</div>
-                            </div>
-                            {% endfor %}
-                        </li>
+                            {{ include('AbcWorkflowBundle:Task:taskItem.html.twig', {task: task}) }}
+                        {% endfor %}
                     </ul>
                     <button class="btn btn-default" data-toggle="modal" data-target="#addTaskModal">
                         <span class="glyphicon glyphicon-plus"></span> {{ 'Add task'|trans }}
@@ -62,12 +53,23 @@
 
     {% spaceless %}
         <script>
+            var $newTask = jQuery('.new-task');
             var $changeKey = jQuery('.list-group-item');
             var $resultContainer = jQuery('#form-content-container');
             var url = '{{ path("task_edit", {'id': 'replaceTaskId'}) }}';
+            var indicator = '<img src="/bundles/abcfiledistribution/images/ajax-loader-transparent.gif" alt="Loading data" >';
 
-            $changeKey.click(function () {
-                $resultContainer.html('<img src="/bundles/abcfiledistribution/images/ajax-loader-transparent.gif" alt="Loading data" >');
+            $newTask.bind('click', function (event) {
+                $resultContainer.html(indicator);
+                $('#addTaskModal').modal('toggle');
+                event.preventDefault();
+                $.get(this.href, {}, function (response) {
+                    $resultContainer.html(response)
+                })
+            });
+
+            function getFormData() {
+                $resultContainer.html(indicator);
                 $changeKey.removeClass('active');
                 jQuery(this).removeClass('active');
                 jQuery.ajax({
@@ -77,7 +79,9 @@
                         $resultContainer.html(html);
                     }
                 });
-            });
+            }
+
+            $(document).on('click', '.list-group-item', getFormData);
 
             jQuery(document).ready(function () {
                 jQuery('.ui-sortable').sortable({

@@ -3,63 +3,19 @@
 {% block body -%}
     <div id="task-form-contents">
         <h3>{{ entity.type }}</h3>
-        {{ form_start(edit_form) }}
-        {{ form_row(edit_form.description) }}
+        {{ form_start(form) }}
+        {{ form_row(form.description) }}
         <div class="checkbox">
-            {{ form_errors(edit_form.disabled) }}
-            {{ form_widget(edit_form.disabled) }}
+            {{ form_errors(form.disabled) }}
+            {{ form_widget(form.disabled) }}
         </div>
 
-        {{ form_rest(edit_form) }}
+        {{ form_rest(form) }}
 
         <button type="submit" class="btn btn-primary" id="submit-task"
                 data-loading-text="{{ 'Saving...'|trans }}">{{ 'Save'|trans }}</button>
         <a href="#" class="btn cancel">{{ 'Cancel'|trans }}</a>
-        {{ form_end(edit_form) }}
+        {{ form_end(form) }}
     </div>
-    <div id="empty-task" class="hidden">
-        {{ include('AbcWorkflowBundle:Task:emptyTask.html.twig') }}
-    </div>
-    <script>
-        function postForm($form, callback) {
-            var values = {};
-            jQuery.each($form.serializeArray(), function (i, field) {
-                values[field.name] = field.value;
-            });
-
-            jQuery.ajax({
-                type: $form.attr('method'),
-                url: $form.attr('action'),
-                data: values,
-                success: function (data) {
-                    callback(data);
-                }
-            });
-        }
-
-        jQuery(document).ready(function () {
-            jQuery('.cancel').click(function () {
-                jQuery('#task-form-contents').replaceWith(jQuery('#empty-task').removeClass('hidden'));
-            });
-
-            var forms = [
-                '[ name="{{ edit_form.vars.full_name }}"]'
-            ];
-
-            jQuery(forms.join(',')).submit(function (e) {
-                e.preventDefault();
-                var $submit = jQuery('#submit-task');
-                $submit.button('loading');
-                postForm(jQuery(this), function (response) {
-                    $submit.button('reset');
-                    var taskData = jQuery(response).filter('#update-task-data').get(0);
-                    var info = jQuery(response).filter('.alert').get(0);
-                    taskData = jQuery(taskData);
-                    jQuery('#task-data-' + taskData.attr('data-id')).html(taskData.html());
-                    jQuery('#task-form-contents').replaceWith(info);
-                });
-                return false;
-            });
-        });
-    </script>
+    {{ include('AbcWorkflowBundle:Task:formScripts.html.twig') }}
 {% endblock %}

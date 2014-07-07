@@ -1,0 +1,10 @@
+<li id="item-{{ task.id }}" data-item-id="{{ task.id }}" class="list-group-item">
+    <div class="handle"></div>
+    {{ delete_with_confirmation (task.id, path('task_delete', { 'id': task.id }), '&times;', 'close') }}
+    <div id="task-data-{{ task.id }}">
+        <h4 class="item-title">{{ task.type }}</h4>
+        {% if task.disabled %}<span
+                class="label label-default pull-right">{{ 'Disabled'|trans }}</span>{% endif %}
+        <div class="item-description">{{ task.description }}</div>
+    </div>
+</li>

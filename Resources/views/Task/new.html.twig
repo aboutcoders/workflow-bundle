@@ -1,18 +1,19 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>{{ entity.type.name }}</h1>
-    {{ form_start(form) }}
-    {{ form_row(form.description) }}
-    <div class="checkbox">
-        {{ form_errors(form.disabled) }}
-        {{ form_widget(form.disabled) }}
-    </div>
-    {{ form_rest(form) }}
-    <div class="form-group">
-        <div class="col-lg-offset-2 col-lg-10">
-            <button type="submit" class="btn btn-primary">{{ 'Save'|trans }}</button>
+    <div id="task-form-contents">
+        <h3>{{ 'New'|trans }} {{ entity.type.name }}</h3>
+        {{ form_start(form) }}
+        {{ form_row(form.description) }}
+        <div class="checkbox">
+            {{ form_errors(form.disabled) }}
+            {{ form_widget(form.disabled) }}
         </div>
+        {{ form_rest(form) }}
+        <button type="submit" class="btn btn-primary" id="submit-task"
+                data-loading-text="{{ 'Saving...'|trans }}">{{ 'Save'|trans }}</button>
+        <a href="#" class="btn cancel">{{ 'Cancel'|trans }}</a>
+        {{ form_end(form) }}
     </div>
-    {{ form_end(form) }}
+    {{ include('AbcWorkflowBundle:Task:formScripts.html.twig') }}
 {% endblock %}
