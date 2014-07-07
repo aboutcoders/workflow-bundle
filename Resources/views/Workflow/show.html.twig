@@ -4,6 +4,7 @@
     <h1>#{{ entity.id }} {{ entity.name }} {% if entity.disabled %}<span
                 class="label label-default">{{ 'Disabled'|trans }}</span>{% endif %}</h1>
     <div class="btn-group">
+        {{ knp_menu_render('main') }}
         <a href="{{ path('workflow') }}" class="btn btn-default"><span
                     class="glyphicon glyphicon-list"></span> {{ 'Back to the list'|trans }}</a>
         <a href="{{ path('workflow_history', { 'id': entity.id }) }}" class="btn btn-default">{{ 'History'|trans }}</a>

@@ -19,8 +19,13 @@
     ],
     "require": {
         "symfony/symfony": "~2.1",
+        "sonata-project/notification-bundle": "~2.2",
         "gedmo/doctrine-extensions": "dev-master",
-        "aboutcoders/job-bundle": "dev-master@dev"
+        "yzalis/supervisor-bundle": "~1",
+        "knplabs/knp-menu": "2.0.*@dev",
+        "knplabs/knp-menu-bundle": "2.0.*@dev",
+        "aboutcoders/job-bundle": "dev-master@dev",
+        "zendframework/zendxml": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "~3.7",

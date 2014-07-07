@@ -63,3 +63,6 @@ abc_job:
   db_driver: orm
   job_logs_dir: "%kernel.logs_dir%"
   #job_logs_dir: "%kernel.logs_dir%"
+
+abc_workflow:
+  db_driver: orm

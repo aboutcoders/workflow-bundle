@@ -1,2 +1,2 @@
 abc_workflow:
-    resource: "@AbcWorkflowBundle/Resources/config/routing.xml"
+    resource: "@AbcWorkflowBundle/Resources/config/routing.yml"

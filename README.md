@@ -23,6 +23,7 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
+        new Knp\Bundle\MenuBundle\KnpMenuBundle(),
         new Abc\Bundle\WorkflowBundle\AbcWorkflowBundle(),
         // ...
     );
@@ -31,6 +32,7 @@ public function registerBundles()
 
 Follow the installation and configuration instructions of the third party bundles:
 
+* [KnpMenuBundle](https://github.com/KnpLabs/KnpMenuBundle/blob/master/Resources/doc/index.md)
 * [AbcJobBundleBundle](https://bitbucket.org/hasc/job-bundle)
 
 Configure the bundle
