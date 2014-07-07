@@ -34,6 +34,13 @@ class ServiceTest extends KernelTestCase
         $this->application->setCatchExceptions(false);
     }
 
+    public function testTwigWorkflowExtension()
+    {
+        $subject = $this->container->get('abc.workflow.workflow_extension');
+
+        $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Twig\WorkflowExtension', $subject);
+    }
+
     public function testWorkflowManager()
     {
         $subject = $this->container->get('abc_workflow.workflow_manager');
