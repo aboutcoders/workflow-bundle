@@ -30,6 +30,23 @@ public function registerBundles()
 }
 ```
 
+Configure routing 
+
+``` yaml
+abc_workflow_tasks:
+    resource: "@AbcWorkflowBundle/Resources/config/routing.yml"
+    prefix:   /
+```
+
+If you like to display workflow GUI you have to import routing_dev.yml
+
+``` yaml
+abc_workflow_workflows:
+    resource: "@AbcWorkflowBundle/Resources/config/routing_dev.yml"
+    prefix:   /
+```
+ 
+ 
 Follow the installation and configuration instructions of the third party bundles:
 
 * [KnpMenuBundle](https://github.com/KnpLabs/KnpMenuBundle/blob/master/Resources/doc/index.md)
@@ -44,3 +61,10 @@ abc_workflow:
 ```
 
 ## Usage
+
+Display workflow GUI
+
+``` twig
+{{ workflow_configuration(workflowEntity) }}
+```
+
