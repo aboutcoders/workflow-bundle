@@ -1,0 +1,4 @@
+abc_workflow_workflows:
+    resource: "@AbcWorkflowBundle/Controller/WorkflowController.php"
+    type:     annotation
+    prefix:   /
