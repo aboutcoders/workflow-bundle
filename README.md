@@ -42,7 +42,7 @@ abc_workflow_tasks:
 If you like to display workflow GUI you have to import optional routing rules
 
 ``` yaml
-# app/config/routing.yml | # app/config/routing_dev.yml
+# app/config/routing.yml
 abc_workflow_workflows:
     resource: "@AbcWorkflowBundle/Resources/config/routing_optional.yml"
     prefix:   /
