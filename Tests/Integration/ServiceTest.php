@@ -68,20 +68,4 @@ class ServiceTest extends KernelTestCase
 
         $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutable', $subject);
     }
-
-    public function testMenuBuilder()
-    {
-        $subject = $this->container->get('abc.workflow.menu.builder');
-
-        $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Menu\MenuBuilder', $subject);
-    }
-
-    public function testMainMenu()
-    {
-        $this->container->enterScope('request');
-        $this->container->set('request', new \Symfony\Component\HttpFoundation\Request(), 'request');
-        $subject = $this->container->get('abc.workflow.menu.main');
-
-        $this->assertInstanceOf('Knp\Menu\ItemInterface', $subject);
-    }
 }

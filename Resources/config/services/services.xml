@@ -27,14 +27,5 @@
             <argument type="service" id="abc_workflow.task_manager" />
             <tag name="abc.job.listener" type="workflow" level="debug" />
         </service>
-
-        <service id="abc.workflow.menu.builder" class="%abc.workflow.menu.builder.class%">
-            <argument type="service" id="knp_menu.factory" />
-        </service>
-        <service id="abc.workflow.menu.main" class="%abc.workflow.menu.item.class%" factory-service="abc.workflow.menu.builder"
-                 factory-method="createMainMenu" scope="request">
-            <argument type="service" id="request" />
-            <tag name="knp_menu.menu" alias="main" />
-        </service>
     </services>
 </container>

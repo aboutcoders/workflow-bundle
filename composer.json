@@ -22,8 +22,6 @@
         "sonata-project/notification-bundle": "~2.2",
         "gedmo/doctrine-extensions": "dev-master",
         "yzalis/supervisor-bundle": "~1",
-        "knplabs/knp-menu": "2.0.*@dev",
-        "knplabs/knp-menu-bundle": "2.0.*@dev",
         "aboutcoders/job-bundle": "dev-master@dev",
         "zendframework/zendxml": "dev-master"
     },
