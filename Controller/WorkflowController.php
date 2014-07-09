@@ -3,9 +3,9 @@
 namespace Abc\Bundle\WorkflowBundle\Controller;
 
 use Abc\Bundle\JobBundle\Api\Manager;
-use Abc\Bundle\JobBundle\Api\Report;
 use Abc\Bundle\JobBundle\Api\Status;
 use Abc\Bundle\JobBundle\Doctrine\JobManager;
+use Abc\Bundle\JobBundle\Job\Report;
 use Abc\Bundle\WorkflowBundle\Doctrine\WorkflowManager;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Form\WorkflowType;
@@ -151,21 +151,13 @@ class WorkflowController extends Controller
         }
 
         $executionManager = $this->getWorkflowExecutionManager();
-        $execution        = $executionManager->create();
 
         /** @var Manager $manager */
         $jobManager = $this->get('abc.job.manager');
         /** @var JobManager $jobEntityManager */
         $jobEntityManager = $this->get('abc.job.job_manager.default');
 
-        $ticket = $jobManager->addJob('workflow', $workflow);
-
-        $job = $jobEntityManager->findById($ticket);
-
-        $execution->setWorkflow($workflow);
-        $execution->setJob($job);
-
-        $executionManager->update($execution);
+        $execution = $executionManager->execute($workflow, $jobManager, $jobEntityManager);
 
         return $this->redirect($this->generateUrl('workflow_execution', array('id' => $execution->getId())));
     }

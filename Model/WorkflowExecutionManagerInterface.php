@@ -2,6 +2,9 @@
 
 namespace Abc\Bundle\WorkflowBundle\Model;
 
+use Abc\Bundle\JobBundle\Api\Manager;
+use Abc\Bundle\JobBundle\Model\JobManager;
+
 /**
  * @author Wojciech Ciolko <w.ciolko@gmail.com>
  */
@@ -68,6 +71,15 @@ interface WorkflowExecutionManagerInterface
      */
     public function findAll();
 
+    /**
+     * Execute workflow
+     *
+     * @param Workflow   $workflow
+     * @param Manager    $jobManager
+     * @param JobManager $jobEntityManager
+     * @return WorkflowExecutionInterface
+     */
+    public function execute(Workflow $workflow, Manager $jobManager, JobManager $jobEntityManager);
 
     /**
      * Returns the WorkflowExecution's fully qualified class name.

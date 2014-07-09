@@ -2,10 +2,14 @@
 
 namespace Abc\Bundle\WorkflowBundle\Doctrine;
 
+use Abc\Bundle\WorkflowBundle\Model\Workflow;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowExecutionInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowExecutionManager as BaseWorkflowExecutionManager;
+use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Abc\Bundle\JobBundle\Api\Manager;
+use Abc\Bundle\JobBundle\Model\JobManager;
 
 /**
  * @author Wojciech Ciolko <w.ciolko@gmail.com>
@@ -100,4 +104,30 @@ class WorkflowExecutionManager extends BaseWorkflowExecutionManager
     {
         return $this->repository->findAll();
     }
+
+    /**
+     * Execute workflow
+     *
+     * @param Workflow   $workflow
+     * @param Manager    $jobManager
+     * @param JobManager $jobEntityManager
+     * @return WorkflowExecutionInterface
+     */
+    public function execute(Workflow $workflow, Manager $jobManager, JobManager $jobEntityManager)
+    {
+        $execution = $this->create();
+
+        $ticket = $jobManager->addJob('workflow', $workflow);
+
+        $job = $jobEntityManager->findById($ticket);
+
+        $execution->setWorkflow($workflow);
+        $execution->setJob($job);
+
+        $this->update($execution);
+
+        return $execution;
+    }
+
+
 }
