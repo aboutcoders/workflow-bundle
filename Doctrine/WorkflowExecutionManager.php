@@ -106,14 +106,9 @@ class WorkflowExecutionManager extends BaseWorkflowExecutionManager
     }
 
     /**
-     * Execute workflow
-     *
-     * @param Workflow   $workflow
-     * @param Manager    $jobManager
-     * @param JobManager $jobEntityManager
-     * @return WorkflowExecutionInterface
+     * {@inheritDoc}
      */
-    public function execute(Workflow $workflow, Manager $jobManager, JobManager $jobEntityManager)
+    public function execute(Workflow $workflow, Manager $jobManager, JobManager $jobEntityManager, \Serializable $parameters = null)
     {
         $execution = $this->create();
 
