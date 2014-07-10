@@ -36,7 +36,7 @@ class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
         $this->subject = new WorkflowFilesystemListener($this->manager, $this->baseFilesystem);
     }
 
-    public function testOnPrepare()
+    public function testOnPrepareAddsFilesystemToContext()
     {
         $ticket = 'foobar';
 
@@ -58,5 +58,27 @@ class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
         $this->subject->onJobPrepare($this->jobEvent);
 
         $this->assertSame($workflowFilesystem, $this->jobEvent->getContext()->get('filesystem'));
+    }
+
+    public function testOnPrepareDoesNothingIfJobIsNoWorkflow()
+    {
+        $ticket = 'foobar';
+
+        $workflowFilesystem = $this->getMock('Abc\File\FilesystemInterface');
+
+        $this->jobEvent->expects($this->any())
+            ->method('getTicket')
+            ->will($this->returnValue($ticket));
+
+        $this->jobEvent->expects($this->any())
+            ->method('getType')
+            ->will($this->returnValue('foobar'));
+
+        $this->manager->expects($this->never())
+            ->method('createFilesystem');
+
+        $this->subject->onJobPrepare($this->jobEvent);
+
+        $this->assertFalse($this->context->has('filesystem'));
     }
 }
