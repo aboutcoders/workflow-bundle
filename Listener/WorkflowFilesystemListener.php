@@ -30,6 +30,9 @@ class WorkflowFilesystemListener
      */
     public function onJobPrepare(JobEvent $job)
     {
-        $job->getContext()->set('filesystem', $this->manager->createFilesystem($this->baseFilesystem, $job->getTicket()));
+        if($job->getType() == 'workflow')
+        {
+            $job->getContext()->set('filesystem', $this->manager->createFilesystem($this->baseFilesystem, $job->getTicket()));
+        }
     }
 }

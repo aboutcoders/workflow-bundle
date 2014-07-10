@@ -46,6 +46,10 @@ class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getTicket')
             ->will($this->returnValue($ticket));
 
+        $this->jobEvent->expects($this->any())
+            ->method('getType')
+            ->will($this->returnValue('workflow'));
+
         $this->manager->expects($this->once())
             ->method('createFilesystem')
             ->with($this->baseFilesystem, $ticket)
