@@ -49,20 +49,10 @@ sonata_notification:
     consumers:
         register_default: false
 
-yz_supervisor:
-    default_environment: dev
-    servers:
-        dev:
-            locahost:
-                host:     127.0.0.1
-                username: username
-                password: password
-                port:     9001
-
 abc_job:
   db_driver: orm
   job_logs_dir: "%kernel.logs_dir%"
-  #job_logs_dir: "%kernel.logs_dir%"
+  rest_api: false
 
 abc_workflow:
   db_driver: orm

@@ -15,23 +15,32 @@
         {
             "type": "vcs",
             "url": "git@bitbucket.org:hasc/job-bundle.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@bitbucket.org:wciolko/file-distribution.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@bitbucket.org:wciolko/file-distribution-bundle.git"
         }
     ],
     "require": {
         "symfony/symfony": "~2.1",
         "sonata-project/notification-bundle": "~2.2",
         "gedmo/doctrine-extensions": "dev-master",
-        "yzalis/supervisor-bundle": "~1",
         "aboutcoders/job-bundle": "dev-master@dev",
-        "zendframework/zendxml": "dev-master"
+        "aboutcoders/file-distribution-bundle": "dev-master@dev"
     },
     "require-dev": {
-        "phpunit/phpunit": "~3.7",
+        "phpunit/phpunit": "~4",
         "doctrine/orm": "~2.2,>=2.2.3",
         "doctrine/doctrine-bundle": "~1.2",
         "symfony/monolog-bundle": "~2",
         "symfony/swiftmailer-bundle": "~2.3"
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {"Abc\\Bundle\\WorkflowBundle\\": ""}
     }

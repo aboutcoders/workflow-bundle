@@ -1,8 +1,4 @@
 services:
-#    logprocessor:
-#        class: Monolog\Processor\PsrLogMessageProcessor
-#        tags:
-#            - { name: monolog.processor, channel: abc.job }
     gedmo.listener.timestampable:
         class: Gedmo\Timestampable\TimestampableListener
         tags:
@@ -15,8 +11,3 @@ services:
         arguments: [@mailer]
         tags:
             - { name: abc.job.listener, type: mailer, level: debug }
-
-    abc.job.test:
-        class: Abc\Bundle\JobBundle\Tests\Fixtures\Job\TestJob
-        tags:
-            - { name: abc.job.listener, type: test, level: debug }
