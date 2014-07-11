@@ -9,18 +9,18 @@ use Abc\File\FilesystemInterface;
 
 class WorkflowFilesystemListener
 {
-    /** @var DistributionManagerInterface  */
+    /** @var DistributionManagerInterface */
     protected $manager;
-    /** @var FilesystemInterface  */
+    /** @var FilesystemInterface */
     protected $baseFilesystem;
 
     /**
      * @param DistributionManagerInterface $manager
-     * @param FilesystemInterface  $baseFilesystem
+     * @param FilesystemInterface          $baseFilesystem
      */
     public function __construct(DistributionManagerInterface $manager, FilesystemInterface $baseFilesystem)
     {
-        $this->manager      = $manager;
+        $this->manager        = $manager;
         $this->baseFilesystem = $baseFilesystem;
     }
 
@@ -31,22 +31,16 @@ class WorkflowFilesystemListener
      */
     public function onJobPrepare(JobEvent $job)
     {
-        if($job->getType() == 'workflow')
-        {
+        if ($job->getType() == 'workflow') {
             $path = $this->baseFilesystem->getPath() . '/' . $job->getTicket();
 
             $filesystem = new Filesystem();
-            if(!file_exists($path))
-            {
-                $filesystem->setType('Filesystem');
+            $filesystem->setType('Filesystem');
+            if (!file_exists($path)) {
                 $filesystem = $this->manager->createFilesystem($filesystem, $path);
-            }
-            else
-            {
-                $filesystem->setType('Filesystem');
+            } else {
                 $filesystem->setPath($path);
             }
-
 
             $job->getContext()->set('filesystem', $filesystem);
         }

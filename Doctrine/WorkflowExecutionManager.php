@@ -5,7 +5,6 @@ namespace Abc\Bundle\WorkflowBundle\Doctrine;
 use Abc\Bundle\WorkflowBundle\Model\Workflow;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowExecutionInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowExecutionManager as BaseWorkflowExecutionManager;
-use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Abc\Bundle\JobBundle\Api\Manager;
