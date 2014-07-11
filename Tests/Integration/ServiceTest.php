@@ -2,6 +2,11 @@
 
 namespace Abc\Bundle\WorkflowBundle\Tests\Integration;
 
+use Abc\Bundle\JobBundle\Api\Context;
+use Abc\Bundle\JobBundle\Event\JobEvent;
+use Abc\Bundle\JobBundle\Model\Job;
+use Abc\Bundle\WorkflowBundle\Listener\WorkflowFilesystemListener;
+use Abc\File\FilesystemInterface;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -67,5 +72,31 @@ class ServiceTest extends KernelTestCase
         $subject = $this->container->get('abc.workflow.executable.workflow');
 
         $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutable', $subject);
+    }
+
+    public function testJobListener()
+    {
+        /** @var WorkflowFilesystemListener $subject */
+        $subject = $this->container->get('abc.workflow.job_listener');
+
+        $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Listener\WorkflowFilesystemListener', $subject);
+
+        $manager = $this->getMockBuilder('Abc\Bundle\JobBundle\Api\Manager')->disableOriginalConstructor()->getMock();
+        $jobManager = $this->getMock('Abc\Bundle\JobBundle\Model\JobManagerInterface');
+        $context = new Context();
+
+        $job = new Job();
+        $job->setId('foobar');
+        $job->setType('workflow');
+
+        $event = new JobEvent($manager, $jobManager, $job, $context);
+
+        $subject->onJobPrepare($event);
+
+        $this->assertTrue($event->getContext()->has('filesystem'));
+
+        /** @var FilesystemInterface $filesystem */
+        $filesystem = $event->getContext()->get('filesystem');
+        $this->assertInstanceOf('Abc\File\FilesystemInterface', $filesystem);
     }
 }

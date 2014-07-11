@@ -23,9 +23,27 @@
         <service id="abc.workflow.task.form.mailer" class="%abc.workflow.task.form.mailer.class%">
             <tag name="abc.workflow.task.form" />
         </service>
+
         <service id="abc.workflow.executable.workflow" class="%abc.workflow.executable.workflow.class%">
             <argument type="service" id="abc_workflow.task_manager" />
             <tag name="abc.job.listener" type="workflow" level="debug" />
         </service>
+
+
+        <service id="abc.workflow.job_listener" class="Abc\Bundle\WorkflowBundle\Listener\WorkflowFilesystemListener" public="true">
+            <argument type="service" id="abc.file_distribution.manager" />
+            <argument type="service" id="abc.workflow.filesystem" />
+            <tag name="abc.job.event_listener" event="abc.job.prepare" method="onPrepare"/>
+        </service>
+
+        <service id="abc.workflow.filesystem" class="Abc\File\Filesystem" public="false">
+            <call method="setType">
+                <argument type="string">Filesystem</argument>
+            </call>
+            <call method="setPath">
+                <argument type="string">/tmp/workflow</argument>
+            </call>
+        </service>
+
     </services>
 </container>

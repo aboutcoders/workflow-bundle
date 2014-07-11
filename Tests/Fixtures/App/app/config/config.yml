@@ -49,6 +49,9 @@ sonata_notification:
     consumers:
         register_default: false
 
+abc_file_distribution:
+    db_driver: orm # there are no other valid values yet
+
 abc_job:
   db_driver: orm
   job_logs_dir: "%kernel.logs_dir%"

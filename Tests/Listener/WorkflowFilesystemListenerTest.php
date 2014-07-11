@@ -60,6 +60,9 @@ class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($workflowFilesystem, $this->jobEvent->getContext()->get('filesystem'));
     }
 
+    /**
+     * @todo remove created directory after test execution
+     */
     public function testOnPrepareDoesNothingIfJobIsNoWorkflow()
     {
         $ticket = 'foobar';

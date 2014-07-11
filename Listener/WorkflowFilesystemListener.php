@@ -2,6 +2,7 @@
 
 namespace Abc\Bundle\WorkflowBundle\Listener;
 
+use Abc\Bundle\FileDistributionBundle\Entity\Filesystem;
 use Abc\Bundle\JobBundle\Event\JobEvent;
 use Abc\File\DistributionManagerInterface;
 use Abc\File\FilesystemInterface;
@@ -32,7 +33,22 @@ class WorkflowFilesystemListener
     {
         if($job->getType() == 'workflow')
         {
-            $job->getContext()->set('filesystem', $this->manager->createFilesystem($this->baseFilesystem, $job->getTicket()));
+            $path = $this->baseFilesystem->getPath() . '/' . $job->getTicket();
+
+            $filesystem = new Filesystem();
+            if(!file_exists($path))
+            {
+                $filesystem->setType('Filesystem');
+                $filesystem = $this->manager->createFilesystem($filesystem, $path);
+            }
+            else
+            {
+                $filesystem->setType('Filesystem');
+                $filesystem->setPath($path);
+            }
+
+
+            $job->getContext()->set('filesystem', $filesystem);
         }
     }
 }
