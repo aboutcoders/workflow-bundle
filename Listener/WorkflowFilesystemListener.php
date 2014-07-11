@@ -25,7 +25,7 @@ class WorkflowFilesystemListener
     }
 
     /**
-     * Registers a filesystem location of type Abc\File\LocationInterface with the key 'filesystem'
+     * Registers a filesystem location of type Abc\File\FilesystemInterface with the key 'filesystem'
      *
      * @param JobEvent $job
      */
