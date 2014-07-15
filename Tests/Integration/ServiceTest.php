@@ -95,8 +95,9 @@ class ServiceTest extends KernelTestCase
 
         $this->assertTrue($event->getContext()->has('filesystem'));
 
-        /** @var FilesystemInterface $filesystem */
+
         $filesystem = $event->getContext()->get('filesystem');
-        $this->assertInstanceOf('Abc\File\FilesystemInterface', $filesystem);
+
+        $this->assertInstanceOf('Abc\Filesystem\Filesystem', $filesystem);
     }
 }

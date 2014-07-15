@@ -25,16 +25,20 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-            ->scalarNode('db_driver')
-            ->validate()
-            ->ifNotInArray($supportedDrivers)
-            ->thenInvalid('The driver %s is not supported. Please choose one of ' . json_encode($supportedDrivers))
-            ->end()
-            ->cannotBeOverwritten()
-            ->isRequired()
-            ->cannotBeEmpty()
-            ->end()
-            ->scalarNode('model_manager_name')->defaultNull()->end()
+                ->scalarNode('db_driver')
+                    ->validate()
+                        ->ifNotInArray($supportedDrivers)
+                        ->thenInvalid('The driver %s is not supported. Please choose one of ' . json_encode($supportedDrivers))
+                    ->end()
+                    ->cannotBeOverwritten()
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                ->end()
+                ->scalarNode('model_manager_name')->defaultNull()->end()
+                ->scalarNode('filesystem')
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                ->end()
             ->end();
 
         $this->addWorkflowSection($rootNode);

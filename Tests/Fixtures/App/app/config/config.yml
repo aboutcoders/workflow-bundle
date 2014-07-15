@@ -51,6 +51,10 @@ sonata_notification:
 
 abc_file_distribution:
     db_driver: orm # there are no other valid values yet
+    filesystems:
+        workflow:
+            type: LOCAL
+            path: "%kernel.root_dir%/../../../../build"
 
 abc_job:
   db_driver: orm
@@ -59,3 +63,4 @@ abc_job:
 
 abc_workflow:
   db_driver: orm
+  filesystem: workflow
