@@ -2,45 +2,32 @@
 
 namespace Abc\Bundle\WorkflowBundle\Listener;
 
-use Abc\Bundle\FileDistributionBundle\Entity\Filesystem;
 use Abc\Bundle\JobBundle\Event\JobEvent;
-use Abc\File\DistributionManagerInterface;
-use Abc\File\FilesystemInterface;
+use Abc\Filesystem\Filesystem;
 
 class WorkflowFilesystemListener
 {
-    /** @var DistributionManagerInterface */
-    protected $manager;
-    /** @var FilesystemInterface */
-    protected $baseFilesystem;
+    /** @var Filesystem */
+    protected $filesystem;
 
     /**
-     * @param DistributionManagerInterface $manager
-     * @param FilesystemInterface          $baseFilesystem
+     * @param Filesystem $filesystem
      */
-    public function __construct(DistributionManagerInterface $manager, FilesystemInterface $baseFilesystem)
+    public function __construct(Filesystem $filesystem)
     {
-        $this->manager        = $manager;
-        $this->baseFilesystem = $baseFilesystem;
+        $this->filesystem = $filesystem;
     }
 
     /**
-     * Registers a filesystem location of type Abc\File\FilesystemInterface with the key 'filesystem'
+     * Registers a filesystem of type Abc\Filesystem\Filesystem with the key 'filesystem'
      *
      * @param JobEvent $job
      */
     public function onJobPrepare(JobEvent $job)
     {
-        if ($job->getType() == 'workflow' || ($job->hasParentJob() && $job->getParentJob()->getType() == 'workflow')) {
-            $path = $this->baseFilesystem->getPath() . '/' . $job->getTicket();
-
-            $filesystem = new Filesystem();
-            $filesystem->setType('Filesystem');
-            if (!file_exists($path)) {
-                $filesystem = $this->manager->createFilesystem($filesystem, $path);
-            } else {
-                $filesystem->setPath($path);
-            }
+        if($job->getRootJob()->getType() == 'workflow')
+        {
+            $filesystem = $this->filesystem->createFilesystem($job->getTicket(), true);
 
             $job->getContext()->set('filesystem', $filesystem);
         }

@@ -31,18 +31,8 @@
 
 
         <service id="abc.workflow.job_listener" class="Abc\Bundle\WorkflowBundle\Listener\WorkflowFilesystemListener" public="true">
-            <argument type="service" id="abc.file_distribution.manager" />
             <argument type="service" id="abc.workflow.filesystem" />
             <tag name="abc.job.event_listener" event="abc.job.prepare" method="onJobPrepare"/>
-        </service>
-
-        <service id="abc.workflow.filesystem" class="Abc\File\Filesystem" public="false">
-            <call method="setType">
-                <argument type="string">Filesystem</argument>
-            </call>
-            <call method="setPath">
-                <argument type="string">/tmp/workflow</argument>
-            </call>
         </service>
 
     </services>

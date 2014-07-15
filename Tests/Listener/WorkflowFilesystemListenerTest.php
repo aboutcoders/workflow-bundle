@@ -4,19 +4,18 @@
 namespace Abc\Bundle\WorkflowBundle\Tests\Listener;
 
 use Abc\Bundle\WorkflowBundle\Listener\WorkflowFilesystemListener;
-use Abc\File\DistributionManagerInterface;
-use Abc\File\FilesystemInterface;
 use Abc\Bundle\JobBundle\Event\JobEvent;
 use Abc\Bundle\JobBundle\Api\Context;
+use Abc\Filesystem\Filesystem;
 
 class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var FilesystemInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $baseFilesystem;
-    /** @var DistributionManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $manager;
+    /** @var Filesystem|\PHPUnit_Framework_MockObject_MockObject */
+    protected $filesystem;
     /** @var JobEvent|\PHPUnit_Framework_MockObject_MockObject */
     protected $jobEvent;
+    /** @var JobEvent|\PHPUnit_Framework_MockObject_MockObject */
+    protected $rootJob;
     /** @var Context */
     protected $context;
     /** @var WorkflowFilesystemListener */
@@ -24,35 +23,39 @@ class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->baseFilesystem = $this->getMock('Abc\File\FilesystemInterface');
-        $this->manager = $this->getMock('Abc\File\DistributionManagerInterface');
-        $this->context = new Context();
-        $this->jobEvent = $this->getMockBuilder('Abc\Bundle\JobBundle\Event\JobEvent')->disableOriginalConstructor()->getMock();
+        $this->filesystem = $this->getMockBuilder('Abc\Filesystem\Filesystem')->disableOriginalConstructor()->getMock();
+        $this->context    = new Context();
+        $this->jobEvent   = $this->createJobEventMock();
+        $this->rootJob    = $this->createJobEventMock();
+
+        $this->jobEvent->expects($this->any())
+            ->method('getRootJob')
+            ->will($this->returnValue($this->rootJob));
 
         $this->jobEvent->expects($this->any())
             ->method('getContext')
             ->will($this->returnValue($this->context));
 
-        $this->subject = new WorkflowFilesystemListener($this->manager, $this->baseFilesystem);
+        $this->subject = new WorkflowFilesystemListener($this->filesystem);
     }
 
     public function testOnPrepareAddsFilesystemToContext()
     {
         $ticket = 'foobar';
 
-        $workflowFilesystem = $this->getMock('Abc\File\FilesystemInterface');
-
         $this->jobEvent->expects($this->any())
             ->method('getTicket')
             ->will($this->returnValue($ticket));
 
-        $this->jobEvent->expects($this->any())
+        $this->rootJob->expects($this->once())
             ->method('getType')
             ->will($this->returnValue('workflow'));
 
-        $this->manager->expects($this->once())
+        $workflowFilesystem = $this->getMockBuilder('Abc\Filesystem\Filesystem')->disableOriginalConstructor()->getMock();
+
+        $this->filesystem->expects($this->once())
             ->method('createFilesystem')
-            ->with($this->baseFilesystem, $ticket)
+            ->with($ticket)
             ->will($this->returnValue($workflowFilesystem));
 
         $this->subject->onJobPrepare($this->jobEvent);
@@ -67,21 +70,28 @@ class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
     {
         $ticket = 'foobar';
 
-        $workflowFilesystem = $this->getMock('Abc\File\FilesystemInterface');
-
         $this->jobEvent->expects($this->any())
             ->method('getTicket')
             ->will($this->returnValue($ticket));
 
-        $this->jobEvent->expects($this->any())
+        $this->rootJob->expects($this->once())
             ->method('getType')
             ->will($this->returnValue('foobar'));
 
-        $this->manager->expects($this->never())
+        $this->filesystem->expects($this->never())
             ->method('createFilesystem');
 
         $this->subject->onJobPrepare($this->jobEvent);
 
         $this->assertFalse($this->context->has('filesystem'));
+    }
+
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createJobEventMock()
+    {
+        return $this->getMockBuilder('Abc\Bundle\JobBundle\Event\JobEvent')->disableOriginalConstructor()->getMock();
     }
 }
