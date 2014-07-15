@@ -30,7 +30,7 @@
         "sonata-project/notification-bundle": "~2.2",
         "gedmo/doctrine-extensions": "dev-master",
         "aboutcoders/job-bundle": "dev-master@dev",
-        "aboutcoders/file-distribution-bundle": "dev-AM-150-add-option-to-configure-filesyste"
+        "aboutcoders/file-distribution-bundle": "dev-master@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "~4",
