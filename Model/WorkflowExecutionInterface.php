@@ -1,8 +1,6 @@
 <?php
 namespace Abc\Bundle\WorkflowBundle\Model;
 
-use Abc\Bundle\JobBundle\Model\JobInterface;
-
 interface WorkflowExecutionInterface
 {
     /**
@@ -16,11 +14,6 @@ interface WorkflowExecutionInterface
     public function setId($id);
 
     /**
-     * @return JobInterface
-     */
-    public function getJob();
-
-    /**
      * @return string
      */
     public function getTicket();
@@ -29,11 +22,6 @@ interface WorkflowExecutionInterface
      * @param string $ticket
      */
     public function setTicket($ticket);
-
-    /**
-     * @param JobInterface $job
-     */
-    public function setJob(JobInterface $job);
 
     /**
      * @return WorkflowInterface

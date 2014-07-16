@@ -17,9 +17,6 @@
         <field name="updatedAt" column="updated_at" type="datetime">
             <gedmo:timestampable on="update"/>
         </field>
-        <one-to-one field="job" target-entity="Abc\Bundle\JobBundle\Entity\Job">
-            <join-column name="job_ticket" referenced-column-name="id"/>
-        </one-to-one>
         <many-to-one field="workflow" target-entity="Abc\Bundle\WorkflowBundle\Entity\Workflow"
                      inversed-by="executions">
             <join-column name="workflow_id" referenced-column-name="id"/>

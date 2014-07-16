@@ -36,11 +36,6 @@ class WorkflowExecution implements WorkflowExecutionInterface
     protected $updatedAt;
 
     /**
-     * @var JobInterface
-     */
-    protected $job;
-
-    /**
      * @var WorkflowInterface
      */
     protected $workflow;
@@ -64,22 +59,6 @@ class WorkflowExecution implements WorkflowExecutionInterface
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return JobInterface
-     */
-    public function getJob()
-    {
-        return $this->job;
-    }
-
-    /**
-     * @param JobInterface $job
-     */
-    public function setJob(JobInterface $job)
-    {
-        $this->job = $job;
     }
 
     /**

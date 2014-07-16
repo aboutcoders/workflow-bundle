@@ -1,24 +1,26 @@
-{% if btnSize is not defined  %}
+{% if btnSize is not defined %}
     {% set btnSize = '' %}
 {% endif %}
-{% if item.job.status.value == 1 %}
-    {% set btnClass = 'btn-default' %}
-    {% set icon = 'time' %}
-{% elseif item.job.status.value == 2 %}
-    {% set btnClass = 'btn-default' %}
-    {% set icon = 'refresh' %}
-{% elseif item.job.status.value == 3 %}
-    {% set btnClass = 'btn-success' %}
-    {% set icon = 'ok-circle' %}
-{% elseif item.job.status.value == 4 %}
-    {% set btnClass = 'btn-warning' %}
-    {% set icon = 'ban-circle' %}
-{% elseif item.job.status.value == 5 %}
-    {% set btnClass = 'btn-danger' %}
-    {% set icon = 'exclamation-sign' %}
-{% elseif item.job.status.value == 6 %}
-    {% set btnClass = 'btn-default' %}
-    {% set icon = 'pause' %}
+{% if report %}
+    {% if report.status.value == 1 %}
+        {% set btnClass = 'btn-default' %}
+        {% set icon = 'time' %}
+    {% elseif report.status.value == 2 %}
+        {% set btnClass = 'btn-default' %}
+        {% set icon = 'refresh' %}
+    {% elseif report.status.value == 3 %}
+        {% set btnClass = 'btn-success' %}
+        {% set icon = 'ok-circle' %}
+    {% elseif report.status.value == 4 %}
+        {% set btnClass = 'btn-warning' %}
+        {% set icon = 'ban-circle' %}
+    {% elseif report.status.value == 5 %}
+        {% set btnClass = 'btn-danger' %}
+        {% set icon = 'exclamation-sign' %}
+    {% elseif report.status.value == 6 %}
+        {% set btnClass = 'btn-default' %}
+        {% set icon = 'pause' %}
+    {% endif %}
 {% endif %}
 <a href="{{ path('workflow_execution', { 'id': item.id }) }}" class="btn {{ btnSize }} {{ btnClass }}">
     <span class="glyphicon glyphicon-{{ icon }}"></span> #{{ item.id }}

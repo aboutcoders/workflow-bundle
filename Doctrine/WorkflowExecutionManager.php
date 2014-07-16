@@ -107,16 +107,14 @@ class WorkflowExecutionManager extends BaseWorkflowExecutionManager
     /**
      * {@inheritDoc}
      */
-    public function execute(Workflow $workflow, Manager $jobManager, JobManager $jobEntityManager, \Serializable $parameters = null)
+    public function execute(Workflow $workflow, Manager $jobManager, \Serializable $parameters = null)
     {
         $execution = $this->create();
 
         $ticket = $jobManager->addJob('workflow', $workflow);
 
-        $job = $jobEntityManager->findById($ticket);
-
         $execution->setWorkflow($workflow);
-        $execution->setJob($job);
+        $execution->setTicket($ticket);
 
         $this->update($execution);
 

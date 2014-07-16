@@ -154,10 +154,8 @@ class WorkflowController extends Controller
 
         /** @var Manager $manager */
         $jobManager = $this->get('abc.job.manager');
-        /** @var JobManager $jobEntityManager */
-        $jobEntityManager = $this->get('abc.job.job_manager.default');
 
-        $execution = $executionManager->execute($workflow, $jobManager, $jobEntityManager);
+        $execution = $executionManager->execute($workflow, $jobManager);
 
         return $this->redirect($this->generateUrl('workflow_execution', array('id' => $execution->getId())));
     }
@@ -178,15 +176,16 @@ class WorkflowController extends Controller
             throw $this->createNotFoundException('Unable to find WorkflowExecution entity.');
         }
 
-        $progress = 0;
-        if ($entity->getJob()->getStatus() == Status::PROCESSED()) {
-            $progress = 100;
-        }
-
         /** @var Manager $manager */
         $jobManager = $this->get('abc.job.manager');
+
         /** @var Report $report */
-        $report = $jobManager->getReport($entity->getJob()->getId());
+        $report = $jobManager->getReport($entity->getTicket());
+
+        $progress = 0;
+        if ($report->getStatus() == Status::PROCESSED()) {
+            $progress = 100;
+        }
 
         return array(
             'entity'   => $entity,
