@@ -76,10 +76,9 @@ interface WorkflowExecutionManagerInterface
      *
      * @param Workflow      $workflow
      * @param Manager       $jobManager
-     * @param \Serializable $parameters
      * @return WorkflowExecutionInterface
      */
-    public function execute(Workflow $workflow, Manager $jobManager, \Serializable $parameters = null);
+    public function execute(Workflow $workflow, Manager $jobManager);
 
     /**
      * Returns the WorkflowExecution's fully qualified class name.

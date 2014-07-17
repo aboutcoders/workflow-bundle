@@ -10,6 +10,8 @@ class Workflow extends BaseWorkflow
 {
     /** @var int */
     protected $index = 0;
+    /** @var \Serializable */
+    protected $parameters;
 
     /**
      * @return int
@@ -28,4 +30,19 @@ class Workflow extends BaseWorkflow
     }
 
 
+    /**
+     * @return \Serializable
+     */
+    public function getParameters()
+    {
+        return $this->parameters;
+    }
+
+    /**
+     * @param \Serializable $parameters
+     */
+    public function setParameters($parameters)
+    {
+        $this->parameters = $parameters;
+    }
 }

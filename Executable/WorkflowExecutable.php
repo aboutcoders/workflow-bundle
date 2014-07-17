@@ -67,6 +67,8 @@ class WorkflowExecutable implements Executable
         /** @var Workflow $workflow */
         $workflow   = $job->getParameters();
         $workflowId = $workflow->getId();
+
+        $job->getContext()->set('parameters', $workflow->getParameters());
         $job->getContext()->get('logger')->debug('Workflow: {workflow} ', array('workflow' => $workflowId));
 
         if ($job->isCallback()) {
