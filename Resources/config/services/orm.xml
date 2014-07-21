@@ -6,8 +6,8 @@
 
     <services>
 
-        <service id="abc_workflow.entity_manager" factory-service="doctrine" factory-method="getManager" class="Doctrine\ORM\EntityManager" public="false">
-            <argument>%abc_workflow.model_manager_name%</argument>
+        <service id="abc.workflow.entity_manager" factory-service="doctrine" factory-method="getManager" class="Doctrine\ORM\EntityManager" public="false">
+            <argument>%abc.workflow.model_manager_name%</argument>
         </service>
 
     </services>

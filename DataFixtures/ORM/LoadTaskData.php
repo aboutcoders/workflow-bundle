@@ -27,7 +27,7 @@ class LoadTaskData extends AbstractFixture implements OrderedFixtureInterface, C
     public function load(ObjectManager $manager)
     {
         /** @var TaskTypeManagerInterface $taskTypeManager */
-        $taskTypeManager = $this->container->get('abc_workflow.task_type_manager');
+        $taskTypeManager = $this->container->get('abc.workflow.task_type_manager');
 
         $item1 = $taskTypeManager->create();
         $item1->setName('Mailer');

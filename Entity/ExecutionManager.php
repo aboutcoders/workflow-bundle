@@ -2,13 +2,13 @@
 
 namespace Abc\Bundle\WorkflowBundle\Entity;
 
-use Abc\Bundle\WorkflowBundle\Doctrine\WorkflowExecutionManager as BaseWorkflowExecutionManager;
+use Abc\Bundle\WorkflowBundle\Doctrine\ExecutionManager as BaseExecutionManager;
 use Doctrine\ORM\EntityManager;
 
 /**
  * @author Wojciech Ciolko <w.ciolko@gmail.com>
  */
-class WorkflowExecutionManager extends BaseWorkflowExecutionManager
+abstract class ExecutionManager extends BaseExecutionManager
 {
     /** @var EntityManager */
     protected $em;

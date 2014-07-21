@@ -23,7 +23,9 @@
         </service>
 
         <service id="abc.workflow.executable.workflow" class="%abc.workflow.executable.workflow.class%">
-            <argument type="service" id="abc_workflow.task_manager" />
+            <argument type="service" id="abc.workflow.workflow_manager" />
+            <argument type="service" id="abc.workflow.task_manager" />
+            <argument type="service" id="abc.workflow.execution_manager" />
             <tag name="abc.job.listener" type="workflow" level="debug" />
         </service>
 

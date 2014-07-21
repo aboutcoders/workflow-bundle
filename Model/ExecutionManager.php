@@ -1,7 +1,8 @@
 <?php
+
 namespace Abc\Bundle\WorkflowBundle\Model;
 
-abstract class WorkflowExecutionManager implements WorkflowExecutionManagerInterface
+abstract class ExecutionManager implements ExecutionManagerInterface
 {
 
     /**

@@ -65,7 +65,7 @@ class Workflow implements WorkflowInterface, \Serializable
     protected $updatedAt;
 
     /**
-     * @return int
+     * {@inheritDoc}
      */
     public function getId()
     {
@@ -73,7 +73,7 @@ class Workflow implements WorkflowInterface, \Serializable
     }
 
     /**
-     * @param int $id
+     * {@inheritDoc}
      */
     public function setId($id)
     {
@@ -82,7 +82,7 @@ class Workflow implements WorkflowInterface, \Serializable
 
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getName()
     {
@@ -90,7 +90,7 @@ class Workflow implements WorkflowInterface, \Serializable
     }
 
     /**
-     * @param string $name
+     * {@inheritDoc}
      */
     public function setName($name)
     {
@@ -98,7 +98,7 @@ class Workflow implements WorkflowInterface, \Serializable
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getDescription()
     {
@@ -106,7 +106,7 @@ class Workflow implements WorkflowInterface, \Serializable
     }
 
     /**
-     * @param string $description
+     * {@inheritDoc}
      */
     public function setDescription($description)
     {
@@ -114,7 +114,7 @@ class Workflow implements WorkflowInterface, \Serializable
     }
 
     /**
-     * @return boolean
+     * {@inheritDoc}
      */
     public function isDisabled()
     {
@@ -122,7 +122,7 @@ class Workflow implements WorkflowInterface, \Serializable
     }
 
     /**
-     * @param boolean $disabled
+     * {@inheritDoc}
      */
     public function setDisabled($disabled)
     {
@@ -130,9 +130,7 @@ class Workflow implements WorkflowInterface, \Serializable
     }
 
     /**
-     * Get all tasks
-     *
-     * @return ArrayCollection
+     * {@inheritDoc}
      */
     public function getTasks()
     {
@@ -140,10 +138,7 @@ class Workflow implements WorkflowInterface, \Serializable
     }
 
     /**
-     * Add Task
-     *
-     * @param Task $task
-     * @return Workflow
+     * {@inheritDoc}
      */
     public function addTask(Task $task)
     {
@@ -153,9 +148,7 @@ class Workflow implements WorkflowInterface, \Serializable
     }
 
     /**
-     * Remove Tasks
-     *
-     * @param Task $task
+     * {@inheritDoc}
      */
     public function removeTask(Task $task)
     {
@@ -164,9 +157,7 @@ class Workflow implements WorkflowInterface, \Serializable
 
 
     /**
-     * Get all workflow executions
-     *
-     * @return ArrayCollection
+     * {@inheritDoc}
      */
     public function getExecutions()
     {
@@ -174,26 +165,21 @@ class Workflow implements WorkflowInterface, \Serializable
     }
 
     /**
-     * Add WorkflowExecution
-     *
-     * @param WorkflowExecutionInterface $workflowExecution
-     * @return Workflow
+     * {@inheritDoc}
      */
-    public function addExecution(WorkflowExecutionInterface $workflowExecution)
+    public function addExecution(ExecutionInterface $execution)
     {
-        $this->executions[] = $workflowExecution;
+        $this->executions[] = $execution;
 
         return $this;
     }
 
     /**
-     * Remove WorkflowExecutions
-     *
-     * @param WorkflowExecutionInterface $workflowExecution
+     * {@inheritDoc}
      */
-    public function removeExecution(WorkflowExecutionInterface $workflowExecution)
+    public function removeExecution(ExecutionInterface $execution)
     {
-        $this->executions->removeElement($workflowExecution);
+        $this->executions->removeElement($execution);
     }
 
     /**
@@ -253,5 +239,4 @@ class Workflow implements WorkflowInterface, \Serializable
             $this->$key = $data[$key];
         }
     }
-
 }

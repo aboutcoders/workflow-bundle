@@ -35,12 +35,9 @@ class AbcWorkflowExtension extends Extension
 
         $loader->load('services.xml');
 
-        $this->remapParametersNamespaces(
-            $config,
-            $container,
-            array(
+        $this->remapParametersNamespaces($config, $container, array(
                 '' => array(
-                    'model_manager_name' => 'abc_workflow.model_manager_name'
+                    'model_manager_name' => 'abc.workflow.model_manager_name'
                 )
             )
         );
@@ -64,16 +61,16 @@ class AbcWorkflowExtension extends Extension
             $loader->load(sprintf('%s_workflow.xml', $dbDriver));
         }
 
-        $container->setAlias('abc_workflow.workflow_manager', $config['workflow_manager']);
-        $container->setAlias('abc_workflow.workflow_execution_manager', $config['workflow_execution_manager']);
+        $container->setAlias('abc.workflow.workflow_manager', $config['workflow_manager']);
+        $container->setAlias('abc.workflow.execution_manager', $config['execution_manager']);
 
         $this->remapParametersNamespaces(
             $config,
             $container,
             array(
                 '' => array(
-                    'workflow_class' => 'abc_workflow.model.workflow.class',
-                    'workflow_execution_class' => 'abc_workflow.model.workflow_execution.class',
+                    'workflow_class' => 'abc.workflow.model.workflow.class',
+                    'execution_class' => 'abc.workflow.model.execution.class',
                 )
             )
         );
@@ -87,16 +84,16 @@ class AbcWorkflowExtension extends Extension
             $loader->load(sprintf('%s_task_type.xml', $dbDriver));
         }
 
-        $container->setAlias('abc_workflow.task_manager', $config['task_manager']);
-        $container->setAlias('abc_workflow.task_type_manager', $config['task_type_manager']);
+        $container->setAlias('abc.workflow.task_manager', $config['task_manager']);
+        $container->setAlias('abc.workflow.task_type_manager', $config['task_type_manager']);
 
         $this->remapParametersNamespaces(
             $config,
             $container,
             array(
                 '' => array(
-                    'task_class' => 'abc_workflow.model.task.class',
-                    'task_type_class' => 'abc_workflow.model.task_type.class',
+                    'task_class' => 'abc.workflow.model.task.class',
+                    'task_type_class' => 'abc.workflow.model.task_type.class',
                 )
             )
         );

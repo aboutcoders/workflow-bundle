@@ -9,7 +9,7 @@ use Abc\Bundle\JobBundle\Job\Report;
 use Abc\Bundle\WorkflowBundle\Doctrine\WorkflowManager;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Form\WorkflowType;
-use Abc\Bundle\WorkflowBundle\Model\WorkflowExecutionManagerInterface;
+use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -150,7 +150,7 @@ class WorkflowController extends Controller
             return $this->redirect($this->generateUrl('workflow_show', array('id' => $workflow->getId())));
         }
 
-        $executionManager = $this->getWorkflowExecutionManager();
+        $executionManager = $this->getExecutionManager();
 
         /** @var Manager $manager */
         $jobManager = $this->get('abc.job.manager');
@@ -169,11 +169,11 @@ class WorkflowController extends Controller
      */
     public function executionAction($id)
     {
-        $workflowExecutionManager = $this->getWorkflowExecutionManager();
-        $entity                   = $workflowExecutionManager->findById($id);
+        $executionManager = $this->getExecutionManager();
+        $entity                   = $executionManager->findById($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find WorkflowExecution entity.');
+            throw $this->createNotFoundException('Unable to find execution entity.');
         }
 
         /** @var Manager $manager */
@@ -207,11 +207,11 @@ class WorkflowController extends Controller
         $workflowManager = $this->getWorkflowManager();
         $entity          = $workflowManager->findById($id);
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find WorkflowExecution entity.');
+            throw $this->createNotFoundException('Unable to find execution entity.');
         }
 
-        $workflowExecutionManager = $this->getWorkflowExecutionManager();
-        $executions               = $workflowExecutionManager->findBy(
+        $executionManager = $this->getExecutionManager();
+        $executions               = $executionManager->findBy(
             array('workflowId' => $id),
             array('createdAt' => 'DESC')
         );
@@ -346,15 +346,15 @@ class WorkflowController extends Controller
      */
     protected function getWorkflowManager()
     {
-        return $this->container->get('abc_workflow.workflow_manager');
+        return $this->container->get('abc.workflow.workflow_manager');
     }
 
     /**
-     * @return WorkflowExecutionManagerInterface
+     * @return ExecutionManagerInterface
      */
-    private function getWorkflowExecutionManager()
+    private function getExecutionManager()
     {
-        return $this->container->get('abc_workflow.workflow_execution_manager');
+        return $this->container->get('abc.workflow.execution_manager');
     }
 
 }

@@ -5,7 +5,7 @@
                     http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd"
                   xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
 
-    <entity name="Abc\Bundle\WorkflowBundle\Entity\WorkflowExecution" table="abc_workflow_execution">
+    <entity name="Abc\Bundle\WorkflowBundle\Entity\Execution" table="abc_workflow_execution">
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO"/>
         </id>

@@ -267,7 +267,7 @@ class TaskController extends Controller
      */
     protected function getWorkflowManager()
     {
-        return $this->container->get('abc_workflow.workflow_manager');
+        return $this->container->get('abc.workflow.workflow_manager');
     }
 
     /**
@@ -275,7 +275,7 @@ class TaskController extends Controller
      */
     protected function getTaskManager()
     {
-        return $this->container->get('abc_workflow.task_manager');
+        return $this->container->get('abc.workflow.task_manager');
     }
 
     /**
@@ -283,7 +283,7 @@ class TaskController extends Controller
      */
     protected function getTaskTypeManager()
     {
-        return $this->container->get('abc_workflow.task_type_manager');
+        return $this->container->get('abc.workflow.task_type_manager');
     }
 
     /**

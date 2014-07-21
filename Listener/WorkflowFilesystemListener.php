@@ -25,7 +25,7 @@ class WorkflowFilesystemListener
      */
     public function onJobPrepare(JobEvent $job)
     {
-        if($job->getType() == 'workflow' || ($job->hasParentJob() && $job->getParentJob()->getType() == 'workflow'))
+        if($job->getRootJob()->getType() == 'workflow')
         {
             $filesystem = $this->filesystem->createFilesystem($job->getTicket(), true);
 

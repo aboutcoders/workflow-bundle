@@ -48,16 +48,16 @@ class ServiceTest extends KernelTestCase
 
     public function testWorkflowManager()
     {
-        $subject = $this->container->get('abc_workflow.workflow_manager');
+        $subject = $this->container->get('abc.workflow.workflow_manager');
 
         $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface', $subject);
     }
 
     public function testWorkflowExecutionManager()
     {
-        $subject = $this->container->get('abc_workflow.workflow_execution_manager');
+        $subject = $this->container->get('abc.workflow.execution_manager');
 
-        $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Model\WorkflowExecutionManagerInterface', $subject);
+        $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface', $subject);
     }
 
     public function testMailerForm()

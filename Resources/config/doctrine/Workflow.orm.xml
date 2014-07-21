@@ -18,6 +18,6 @@
         <field name="updatedAt" column="updated_at" type="datetime">
             <gedmo:timestampable on="update"/>
         </field>
-        <one-to-many field="executions" target-entity="Abc\Bundle\WorkflowBundle\Entity\WorkflowExecution" mapped-by="workflow" />
+        <one-to-many field="executions" target-entity="Abc\Bundle\WorkflowBundle\Entity\Execution" mapped-by="workflow" />
     </entity>
 </doctrine-mapping>

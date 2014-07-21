@@ -2,18 +2,15 @@
 
 namespace Abc\Bundle\WorkflowBundle\Doctrine;
 
-use Abc\Bundle\WorkflowBundle\Model\Workflow;
-use Abc\Bundle\WorkflowBundle\Model\WorkflowExecutionInterface;
-use Abc\Bundle\WorkflowBundle\Model\WorkflowExecutionManager as BaseWorkflowExecutionManager;
+use Abc\Bundle\WorkflowBundle\Model\ExecutionInterface;
+use Abc\Bundle\WorkflowBundle\Model\ExecutionManager as BaseExecutionManager;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Abc\Bundle\JobBundle\Api\Manager;
-use Abc\Bundle\JobBundle\Model\JobManager;
 
 /**
  * @author Wojciech Ciolko <w.ciolko@gmail.com>
  */
-class WorkflowExecutionManager extends BaseWorkflowExecutionManager
+class ExecutionManager extends BaseExecutionManager
 {
     /** @var ObjectManager */
     protected $objectManager;
@@ -36,7 +33,6 @@ class WorkflowExecutionManager extends BaseWorkflowExecutionManager
         $this->class = $metadata->getName();
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -45,26 +41,23 @@ class WorkflowExecutionManager extends BaseWorkflowExecutionManager
         return $this->class;
     }
 
-
     /**
-     * Updates a WorkflowExecution
-     *
-     * @param WorkflowExecutionInterface $item
-     * @param Boolean                    $andFlush Whether to flush the changes (default true)
+     * @param ExecutionInterface $item
+     * @param Boolean            $andFlush Whether to flush the changes (default true)
      */
-    public function update(WorkflowExecutionInterface $item, $andFlush = true)
+    public function update(ExecutionInterface $item, $andFlush = true)
     {
         $this->objectManager->persist($item);
-        if ($andFlush) {
+        if($andFlush)
+        {
             $this->objectManager->flush();
         }
     }
 
-
     /**
      * {@inheritDoc}
      */
-    public function delete(WorkflowExecutionInterface $item)
+    public function delete(ExecutionInterface $item)
     {
         $this->objectManager->remove($item);
         $this->objectManager->flush();
@@ -95,7 +88,6 @@ class WorkflowExecutionManager extends BaseWorkflowExecutionManager
         return $this->repository->find($id);
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -103,23 +95,4 @@ class WorkflowExecutionManager extends BaseWorkflowExecutionManager
     {
         return $this->repository->findAll();
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function execute(Workflow $workflow, Manager $jobManager)
-    {
-        $execution = $this->create();
-
-        $ticket = $jobManager->addJob('workflow', $workflow);
-
-        $execution->setWorkflow($workflow);
-        $execution->setTicket($ticket);
-
-        $this->update($execution);
-
-        return $execution;
-    }
-
-
 }

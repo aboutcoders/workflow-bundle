@@ -1,7 +1,7 @@
 <?php
 namespace Abc\Bundle\WorkflowBundle\Model;
 
-interface WorkflowExecutionInterface
+interface ExecutionInterface
 {
     /**
      * @return int

@@ -54,7 +54,7 @@ class WorkflowExtension extends \Twig_Extension
      */
     protected function getTaskManager()
     {
-        return $this->container->get('abc_workflow.task_manager');
+        return $this->container->get('abc.workflow.task_manager');
     }
 
     /**
@@ -62,6 +62,6 @@ class WorkflowExtension extends \Twig_Extension
      */
     protected function getTaskTypeManager()
     {
-        return $this->container->get('abc_workflow.task_type_manager');
+        return $this->container->get('abc.workflow.task_type_manager');
     }
 } 

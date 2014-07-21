@@ -74,17 +74,13 @@ interface WorkflowInterface
     public function getExecutions();
 
     /**
-     * Add WorkflowExecution
-     *
-     * @param WorkflowExecutionInterface $workflowExecution
+     * @param ExecutionInterface $execution
      * @return Workflow
      */
-    public function addExecution(WorkflowExecutionInterface $workflowExecution);
+    public function addExecution(ExecutionInterface $execution);
 
     /**
-     * Remove WorkflowExecutions
-     *
-     * @param WorkflowExecutionInterface $workflowExecution
+     * @param ExecutionInterface $execution
      */
-    public function removeExecution(WorkflowExecutionInterface $workflowExecution);
+    public function removeExecution(ExecutionInterface $execution);
 } 

@@ -5,14 +5,14 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="abc_workflow.task_manager.class">Abc\Bundle\WorkflowBundle\Doctrine\TaskManager</parameter>
-        <parameter key="abc_workflow.model.task.class">Abc\Bundle\WorkflowBundle\Entity\Task</parameter>
+        <parameter key="abc.workflow.task_manager.class">Abc\Bundle\WorkflowBundle\Doctrine\TaskManager</parameter>
+        <parameter key="abc.workflow.model.task.class">Abc\Bundle\WorkflowBundle\Entity\Task</parameter>
     </parameters>
 
     <services>
-        <service id="abc_workflow.task_manager.default" class="%abc_workflow.task_manager.class%" public="false">
-            <argument type="service" id="abc_workflow.entity_manager" />
-            <argument>%abc_workflow.model.task.class%</argument>
+        <service id="abc.workflow.task_manager.default" class="%abc.workflow.task_manager.class%" public="false">
+            <argument type="service" id="abc.workflow.entity_manager" />
+            <argument>%abc.workflow.model.task.class%</argument>
         </service>
     </services>
 

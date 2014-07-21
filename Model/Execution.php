@@ -13,7 +13,7 @@ use JMS\Serializer\Annotation\SerializedName;
  *
  * @ExclusionPolicy("all")
  */
-class WorkflowExecution implements WorkflowExecutionInterface
+class Execution implements ExecutionInterface
 {
     /**
      * @var int
@@ -46,7 +46,7 @@ class WorkflowExecution implements WorkflowExecutionInterface
     protected $ticket;
 
     /**
-     * @return int
+     * {@inheritDoc}
      */
     public function getId()
     {
@@ -54,7 +54,7 @@ class WorkflowExecution implements WorkflowExecutionInterface
     }
 
     /**
-     * @param int $id
+     * {@inheritDoc}
      */
     public function setId($id)
     {
@@ -62,7 +62,7 @@ class WorkflowExecution implements WorkflowExecutionInterface
     }
 
     /**
-     * @return WorkflowInterface
+     * {@inheritDoc}
      */
     public function getWorkflow()
     {
@@ -70,7 +70,7 @@ class WorkflowExecution implements WorkflowExecutionInterface
     }
 
     /**
-     * @param WorkflowInterface $workflow
+     * {@inheritDoc}
      */
     public function setWorkflow(WorkflowInterface $workflow)
     {
@@ -78,7 +78,7 @@ class WorkflowExecution implements WorkflowExecutionInterface
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getTicket()
     {
@@ -86,7 +86,7 @@ class WorkflowExecution implements WorkflowExecutionInterface
     }
 
     /**
-     * @param string $ticket
+     * {@inheritDoc}
      */
     public function setTicket($ticket)
     {
@@ -124,5 +124,4 @@ class WorkflowExecution implements WorkflowExecutionInterface
     {
         $this->createdAt = $createdAt;
     }
-
 }

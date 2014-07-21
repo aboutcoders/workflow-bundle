@@ -1,12 +1,12 @@
 <?php
 namespace Abc\Bundle\WorkflowBundle\Entity;
 
-use Abc\Bundle\WorkflowBundle\Model\WorkflowExecution as BaseWorkflowExecution;
+use Abc\Bundle\WorkflowBundle\Model\Execution as BaseExecution;
 
 /**
  * @author Wojciech Ciolko <w.ciolko@gmail.com>
  */
-class WorkflowExecution extends BaseWorkflowExecution
+class Execution extends BaseExecution
 {
     /** @var int */
     protected $workflowId;
@@ -26,5 +26,4 @@ class WorkflowExecution extends BaseWorkflowExecution
     {
         $this->workflowId = $workflowId;
     }
-
 }
