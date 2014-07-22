@@ -30,10 +30,9 @@ class LoadTaskData extends AbstractFixture implements OrderedFixtureInterface, C
         $taskTypeManager = $this->container->get('abc.workflow.task_type_manager');
 
         $item1 = $taskTypeManager->create();
-        $item1->setName('Mailer');
+        $item1->setName('Send mail');
+        $item1->setJobType('mailer');
         $item1->setFormServiceName('abc.workflow.task.form.mailer');
         $taskTypeManager->update($item1);
-
     }
-
 }
