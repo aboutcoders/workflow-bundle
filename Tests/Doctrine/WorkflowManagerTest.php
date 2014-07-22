@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Abc\Bundle\WorkflowBundle\Tests\Doctrine;
-
 
 use Abc\Bundle\WorkflowBundle\Doctrine\WorkflowManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;

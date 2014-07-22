@@ -4,6 +4,7 @@ namespace Abc\Bundle\WorkflowBundle\Form;
 
 use Abc\Bundle\WorkflowBundle\Model\TaskTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -39,12 +40,14 @@ class TaskType extends AbstractType
         );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            $task = $event->getData();
-            $form = $event->getForm();
+                $task = $event->getData();
+                $form = $event->getForm();
 
-            $taskTypeForm = $this->buildTaskTypeForm($task->getType());
-            $form->add('parameters', $taskTypeForm);
-        });
+                if($taskTypeForm = $this->buildTaskTypeForm($task->getType()))
+                {
+                    $form->add('parameters', $taskTypeForm);
+                }
+            });
 
     }
 
@@ -54,8 +57,8 @@ class TaskType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Abc\Bundle\WorkflowBundle\Entity\Task'
-        ));
+                'data_class' => 'Abc\Bundle\WorkflowBundle\Entity\Task'
+            ));
     }
 
     /**
@@ -68,10 +71,14 @@ class TaskType extends AbstractType
 
     /**
      * @param TaskTypeInterface $taskType
-     * @return FormBuilderInterface
+     * @return FormBuilderInterface|null
+     * @throws ServiceNotFoundException When the service is not defined
      */
     private function buildTaskTypeForm($taskType)
     {
-        return $this->container->get($taskType->getFormServiceName());
+        if($taskType->getFormServiceName() != null)
+        {
+            return $this->container->get($taskType->getFormServiceName());
+        }
     }
 }

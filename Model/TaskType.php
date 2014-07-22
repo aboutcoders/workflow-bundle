@@ -20,6 +20,11 @@ class TaskType implements TaskTypeInterface
     /**
      * @var string
      */
+    protected $jobType;
+
+    /**
+     * @var string
+     */
     protected $formServiceName;
 
     /**
@@ -51,6 +56,22 @@ class TaskType implements TaskTypeInterface
     /**
      * {@inheritdoc}
      */
+    public function setJobType($jobType)
+    {
+        $this->jobType = $jobType;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getJobType()
+    {
+        return $this->jobType;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getFormServiceName()
     {
         return $this->formServiceName;
@@ -59,11 +80,14 @@ class TaskType implements TaskTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function setFormServiceName($formServiceName)
+    public function setFormServiceName($formServiceName = null)
     {
         $this->formServiceName = $formServiceName;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     function __toString()
     {
         return $this->name;

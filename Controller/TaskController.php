@@ -37,7 +37,8 @@ class TaskController extends Controller
         $workflowManager = $this->getWorkflowManager();
         $entity          = $workflowManager->findOneBy(array('id' => $id));
 
-        if (!$entity) {
+        if(!$entity)
+        {
             throw $this->createNotFoundException('Unable to find Workflow entity.');
         }
 
@@ -47,7 +48,7 @@ class TaskController extends Controller
     }
 
     /**
-     * Creates a new Task item entity.
+     * Creates a new Task entity.
      *
      * @Route("/", name="task_create")
      * @Method("POST")
@@ -62,7 +63,8 @@ class TaskController extends Controller
 
         $data = $request->request->get('abc_bundle_workflowbundle_task');
 
-        if (!isset($data['typeId'])) {
+        if(!isset($data['typeId']))
+        {
             throw $this->createNotFoundException('Unable to find Task type for Task entity.');
         }
 
@@ -74,12 +76,14 @@ class TaskController extends Controller
 
         /** @var Workflow $workflow */
         $workflow = $workflowManager->findById($form->getData()->getWorkflowId());
-        if (!$workflow) {
+        if(!$workflow)
+        {
             throw $this->createNotFoundException('Unable to find Workflow entity.');
         }
         $entity->setWorkflow($workflow);
 
-        if ($form->isValid()) {
+        if($form->isValid())
+        {
 
             $taskManager->update($entity);
             //Update date in workflow object
@@ -91,27 +95,10 @@ class TaskController extends Controller
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            'form' => $form->createView(),
         );
     }
 
-    /**
-     * Creates a form to create a Task entity.
-     *
-     * @param Task $entity The entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createCreateForm(Task $entity)
-    {
-        $form = $this->createForm(new TaskType($this->container), $entity, array(
-            'action'     => $this->generateUrl('task_create'),
-            'method'     => 'POST',
-            'horizontal' => false
-        ));
-
-        return $form;
-    }
 
     /**
      * Displays a form to edit an existing Task entity.
@@ -125,7 +112,8 @@ class TaskController extends Controller
         $taskManager = $this->getTaskManager();
         $entity      = $taskManager->findById($id);
 
-        if (!$entity) {
+        if(!$entity)
+        {
             throw $this->createNotFoundException('Unable to find Task entity.');
         }
 
@@ -133,27 +121,11 @@ class TaskController extends Controller
 
         return array(
             'entity' => $entity,
-            'form'   => $editForm->createView()
+            'form' => $editForm->createView()
         );
     }
 
-    /**
-     * Creates a form to edit a Task entity.
-     *
-     * @param Task $entity The entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createEditForm(Task $entity)
-    {
-        $form = $this->createForm(new TaskType($this->container), $entity, array(
-            'action'     => $this->generateUrl('task_update', array('id' => $entity->getId())),
-            'method'     => 'PUT',
-            'horizontal' => false
-        ));
 
-        return $form;
-    }
 
     /**
      * Edits an existing Task entity.
@@ -167,23 +139,26 @@ class TaskController extends Controller
         $taskManager = $this->getTaskManager();
         $entity      = $taskManager->findById($id);
 
-        if (!$entity) {
+        if(!$entity)
+        {
             throw $this->createNotFoundException('Unable to find Task entity.');
         }
 
         $editForm = $this->createEditForm($entity);
         $editForm->handleRequest($request);
 
-        if ($editForm->isValid()) {
+        if($editForm->isValid())
+        {
             //Workaround to update serializable parameters
             $entity->setParameters(clone($entity->getParameters()));
             $taskManager->update($entity);
+
             return $this->render('AbcWorkflowBundle:Task:editSuccess.html.twig', array('task' => $entity));
         }
 
         return array(
             'entity' => $entity,
-            'form'   => $editForm->createView()
+            'form' => $editForm->createView()
         );
     }
 
@@ -200,9 +175,12 @@ class TaskController extends Controller
 
         $items = $request->request->get('item');
 
-        foreach ($tasks as $task) {
-            foreach ($items as $position => $item) {
-                if ($task->getId() == $item) {
+        foreach($tasks as $task)
+        {
+            foreach($items as $position => $item)
+            {
+                if($task->getId() == $item)
+                {
                     $task->setPosition($position);
                     $taskManager->update($task);
                 }
@@ -227,15 +205,17 @@ class TaskController extends Controller
         $taskType = $this->getTaskType($type);
 
         $taskManager = $this->getTaskManager();
+
         $entity      = $taskManager->create();
         $entity->setWorkflowId($id);
         $entity->setTypeId($type);
         $entity->setType($taskType);
+
         $form = $this->createCreateForm($entity);
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            'form' => $form->createView(),
         );
     }
 
@@ -251,7 +231,8 @@ class TaskController extends Controller
         $entity      = $taskManager->findById($id);
         $workflowId  = $entity->getWorkflowId();
 
-        if (!$entity) {
+        if(!$entity)
+        {
             throw $this->createNotFoundException('Unable to find Task entity.');
         }
 
@@ -287,6 +268,29 @@ class TaskController extends Controller
     }
 
     /**
+     * Creates a form to create a Task entity.
+     *
+     * @param Task $entity The entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createCreateForm(Task $entity)
+    {
+        $form = $this->createForm(
+            new TaskType($this->container),
+            $entity,
+            array(
+                'action' => $this->generateUrl('task_create'),
+                'method' => 'POST',
+                'horizontal' => false
+            )
+        );
+
+        return $form;
+    }
+
+
+    /**
      * Get TaskType By Id
      *
      * @param int $id
@@ -297,9 +301,11 @@ class TaskController extends Controller
         $taskTypeManager = $this->getTaskTypeManager();
         $taskType        = $taskTypeManager->findById($id);
 
-        if (!$taskType) {
+        if(!$taskType)
+        {
             throw $this->createNotFoundException('Unable to find TaskType entity.');
         }
+
         return $taskType;
     }
 
@@ -316,5 +322,25 @@ class TaskController extends Controller
         $workflowManager->update($workflow);
     }
 
+    /**
+     * Creates a form to edit a Task entity.
+     *
+     * @param Task $entity The entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createEditForm(Task $entity)
+    {
+        $form = $this->createForm(
+            new TaskType($this->container),
+            $entity,
+            array(
+                'action' => $this->generateUrl('task_update', array('id' => $entity->getId())),
+                'method' => 'PUT',
+                'horizontal' => false
+            )
+        );
 
+        return $form;
+    }
 }

@@ -5,35 +5,40 @@ namespace Abc\Bundle\WorkflowBundle\Model;
 interface TaskTypeInterface
 {
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId();
 
     /**
-     * Set name
-     *
+     * @return string
+     */
+    public function getName();
+
+    /**
      * @param string $name
      * @return TaskType
      */
     public function setName($name);
 
     /**
-     * Get name
-     *
      * @return string
      */
-    public function getName();
-
+    public function getJobType();
 
     /**
-     * @return string
+     * @param string $jobType
+     * @return void
+     */
+    public function setJobType($jobType);
+
+    /**
+     * @return string|null
      */
     public function getFormServiceName();
 
     /**
-     * @param string $formServiceName
+     * @param string|null $formServiceName
+     * @return void
      */
-    public function setFormServiceName($formServiceName);
+    public function setFormServiceName($formServiceName = null);
 }

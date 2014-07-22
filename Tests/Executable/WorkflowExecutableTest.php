@@ -62,7 +62,7 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
 
         $task = new Task();
         $task->setType(new TaskType());
-        $task->getType()->setName('foobar');
+        $task->getType()->setJobType('foobar');
         $task->getParameters(clone $workflowParameters);
 
         $job = $this->createJob($ticket, 'workflow', $workflow);
@@ -106,7 +106,7 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
 
         $job->expects($this->once())
             ->method('addChildJob')
-            ->with($task->getType()->getName(), $task->getParameters());
+            ->with($task->getType()->getJobType(), $task->getParameters());
 
         $job->expects($this->once())
             ->method('updateParameters')
@@ -138,7 +138,7 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
 
         $task = new Task();
         $task->setType(new TaskType());
-        $task->getType()->setName('foobar');
+        $task->getType()->setJobType('foobar');
         $task->getParameters(clone $workflowParameters);
 
         $job      = $this->createJob($ticket, 'workflow', $workflow);
@@ -161,7 +161,7 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
 
         $job->expects($this->once())
             ->method('addChildJob')
-            ->with($task->getType()->getName(), $task->getParameters());
+            ->with($task->getType()->getJobType(), $task->getParameters());
 
         $job->expects($this->once())
             ->method('updateParameters')

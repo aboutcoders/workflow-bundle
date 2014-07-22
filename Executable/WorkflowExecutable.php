@@ -127,7 +127,7 @@ class WorkflowExecutable implements Executable
      */
     protected function addTask(Job $job, TaskInterface $task)
     {
-        $jobType = strtolower($task->getType()->getName());
+        $jobType = $task->getType()->getJobType();
 
         $ticket = $job->addChildJob($jobType, $task->getParameters());
 
