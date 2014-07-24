@@ -2,7 +2,7 @@
 
 namespace Abc\Bundle\WorkflowBundle\Listener;
 
-use Abc\Bundle\JobBundle\Event\JobEvent;
+use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Filesystem\Filesystem;
 
 class WorkflowFilesystemListener
@@ -21,9 +21,9 @@ class WorkflowFilesystemListener
     /**
      * Registers a filesystem of type Abc\Filesystem\Filesystem with the key 'filesystem'
      *
-     * @param JobEvent $job
+     * @param Job $job
      */
-    public function onJobPrepare(JobEvent $job)
+    public function onJobPrepare(Job $job)
     {
         if($job->getRootJob()->getType() == 'workflow')
         {

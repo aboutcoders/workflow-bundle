@@ -1,7 +1,7 @@
 <?php
 namespace Abc\Bundle\WorkflowBundle\Executable;
 
-use Abc\Bundle\JobBundle\Event\JobEvent;
+use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Executable;
 use Abc\Bundle\JobBundle\Model\JobInterface;
 use Abc\Bundle\WorkflowBundle\Entity\Task;
@@ -39,7 +39,7 @@ class WorkflowExecutable implements Executable
     /**
      * {@inheritDoc}
      */
-    public function execute(JobEvent $job)
+    public function execute(Job $job)
     {
         if(!$job->getParameters() instanceof WorkflowInterface)
         {
@@ -50,11 +50,11 @@ class WorkflowExecutable implements Executable
     }
 
     /**
-     * @param JobEvent $job
+     * @param Job $job
      * @return void
      * @codeCoverageIgnore
      */
-    protected function executeSimultaneously(JobEvent $job)
+    protected function executeSimultaneously(Job $job)
     {
         if($job->isTriggeredByCallback())
         {
@@ -66,6 +66,7 @@ class WorkflowExecutable implements Executable
             $workflow = $job->getParameters();
 
             $job->getContext()->get('logger')->debug('Workflow: {workflow} ', array('workflow' => $workflow->getId()));
+
             $tasks = $this->taskManager->findWorkflowTasks($workflow->getId());
             if(count($tasks) > 0)
             {
@@ -81,10 +82,10 @@ class WorkflowExecutable implements Executable
     }
 
     /**
-     * @param JobEvent $job
+     * @param Job $job
      * @return void
      */
-    protected function executeSequentially(JobEvent $job)
+    protected function executeSequentially(Job $job)
     {
         /** @var Workflow $workflow */
         $workflow   = $job->getParameters();
@@ -119,13 +120,14 @@ class WorkflowExecutable implements Executable
 
         $workflow->setIndex($index);
         $job->setParameters($workflow);
+        $job->update();
     }
 
     /**
-     * @param JobEvent           $job
+     * @param Job           $job
      * @param TaskInterface $task
      */
-    protected function addTask(JobEvent $job, TaskInterface $task)
+    protected function addTask(Job $job, TaskInterface $task)
     {
         $jobType = $task->getType()->getJobType();
 

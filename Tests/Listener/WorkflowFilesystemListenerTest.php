@@ -1,20 +1,19 @@
 <?php
 
-
 namespace Abc\Bundle\WorkflowBundle\Tests\Listener;
 
 use Abc\Bundle\WorkflowBundle\Listener\WorkflowFilesystemListener;
+use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Context\Context;
-use Abc\Bundle\JobBundle\Event\JobEvent;
 use Abc\Filesystem\Filesystem;
 
 class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Filesystem|\PHPUnit_Framework_MockObject_MockObject */
     protected $filesystem;
-    /** @var JobEvent|\PHPUnit_Framework_MockObject_MockObject */
-    protected $jobEvent;
-    /** @var JobEvent|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Job|\PHPUnit_Framework_MockObject_MockObject */
+    protected $job;
+    /** @var Job|\PHPUnit_Framework_MockObject_MockObject */
     protected $rootJob;
     /** @var Context */
     protected $context;
@@ -25,14 +24,14 @@ class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->filesystem = $this->getMockBuilder('Abc\Filesystem\Filesystem')->disableOriginalConstructor()->getMock();
         $this->context    = new Context();
-        $this->jobEvent   = $this->createJobEventMock();
-        $this->rootJob    = $this->createJobEventMock();
+        $this->job        = $this->createJobMock();
+        $this->rootJob    = $this->createJobMock();
 
-        $this->jobEvent->expects($this->any())
+        $this->job->expects($this->any())
             ->method('getRootJob')
             ->will($this->returnValue($this->rootJob));
 
-        $this->jobEvent->expects($this->any())
+        $this->job->expects($this->any())
             ->method('getContext')
             ->will($this->returnValue($this->context));
 
@@ -43,7 +42,7 @@ class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
     {
         $ticket = 'foobar';
 
-        $this->jobEvent->expects($this->any())
+        $this->job->expects($this->any())
             ->method('getTicket')
             ->will($this->returnValue($ticket));
 
@@ -58,9 +57,9 @@ class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
             ->with($ticket)
             ->will($this->returnValue($workflowFilesystem));
 
-        $this->subject->onJobPrepare($this->jobEvent);
+        $this->subject->onJobPrepare($this->job);
 
-        $this->assertSame($workflowFilesystem, $this->jobEvent->getContext()->get('filesystem'));
+        $this->assertSame($workflowFilesystem, $this->job->getContext()->get('filesystem'));
     }
 
     /**
@@ -70,7 +69,7 @@ class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
     {
         $ticket = 'foobar';
 
-        $this->jobEvent->expects($this->any())
+        $this->job->expects($this->any())
             ->method('getTicket')
             ->will($this->returnValue($ticket));
 
@@ -81,17 +80,16 @@ class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
         $this->filesystem->expects($this->never())
             ->method('createFilesystem');
 
-        $this->subject->onJobPrepare($this->jobEvent);
+        $this->subject->onJobPrepare($this->job);
 
         $this->assertFalse($this->context->has('filesystem'));
     }
 
-
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return Job|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function createJobEventMock()
+    private function createJobMock()
     {
-        return $this->getMockBuilder('Abc\Bundle\JobBundle\Event\JobEvent')->disableOriginalConstructor()->getMock();
+        return $this->getMock('Abc\Bundle\JobBundle\Job\Job');
     }
 }

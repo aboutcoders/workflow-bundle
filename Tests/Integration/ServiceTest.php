@@ -3,7 +3,6 @@
 namespace Abc\Bundle\WorkflowBundle\Tests\Integration;
 
 use Abc\Bundle\JobBundle\Job\Context\Context;
-use Abc\Bundle\JobBundle\Event\JobEvent;
 use Abc\Bundle\JobBundle\Model\Job;
 use Abc\Bundle\WorkflowBundle\Listener\WorkflowFilesystemListener;
 use Abc\File\FilesystemInterface;
@@ -78,23 +77,26 @@ class ServiceTest extends KernelTestCase
     {
         /** @var WorkflowFilesystemListener $subject */
         $subject = $this->container->get('abc.workflow.job_listener');
-
         $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Listener\WorkflowFilesystemListener', $subject);
 
-        $manager = $this->getMock('Abc\Bundle\JobBundle\Job\ManagerInterface');
         $context = new Context();
 
-        $job = new Job();
-        $job->setTicket('job-ticket');
-        $job->setType('workflow');
-        $job->setContext(new \Abc\Bundle\JobBundle\Model\Context());
-        $job->getContext()->setData($context);
+        $rootJob = new Job();
+        $rootJob->setType('workflow');
 
-        $event = new JobEvent($manager, $job);
+        $job = $this->getMock('Abc\Bundle\JobBundle\Job\Job');
 
-        $subject->onJobPrepare($event);
+        $job->expects($this->any())
+            ->method('getContext')
+            ->willReturn($context);
 
-        $this->assertTrue($event->getContext()->has('filesystem'));
-        $this->assertInstanceOf('Abc\Filesystem\Filesystem', $event->getContext()->get('filesystem'));
+        $job->expects($this->once())
+            ->method('getRootJob')
+            ->willReturn($rootJob);
+
+        $subject->onJobPrepare($job);
+
+        $this->assertTrue($context->has('filesystem'));
+        $this->assertInstanceOf('Abc\Filesystem\Filesystem', $context->get('filesystem'));
     }
 }

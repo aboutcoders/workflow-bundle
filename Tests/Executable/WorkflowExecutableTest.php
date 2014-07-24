@@ -2,7 +2,7 @@
 
 namespace Abc\Bundle\WorkflowBundle\Tests\Executable;
 
-use Abc\Bundle\JobBundle\Event\JobEvent;
+use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Context\Context;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutable;
@@ -107,18 +107,11 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
             ->with($task->getType()->getJobType(), $task->getParameters());
 
         $job->expects($this->once())
-            ->method('setParameters')
-            ->will(
-                $this->returnCallback(
-                    function ($parameters) use ($self)
-                    {
-                        $self->assertEquals(0, $parameters->getIndex());
-                    }
-                )
-            );
+            ->method('update');
 
         $this->subject->execute($job);
 
+        $this->assertEquals(0, $workflow->getIndex());
         $this->assertTrue($job->getContext()->has('parameters'));
         $this->assertSame($workflow->getParameters(), $job->getContext()->get('parameters'));
     }
@@ -162,17 +155,11 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
             ->with($task->getType()->getJobType(), $task->getParameters());
 
         $job->expects($this->once())
-            ->method('setParameters')
-            ->will(
-                $this->returnCallback(
-                    function ($parameters) use ($self)
-                    {
-                        $self->assertEquals(5, $parameters->getIndex());
-                    }
-                )
-            );
+            ->method('update');
 
         $this->subject->execute($job);
+
+        $this->assertEquals(5, $workflow->getIndex());
     }
 
     public function testExecuteWithChildJobDoesNotCreateExecution()
@@ -207,11 +194,11 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
      * @param mixed $ticket
      * @param mixed $type
      * @param mixed $parameter
-     * @return JobEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @return Job|\PHPUnit_Framework_MockObject_MockObject
      */
     private function createJob($ticket = null, $type = null, $parameter = null)
     {
-        $job = $this->getMockBuilder('Abc\Bundle\JobBundle\Event\JobEvent')->disableOriginalConstructor()->getMock();
+        $job = $this->getMock('Abc\Bundle\JobBundle\Job\Job');
 
         $job->expects($this->any())
             ->method('getTicket')
