@@ -1,6 +1,8 @@
 <?php
 namespace Abc\Bundle\WorkflowBundle\Model;
 
+use Abc\Bundle\JobBundle\Model\ScheduleInterface;
+
 interface TaskInterface
 {
     /**
@@ -74,4 +76,15 @@ interface TaskInterface
      * @return void
      */
     public function setParameters(\Serializable $parameters = null);
+
+    /**
+     * @return ScheduleInterface
+     */
+    public function getSchedule();
+
+    /**
+     * @param ScheduleInterface|null $schedule
+     * @return $void
+     */
+    public function setSchedule(ScheduleInterface $schedule = null);
 }

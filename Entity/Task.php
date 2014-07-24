@@ -12,6 +12,8 @@ class Task extends BaseTask
     protected $workflowId;
     /** @var int */
     protected $typeId;
+    /** @var int */
+    protected $scheduleId;
 
     /**
      * @return int
@@ -45,5 +47,11 @@ class Task extends BaseTask
         $this->typeId = $typeId;
     }
 
-
+    /**
+     * @return int
+     */
+    public function getScheduleId()
+    {
+        return $this->scheduleId;
+    }
 }

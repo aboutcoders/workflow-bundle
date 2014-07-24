@@ -13,6 +13,7 @@
         <field name="description" column="description" type="string" length="255"/>
         <field name="typeId" column="type_id" type="integer"/>
         <field name="parameters" type="serializable" nullable="true"/>
+        <field name="scheduleId" column="schedule_id" type="integer" nullable="true"/>
         <field name="disabled" column="is_disabled" type="boolean"/>
         <field name="createdAt" column="created_at" type="datetime">
             <gedmo:timestampable on="create"/>
@@ -29,5 +30,14 @@
         <many-to-one field="type" target-entity="Abc\Bundle\WorkflowBundle\Entity\TaskType">
             <join-column name="type_id" referenced-column-name="id"/>
         </many-to-one>
+
+        <!-- namespace issue, see: /vendor/gedmo/doctrine-extensions/schemas/orm/doctrine-extensions-mapping-2-1.xsd -->
+        <one-to-one field="schedule" target-entity="Abc\Bundle\JobBundle\Entity\Schedule">
+            <cascade>
+                <cascade-all/>
+            </cascade>
+            <join-column name="schedule_id" referenced-column-name="id" on-delete="SET NULL"/>
+        </one-to-one>
+
     </entity>
 </doctrine-mapping>

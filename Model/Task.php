@@ -2,6 +2,7 @@
 
 namespace Abc\Bundle\WorkflowBundle\Model;
 
+use Abc\Bundle\JobBundle\Model\ScheduleInterface;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
 use JMS\Serializer\Annotation\SerializedName;
@@ -50,6 +51,9 @@ class Task implements TaskInterface
 
     /** @var string */
     protected $parameters;
+
+    /** @var ScheduleInterface */
+    protected $schedule;
 
     /**
      * @var \DateTime
@@ -159,6 +163,22 @@ class Task implements TaskInterface
     public function setParameters(\Serializable $parameters = null)
     {
         $this->parameters = $parameters;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSchedule(ScheduleInterface $schedule = null)
+    {
+        $this->schedule = $schedule;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSchedule()
+    {
+        return $this->schedule;
     }
 
     /**
