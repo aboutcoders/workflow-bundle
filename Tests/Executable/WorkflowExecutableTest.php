@@ -1,11 +1,9 @@
 <?php
 
-
 namespace Abc\Bundle\WorkflowBundle\Tests\Executable;
 
-
-use Abc\Bundle\JobBundle\Api\Context;
 use Abc\Bundle\JobBundle\Event\JobEvent;
+use Abc\Bundle\JobBundle\Job\Context\Context;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutable;
 use Abc\Bundle\WorkflowBundle\Model\Execution;
@@ -109,7 +107,7 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
             ->with($task->getType()->getJobType(), $task->getParameters());
 
         $job->expects($this->once())
-            ->method('updateParameters')
+            ->method('setParameters')
             ->will(
                 $this->returnCallback(
                     function ($parameters) use ($self)
@@ -147,11 +145,11 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
         $self = $this;
 
         $job->expects($this->any())
-            ->method('isCallback')
+            ->method('IsTriggeredByCallback')
             ->will($this->returnValue(true));
 
         $job->expects($this->any())
-            ->method('getCallback')
+            ->method('getCallerJob')
             ->will($this->returnValue($childJob));
 
         $this->taskManager->expects($this->once())
@@ -164,7 +162,7 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
             ->with($task->getType()->getJobType(), $task->getParameters());
 
         $job->expects($this->once())
-            ->method('updateParameters')
+            ->method('setParameters')
             ->will(
                 $this->returnCallback(
                     function ($parameters) use ($self)
@@ -191,11 +189,11 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
         $childJob = $this->createJob('task-ticket', 'foobar');
 
         $job->expects($this->any())
-            ->method('isCallback')
+            ->method('isTriggeredByCallback')
             ->will($this->returnValue(true));
 
         $job->expects($this->any())
-            ->method('getCallback')
+            ->method('getCallerJob')
             ->will($this->returnValue($childJob));
 
         $this->executionManager->expects($this->never())
@@ -209,11 +207,11 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
      * @param mixed $ticket
      * @param mixed $type
      * @param mixed $parameter
-     * @return \Abc\Bundle\JobBundle\Api\Job|\PHPUnit_Framework_MockObject_MockObject
+     * @return JobEvent|\PHPUnit_Framework_MockObject_MockObject
      */
     private function createJob($ticket = null, $type = null, $parameter = null)
     {
-        $job = $this->getMock('Abc\Bundle\JobBundle\Api\Job');
+        $job = $this->getMockBuilder('Abc\Bundle\JobBundle\Event\JobEvent')->disableOriginalConstructor()->getMock();
 
         $job->expects($this->any())
             ->method('getTicket')

@@ -1,8 +1,8 @@
 <?php
 namespace Abc\Bundle\WorkflowBundle\Executable;
 
-use Abc\Bundle\JobBundle\Api\Executable;
-use Abc\Bundle\JobBundle\Api\Job;
+use Abc\Bundle\JobBundle\Event\JobEvent;
+use Abc\Bundle\JobBundle\Job\Executable;
 use Abc\Bundle\JobBundle\Model\JobInterface;
 use Abc\Bundle\WorkflowBundle\Entity\Task;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
@@ -39,7 +39,7 @@ class WorkflowExecutable implements Executable
     /**
      * {@inheritDoc}
      */
-    public function execute(Job $job)
+    public function execute(JobEvent $job)
     {
         if(!$job->getParameters() instanceof WorkflowInterface)
         {
@@ -50,15 +50,15 @@ class WorkflowExecutable implements Executable
     }
 
     /**
-     * @param Job $job
+     * @param JobEvent $job
      * @return void
      * @codeCoverageIgnore
      */
-    protected function executeSimultaneously(Job $job)
+    protected function executeSimultaneously(JobEvent $job)
     {
-        if($job->isCallback())
+        if($job->isTriggeredByCallback())
         {
-            $job->getContext()->get('logger')->debug('Callback: {ticket}', array('ticket' => $job->getCallback()->getTicket()));
+            $job->getContext()->get('logger')->debug('Callback: {ticket}', array('ticket' => $job->getCallerJob()->getTicket()));
         }
         else
         {
@@ -81,17 +81,17 @@ class WorkflowExecutable implements Executable
     }
 
     /**
-     * @param Job $job
+     * @param JobEvent $job
      * @return void
      */
-    protected function executeSequentially($job)
+    protected function executeSequentially(JobEvent $job)
     {
         /** @var Workflow $workflow */
         $workflow   = $job->getParameters();
         $workflowId = $workflow->getId();
         $index      = 0;
 
-        if(!$job->isCallback())
+        if(!$job->isTriggeredByCallback())
         {
             $job->getContext()->get('logger')->debug('Start executing workflow {workflowId}', array('workflowId' => $workflowId));
 
@@ -103,7 +103,7 @@ class WorkflowExecutable implements Executable
         }
         else
         {
-            $job->getContext()->get('logger')->debug('Callback by ticket {ticket}', array('ticket' => $job->getCallback()->getTicket()));
+            $job->getContext()->get('logger')->debug('Callback by ticket {ticket}', array('ticket' => $job->getCallerJob()->getTicket()));
 
             $index = $workflow->getIndex() + 1;
         }
@@ -118,14 +118,14 @@ class WorkflowExecutable implements Executable
         }
 
         $workflow->setIndex($index);
-        $job->updateParameters($workflow);
+        $job->setParameters($workflow);
     }
 
     /**
-     * @param Job           $job
+     * @param JobEvent           $job
      * @param TaskInterface $task
      */
-    protected function addTask(Job $job, TaskInterface $task)
+    protected function addTask(JobEvent $job, TaskInterface $task)
     {
         $jobType = $task->getType()->getJobType();
 

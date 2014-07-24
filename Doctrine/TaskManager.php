@@ -2,7 +2,7 @@
 
 namespace Abc\Bundle\WorkflowBundle\Doctrine;
 
-use Abc\Bundle\JobBundle\Api\Status;
+use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\WorkflowBundle\Model\TaskInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskManager as BaseTaskManager;
 use Doctrine\Common\Persistence\ObjectManager;

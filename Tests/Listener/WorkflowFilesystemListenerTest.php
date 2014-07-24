@@ -4,8 +4,8 @@
 namespace Abc\Bundle\WorkflowBundle\Tests\Listener;
 
 use Abc\Bundle\WorkflowBundle\Listener\WorkflowFilesystemListener;
+use Abc\Bundle\JobBundle\Job\Context\Context;
 use Abc\Bundle\JobBundle\Event\JobEvent;
-use Abc\Bundle\JobBundle\Api\Context;
 use Abc\Filesystem\Filesystem;
 
 class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase

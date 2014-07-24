@@ -56,6 +56,9 @@ abc_file_distribution:
             type: LOCAL
             path: "%kernel.root_dir%/../../../../build"
 
+abc_scheduler:
+  db_driver: orm
+
 abc_job:
   db_driver: orm
   job_logs_dir: "%kernel.logs_dir%"

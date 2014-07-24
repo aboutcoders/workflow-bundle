@@ -2,10 +2,9 @@
 
 namespace Abc\Bundle\WorkflowBundle\Controller;
 
-use Abc\Bundle\JobBundle\Api\Manager;
-use Abc\Bundle\JobBundle\Api\Status;
-use Abc\Bundle\JobBundle\Doctrine\JobManager;
+use Abc\Bundle\JobBundle\Job\ManagerInterface;
 use Abc\Bundle\JobBundle\Job\Report;
+use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\WorkflowBundle\Doctrine\WorkflowManager;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Form\WorkflowType;
@@ -150,12 +149,9 @@ class WorkflowController extends Controller
             return $this->redirect($this->generateUrl('workflow_show', array('id' => $workflow->getId())));
         }
 
-        $executionManager = $this->getExecutionManager();
-
-        /** @var Manager $manager */
-        $jobManager = $this->get('abc.job.manager');
-
-        $execution = $executionManager->execute($workflow, $jobManager);
+        /** @var ManagerInterface $manager */
+        $manager = $this->get('abc.job.manager');
+        $manager->addJob('workflow', $workflow);
 
         return $this->redirect($this->generateUrl('workflow_execution', array('id' => $execution->getId())));
     }
@@ -356,5 +352,4 @@ class WorkflowController extends Controller
     {
         return $this->container->get('abc.workflow.execution_manager');
     }
-
 }

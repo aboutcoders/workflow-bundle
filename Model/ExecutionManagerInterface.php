@@ -2,8 +2,6 @@
 
 namespace Abc\Bundle\WorkflowBundle\Model;
 
-use Abc\Bundle\JobBundle\Api\Manager;
-
 /**
  * @author Wojciech Ciolko <w.ciolko@gmail.com>
  */
