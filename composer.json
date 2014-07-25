@@ -14,6 +14,14 @@
     "repositories": [
         {
             "type": "vcs",
+            "url": "git@bitbucket.org:hasc/process-control.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@bitbucket.org:hasc/process-control-bundle.git"
+        },
+        {
+            "type": "vcs",
             "url": "git@bitbucket.org:hasc/scheduler-bundle.git"
         },
         {
