@@ -23,7 +23,6 @@ class WorkflowExecutable implements Executable
     /** @var WorkflowManagerInterface */
     protected $workflowManager;
 
-
     /**
      * @param WorkflowManagerInterface  $workflowManager
      * @param TaskManagerInterface      $taskManager
@@ -131,7 +130,7 @@ class WorkflowExecutable implements Executable
     {
         $jobType = $task->getType()->getJobType();
 
-        $ticket = $job->addChildJob($jobType, $task->getParameters());
+        $ticket = $job->addChildJob($jobType, $task->getParameters(), $task->getSchedule());
 
         $job->getContext()->get('logger')->debug('Added child job of type {type} with ticket {ticket}', array('type' => $jobType, 'ticket' => $ticket));
     }

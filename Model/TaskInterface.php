@@ -1,8 +1,6 @@
 <?php
 namespace Abc\Bundle\WorkflowBundle\Model;
 
-use Abc\Bundle\JobBundle\Model\ScheduleInterface;
-
 interface TaskInterface
 {
     /**

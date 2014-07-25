@@ -46,9 +46,12 @@ class TaskType extends AbstractType
                 if($taskTypeForm = $this->buildTaskTypeForm($task->getType()))
                 {
                     $form->add('parameters', $taskTypeForm);
+                    if($taskTypeForm instanceof SchedulableTask)
+                    {
+                        $form->add('schedule', new ScheduleType());
+                    }
                 }
             });
-
     }
 
     /**

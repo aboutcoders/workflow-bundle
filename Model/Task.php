@@ -2,7 +2,6 @@
 
 namespace Abc\Bundle\WorkflowBundle\Model;
 
-use Abc\Bundle\JobBundle\Model\ScheduleInterface;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
 use JMS\Serializer\Annotation\SerializedName;

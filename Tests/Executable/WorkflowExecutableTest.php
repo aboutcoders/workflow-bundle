@@ -4,8 +4,10 @@ namespace Abc\Bundle\WorkflowBundle\Tests\Executable;
 
 use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Context\Context;
+
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutable;
+use Abc\Bundle\WorkflowBundle\Model\Schedule;
 use Abc\Bundle\WorkflowBundle\Model\Execution;
 use Abc\Bundle\WorkflowBundle\Model\Task;
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
@@ -62,6 +64,7 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
         $task->setType(new TaskType());
         $task->getType()->setJobType('foobar');
         $task->getParameters(clone $workflowParameters);
+        $task->setSchedule(new Schedule());
 
         $job = $this->createJob($ticket, 'workflow', $workflow);
 
@@ -104,7 +107,7 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
 
         $job->expects($this->once())
             ->method('addChildJob')
-            ->with($task->getType()->getJobType(), $task->getParameters());
+            ->with($task->getType()->getJobType(), $task->getParameters(), $task->getSchedule());
 
         $job->expects($this->once())
             ->method('update');
