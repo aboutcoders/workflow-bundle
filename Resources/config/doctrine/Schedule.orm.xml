@@ -25,8 +25,6 @@
             <gedmo:timestampable on="create"/>
         </field>
 
-        <one-to-one field="task" target-entity="Abc\Bundle\WorkflowBundle\Entity\Task" mapped-by="task"/>
-
     </entity>
 
 </doctrine-mapping>

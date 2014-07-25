@@ -32,7 +32,7 @@
         </many-to-one>
 
         <!-- namespace issue, see: /vendor/gedmo/doctrine-extensions/schemas/orm/doctrine-extensions-mapping-2-1.xsd -->
-        <one-to-one field="schedule" target-entity="Abc\Bundle\WorkflowBundle\Entity\Schedule" inversed-by="task">
+        <one-to-one field="schedule" target-entity="Abc\Bundle\WorkflowBundle\Entity\Schedule">
             <cascade>
                 <cascade-all/>
             </cascade>
