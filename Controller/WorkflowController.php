@@ -9,6 +9,7 @@ use Abc\Bundle\WorkflowBundle\Doctrine\WorkflowManager;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Form\WorkflowType;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
+use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -77,9 +78,9 @@ class WorkflowController extends Controller
     private function createCreateForm(Workflow $entity)
     {
         $form = $this->createForm(new WorkflowType(), $entity, array(
-            'action' => $this->generateUrl('workflow_create'),
-            'method' => 'POST',
-        ));
+                'action' => $this->generateUrl('workflow_create'),
+                'method' => 'POST',
+            ));
 
         return $form;
     }
@@ -151,7 +152,14 @@ class WorkflowController extends Controller
 
         /** @var ManagerInterface $manager */
         $manager = $this->get('abc.job.manager');
-        $manager->addJob('workflow', $workflow);
+
+        $ticket = $manager->addJob('workflow', $workflow);
+
+        $execution = $this->getExecutionManager()->create();
+        $execution->setWorkflow($workflow);
+        $execution->setTicket($ticket);
+
+        $this->getExecutionManager()->update($execution);
 
         return $this->redirect($this->generateUrl('workflow_execution', array('id' => $execution->getId())));
     }
@@ -254,9 +262,9 @@ class WorkflowController extends Controller
     private function createEditForm(Workflow $entity)
     {
         $form = $this->createForm(new WorkflowType(), $entity, array(
-            'action' => $this->generateUrl('workflow_update', array('id' => $entity->getId())),
-            'method' => 'PUT',
-        ));
+                'action' => $this->generateUrl('workflow_update', array('id' => $entity->getId())),
+                'method' => 'PUT',
+            ));
 
         return $form;
     }

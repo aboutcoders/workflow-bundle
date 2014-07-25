@@ -9,7 +9,6 @@ use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Model\TaskInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskTypeInterface;
-use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
 use Monolog\Logger;
@@ -18,21 +17,17 @@ class WorkflowExecutable implements Executable
 {
     /** @var TaskManagerInterface */
     protected $taskManager;
-    /** @var ExecutionManagerInterface */
-    protected $executionManager;
     /** @var WorkflowManagerInterface */
     protected $workflowManager;
 
     /**
      * @param WorkflowManagerInterface  $workflowManager
      * @param TaskManagerInterface      $taskManager
-     * @param ExecutionManagerInterface $executionManager
      */
-    function __construct(WorkflowManagerInterface $workflowManager, TaskManagerInterface $taskManager, ExecutionManagerInterface $executionManager)
+    function __construct(WorkflowManagerInterface $workflowManager, TaskManagerInterface $taskManager)
     {
-        $this->executionManager = $executionManager;
         $this->taskManager      = $taskManager;
-        $this->workflowManager   = $workflowManager;
+        $this->workflowManager  = $workflowManager;
     }
 
     /**
@@ -93,10 +88,7 @@ class WorkflowExecutable implements Executable
 
         if(!$job->isTriggeredByCallback())
         {
-            $job->getContext()->get('logger')->debug('Start executing workflow {workflowId}', array('workflowId' => $workflowId));
-
-            # start execution
-            $this->createExecution($job->getTicket(), $workflowId);
+            $job->getContext()->get('logger')->debug('Start executing workflow with id {id}', array('id' => $workflowId));
 
             # store parameters in the context
             $job->getContext()->set('parameters', $workflow->getParameters());
@@ -128,26 +120,11 @@ class WorkflowExecutable implements Executable
      */
     protected function addTask(Job $job, TaskInterface $task)
     {
-        $jobType = $task->getType()->getJobType();
+        $ticket = $job->addChildJob($task->getType()->getJobType(), $task->getParameters(), $task->getSchedule());
 
-        $ticket = $job->addChildJob($jobType, $task->getParameters(), $task->getSchedule());
-
-        $job->getContext()->get('logger')->debug('Added child job of type {type} with ticket {ticket}', array('type' => $jobType, 'ticket' => $ticket));
-    }
-
-    /**
-     * @param string  $ticket
-     * @param integer $workflowId
-     */
-    protected function createExecution($ticket, $workflowId)
-    {
-        $execution = $this->executionManager->create();
-
-        $workflow = $this->workflowManager->findById($workflowId);
-
-        $execution->setWorkflow($workflow);
-        $execution->setTicket($ticket);
-
-        $this->executionManager->update($execution);
+        $job->getContext()->get('logger')->debug(
+            'Added child job {ticket} {type} {parameters} {schedule}',
+            array('ticket' => $ticket, 'type' => $task->getType()->getJobType(), 'parameters' => $task->getParameters(), 'schedule' => $task->getSchedule())
+        );
     }
 }
