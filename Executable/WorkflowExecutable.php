@@ -6,6 +6,7 @@ use Abc\Bundle\JobBundle\Job\Executable;
 use Abc\Bundle\JobBundle\Model\JobInterface;
 use Abc\Bundle\WorkflowBundle\Entity\Task;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
+use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskTypeInterface;
@@ -17,17 +18,22 @@ class WorkflowExecutable implements Executable
 {
     /** @var TaskManagerInterface */
     protected $taskManager;
+    /** @var ExecutionManagerInterface */
+    protected $executionManager;
     /** @var WorkflowManagerInterface */
     protected $workflowManager;
+
 
     /**
      * @param WorkflowManagerInterface  $workflowManager
      * @param TaskManagerInterface      $taskManager
+     * @param ExecutionManagerInterface $executionManager
      */
-    function __construct(WorkflowManagerInterface $workflowManager, TaskManagerInterface $taskManager)
+    function __construct(WorkflowManagerInterface $workflowManager, TaskManagerInterface $taskManager, ExecutionManagerInterface $executionManager)
     {
+        $this->executionManager = $executionManager;
         $this->taskManager      = $taskManager;
-        $this->workflowManager  = $workflowManager;
+        $this->workflowManager   = $workflowManager;
     }
 
     /**
@@ -92,6 +98,9 @@ class WorkflowExecutable implements Executable
 
             # store parameters in the context
             $job->getContext()->set('parameters', $workflow->getParameters());
+
+            # start execution
+            $this->createExecution($job->getTicket(), $workflowId);
         }
         else
         {
@@ -126,5 +135,25 @@ class WorkflowExecutable implements Executable
             'Added child job {ticket} {type} {parameters} {schedule}',
             array('ticket' => $ticket, 'type' => $task->getType()->getJobType(), 'parameters' => $task->getParameters(), 'schedule' => $task->getSchedule())
         );
+    }
+
+    /**
+     * @param string  $ticket
+     * @param integer $workflowId
+     * @return void
+     */
+    protected function createExecution($ticket, $workflowId)
+    {
+        if($this->executionManager->findOneBy(array('ticket' => $ticket)) == null)
+        {
+            $execution = $this->executionManager->create();
+
+            $workflow = $this->workflowManager->findById($workflowId);
+
+            $execution->setWorkflow($workflow);
+            $execution->setTicket($ticket);
+
+            $this->executionManager->update($execution);
+        }
     }
 }
