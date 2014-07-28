@@ -65,6 +65,16 @@ interface TaskInterface
     public function setDisabled($disabled);
 
     /**
+     * @return boolean
+     */
+    public function isScheduled();
+
+    /**
+     * @param boolean $scheduled
+     */
+    public function setScheduled($scheduled);
+
+    /**
      * @return \Serializable|null
      */
     public function getParameters();

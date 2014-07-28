@@ -150,7 +150,9 @@ class TaskController extends Controller
         if($editForm->isValid())
         {
             //Workaround to update serializable parameters
-            $entity->setParameters(clone($entity->getParameters()));
+            if($entity->getParameters()) {
+                $entity->setParameters(clone($entity->getParameters()));
+            }
             $taskManager->update($entity);
 
             return $this->render('AbcWorkflowBundle:Task:editSuccess.html.twig', array('task' => $entity));

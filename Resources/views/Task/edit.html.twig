@@ -9,7 +9,16 @@
             {{ form_errors(form.disabled) }}
             {{ form_widget(form.disabled) }}
         </div>
-
+        <div class="checkbox">
+            {{ form_errors(form.scheduled) }}
+            {{ form_widget(form.scheduled) }}
+        </div>
+        <div id="schedule-subform">
+            {% if form.schedule is defined %}
+                {{ form_errors(form.schedule) }}
+                {{ form_widget(form.schedule) }}
+            {% endif %}
+        </div>
         {{ form_rest(form) }}
 
         <button type="submit" class="btn btn-primary" id="submit-task"

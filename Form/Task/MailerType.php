@@ -2,12 +2,11 @@
 
 namespace Abc\Bundle\WorkflowBundle\Form\Task;
 
-use Abc\Bundle\WorkflowBundle\Form\SchedulableTask;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class MailerType extends AbstractType implements SchedulableTask
+class MailerType extends AbstractType
 {
 
     /**

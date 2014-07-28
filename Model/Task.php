@@ -48,6 +48,11 @@ class Task implements TaskInterface
      */
     protected $disabled;
 
+    /**
+     * @var boolean
+     */
+    protected $scheduled;
+
     /** @var string */
     protected $parameters;
 
@@ -194,6 +199,22 @@ class Task implements TaskInterface
     public function setDisabled($disabled)
     {
         $this->disabled = $disabled;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isScheduled()
+    {
+        return $this->scheduled;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setScheduled($scheduled)
+    {
+        $this->scheduled = $scheduled;
     }
 
     /**

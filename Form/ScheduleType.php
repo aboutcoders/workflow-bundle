@@ -26,8 +26,8 @@ class ScheduleType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-                'data_class' => 'Abc\Bundle\WorkflowBundle\Entity\Schedule'
-            ));
+            'data_class' => 'Abc\Bundle\WorkflowBundle\Entity\Schedule'
+        ));
     }
 
     /**

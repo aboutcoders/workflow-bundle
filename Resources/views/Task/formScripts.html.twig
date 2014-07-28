@@ -18,9 +18,28 @@
         });
     }
 
+    function displaySchedule() {
+        var $expression = jQuery("#abc_bundle_workflowbundle_task_schedule_expression");
+        var $scheduleSubForm = jQuery("#schedule-subform");
+
+        if (jQuery("#abc_bundle_workflowbundle_task_scheduled").is(":checked")) {
+            $scheduleSubForm.show();
+            $expression.attr('required', 'required');
+        } else {
+            $scheduleSubForm.hide();
+            $expression.removeAttr('required');
+        }
+    }
+
     jQuery(document).ready(function () {
+        displaySchedule();
+
         jQuery('.cancel').click(function () {
             jQuery('#task-form-contents').replaceWith(jQuery('#empty-task').removeClass('hidden'));
+        });
+
+        jQuery('#abc_bundle_workflowbundle_task_scheduled').change(function () {
+            displaySchedule();
         });
 
         var forms = [

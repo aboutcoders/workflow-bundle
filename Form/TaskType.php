@@ -39,19 +39,33 @@ class TaskType extends AbstractType
             )
         );
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-                $task = $event->getData();
-                $form = $event->getForm();
+        $builder->add('scheduled', 'checkbox',
+            array(
+                'required'    => false,
+                'widget_type' => 'inline',
+                'label'       => 'Schedule',
+            )
+        );
+        $builder->add('schedule', new ScheduleType());
 
-                if($taskTypeForm = $this->buildTaskTypeForm($task->getType()))
-                {
-                    $form->add('parameters', $taskTypeForm);
-                    if($taskTypeForm instanceof SchedulableTask)
-                    {
-                        $form->add('schedule', new ScheduleType());
-                    }
-                }
-            });
+        $builder->addEventListener(FormEvents::SUBMIT , function (FormEvent $event) {
+            $data = $event->getData();
+            if (!$data->isScheduled()) {
+                $data->setSchedule(null);
+            }
+        });
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $task = $event->getData();
+            $form = $event->getForm();
+
+            $scheduled = is_null($task->getSchedule()) ? false : true;
+            $task->setScheduled($scheduled);
+
+            if ($taskTypeForm = $this->buildTaskTypeForm($task->getType())) {
+                $form->add('parameters', $taskTypeForm);
+            }
+        });
     }
 
     /**
@@ -60,8 +74,8 @@ class TaskType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-                'data_class' => 'Abc\Bundle\WorkflowBundle\Entity\Task'
-            ));
+            'data_class' => 'Abc\Bundle\WorkflowBundle\Entity\Task'
+        ));
     }
 
     /**
@@ -79,8 +93,7 @@ class TaskType extends AbstractType
      */
     private function buildTaskTypeForm($taskType)
     {
-        if($taskType->getFormServiceName() != null)
-        {
+        if ($taskType->getFormServiceName() != null) {
             return $this->container->get($taskType->getFormServiceName());
         }
     }
