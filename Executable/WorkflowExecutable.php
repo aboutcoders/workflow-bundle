@@ -33,7 +33,7 @@ class WorkflowExecutable implements Executable
     {
         $this->executionManager = $executionManager;
         $this->taskManager      = $taskManager;
-        $this->workflowManager   = $workflowManager;
+        $this->workflowManager  = $workflowManager;
     }
 
     /**
@@ -41,8 +41,7 @@ class WorkflowExecutable implements Executable
      */
     public function execute(Job $job)
     {
-        if(!$job->getParameters() instanceof WorkflowInterface)
-        {
+        if (!$job->getParameters() instanceof WorkflowInterface) {
             throw new \InvalidArgumentException('Parameters must be an instance of Abc\Bundle\WorkflowBundle\Model\WorkflowInterface');
         }
 
@@ -56,24 +55,19 @@ class WorkflowExecutable implements Executable
      */
     protected function executeSimultaneously(Job $job)
     {
-        if($job->isTriggeredByCallback())
-        {
+        if ($job->isTriggeredByCallback()) {
             $job->getContext()->get('logger')->debug('Callback: {ticket}', array('ticket' => $job->getCallerJob()->getTicket()));
-        }
-        else
-        {
+        } else {
             /** @var Workflow $workflow */
             $workflow = $job->getParameters();
 
             $job->getContext()->get('logger')->debug('Workflow: {workflow} ', array('workflow' => $workflow->getId()));
 
             $tasks = $this->taskManager->findWorkflowTasks($workflow->getId());
-            if(count($tasks) > 0)
-            {
+            if (count($tasks) > 0) {
                 $job->getContext()->get('logger')->debug('Processing tasks...');
                 /** @var Task $task */
-                foreach($tasks as $task)
-                {
+                foreach ($tasks as $task) {
                     $this->addTask($job, $task);
                 }
             }
@@ -92,8 +86,7 @@ class WorkflowExecutable implements Executable
         $workflowId = $workflow->getId();
         $index      = 0;
 
-        if(!$job->isTriggeredByCallback())
-        {
+        if (!$job->isTriggeredByCallback()) {
             $job->getContext()->get('logger')->debug('Start executing workflow with id {id}', array('id' => $workflowId));
 
             # store parameters in the context
@@ -101,20 +94,15 @@ class WorkflowExecutable implements Executable
 
             # start execution
             $this->createExecution($job->getTicket(), $workflowId);
-        }
-        else
-        {
+        } else {
             $job->getContext()->get('logger')->debug('Callback by ticket {ticket}', array('ticket' => $job->getCallerJob()->getTicket()));
 
             $index = $workflow->getIndex() + 1;
         }
 
-        if($task = $this->taskManager->findNextWorkflowTask($workflowId, $index))
-        {
+        if ($task = $this->taskManager->findNextWorkflowTask($workflowId, $index)) {
             $this->addTask($job, $task);
-        }
-        else
-        {
+        } else {
             $job->getContext()->get('logger')->debug('No tasks to execute');
         }
 
@@ -144,8 +132,7 @@ class WorkflowExecutable implements Executable
      */
     protected function createExecution($ticket, $workflowId)
     {
-        if($this->executionManager->findOneBy(array('ticket' => $ticket)) == null)
-        {
+        if ($this->executionManager->findOneBy(array('ticket' => $ticket)) == null) {
             $execution = $this->executionManager->create();
 
             $workflow = $this->workflowManager->findById($workflowId);

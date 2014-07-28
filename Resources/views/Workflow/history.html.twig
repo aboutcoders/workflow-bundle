@@ -12,8 +12,6 @@
         <tr>
             <th>{{ 'Status'|trans }}</th>
             <th>{{ 'Ticket'|trans }}</th>
-            <th>{{ 'Completed'|trans }}</th>
-            <th>{{ 'Duration'|trans }}</th>
             <th>{{ 'Started'|trans }}</th>
         </tr>
         </thead>
@@ -23,9 +21,7 @@
                 <td>
                     {{ include('AbcWorkflowBundle:Workflow:executionStatusLink.html.twig', { item: item, btnSize: 'btn-xs'}) }}
                 </td>
-                <td>{{ item.job.id }}</td>
-                <td></td>
-                <td>{{ item.job.executionTime }}</td>
+                <td>{{ item.ticket }}</td>
                 <td>{{ item.createdAt|date('Y-m-d H:i:s') }}</td>
             </tr>
         {% endfor %}

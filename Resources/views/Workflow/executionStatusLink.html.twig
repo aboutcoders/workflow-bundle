@@ -1,7 +1,7 @@
 {% if btnSize is not defined %}
     {% set btnSize = '' %}
 {% endif %}
-{% if report %}
+{% if report is defined %}
     {% if report.status.value == 1 %}
         {% set btnClass = 'btn-default' %}
         {% set icon = 'time' %}
@@ -21,6 +21,9 @@
         {% set btnClass = 'btn-default' %}
         {% set icon = 'pause' %}
     {% endif %}
+{% else %}
+    {% set btnClass = 'btn-default' %}
+    {% set icon = 'time' %}
 {% endif %}
 <a href="{{ path('workflow_execution', { 'id': item.id }) }}" class="btn {{ btnSize }} {{ btnClass }}">
     <span class="glyphicon glyphicon-{{ icon }}"></span> #{{ item.id }}
