@@ -27,7 +27,7 @@ class WorkflowFilesystemListener
     {
         if($job->getRootJob()->getType() == 'workflow')
         {
-            $filesystem = $this->filesystem->createFilesystem($job->getTicket(), true);
+            $filesystem = $this->filesystem->createFilesystem($job->getRootJob()->getTicket(), true);
 
             $job->getContext()->set('filesystem', $filesystem);
         }
