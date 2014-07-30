@@ -41,20 +41,25 @@ class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnPrepareAddsFilesystemToContext()
     {
         $ticket = 'foobar';
+        $rootTicket = 'root-ticket';
 
         $this->job->expects($this->any())
             ->method('getTicket')
             ->will($this->returnValue($ticket));
 
-        $this->rootJob->expects($this->once())
+        $this->rootJob->expects($this->any())
             ->method('getType')
             ->will($this->returnValue('workflow'));
+
+        $this->rootJob->expects($this->any())
+            ->method('getTicket')
+            ->will($this->returnValue($rootTicket));
 
         $workflowFilesystem = $this->getMockBuilder('Abc\Filesystem\Filesystem')->disableOriginalConstructor()->getMock();
 
         $this->filesystem->expects($this->once())
             ->method('createFilesystem')
-            ->with($ticket)
+            ->with($rootTicket)
             ->will($this->returnValue($workflowFilesystem));
 
         $this->subject->onJobPrepare($this->job);

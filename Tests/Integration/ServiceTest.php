@@ -90,7 +90,7 @@ class ServiceTest extends KernelTestCase
             ->method('getContext')
             ->willReturn($context);
 
-        $job->expects($this->once())
+        $job->expects($this->any())
             ->method('getRootJob')
             ->willReturn($rootJob);
 
