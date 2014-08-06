@@ -49,10 +49,10 @@ interface TaskInterface
     public function getType();
 
     /**
-     * @param TaskType $type
+     * @param TaskTypeInterface $type
      * @return void
      */
-    public function setType(TaskType $type);
+    public function setType(TaskTypeInterface $type);
 
     /**
      * @return boolean

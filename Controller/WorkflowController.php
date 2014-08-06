@@ -2,25 +2,22 @@
 
 namespace Abc\Bundle\WorkflowBundle\Controller;
 
-use Abc\Bundle\JobBundle\Job\ManagerInterface;
-use Abc\Bundle\JobBundle\Job\Report;
-use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\WorkflowBundle\Doctrine\WorkflowManager;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Form\WorkflowType;
-use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
+use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Workflow controller.
  *
  * @Route("/workflow")
  */
-class WorkflowController extends Controller
+class WorkflowController extends BaseController
 {
     /**
      * Lists all Workflow entities.
@@ -31,11 +28,8 @@ class WorkflowController extends Controller
      */
     public function indexAction()
     {
-        $workflowManager = $this->getWorkflowManager();
-        $entities        = $workflowManager->findAll();
-
         return array(
-            'entities' => $entities,
+            'entities' => $this->getWorkflowManager()->findAll()
         );
     }
 
@@ -49,13 +43,13 @@ class WorkflowController extends Controller
     public function createAction(Request $request)
     {
         $workflowManager = $this->getWorkflowManager();
+        $entity          = $workflowManager->create();
+        $form            = $this->createCreateForm($entity);
 
-        $entity = $workflowManager->create();
-
-        $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if($form->isValid())
+        {
             $workflowManager->update($entity);
 
             return $this->redirect($this->generateUrl('workflow_show', array('id' => $entity->getId())));
@@ -63,25 +57,8 @@ class WorkflowController extends Controller
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            'form' => $form->createView(),
         );
-    }
-
-    /**
-     * Creates a form to create a Workflow entity.
-     *
-     * @param Workflow $entity The entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createCreateForm(Workflow $entity)
-    {
-        $form = $this->createForm(new WorkflowType(), $entity, array(
-            'action' => $this->generateUrl('workflow_create'),
-            'method' => 'POST',
-        ));
-
-        return $form;
     }
 
     /**
@@ -99,7 +76,7 @@ class WorkflowController extends Controller
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            'form' => $form->createView(),
         );
     }
 
@@ -109,20 +86,15 @@ class WorkflowController extends Controller
      * @Route("/{id}", name="workflow_show")
      * @Method("GET")
      * @Template()
+     * @throws NotFoundHttpException
      */
     public function showAction($id)
     {
-        $workflowManager = $this->getWorkflowManager();
-        $entity          = $workflowManager->findById($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Workflow entity.');
-        }
-
+        $entity     = $this->findWorkflow($id);
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
+            'entity' => $entity,
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -133,41 +105,19 @@ class WorkflowController extends Controller
      * @Route("/{id}/edit", name="workflow_edit")
      * @Method("GET")
      * @Template()
+     * @throws NotFoundHttpException
      */
     public function editAction($id)
     {
-        $workflowManager = $this->getWorkflowManager();
-        $entity          = $workflowManager->findById($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Workflow entity.');
-        }
-
+        $entity     = $this->findWorkflow($id);
         $editForm   = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $entity,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
-    }
-
-    /**
-     * Creates a form to edit a Workflow entity.
-     *
-     * @param Workflow $entity The entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createEditForm(Workflow $entity)
-    {
-        $form = $this->createForm(new WorkflowType(), $entity, array(
-            'action' => $this->generateUrl('workflow_update', array('id' => $entity->getId())),
-            'method' => 'PUT',
-        ));
-
-        return $form;
     }
 
     /**
@@ -176,58 +126,92 @@ class WorkflowController extends Controller
      * @Route("/{id}", name="workflow_update")
      * @Method("PUT")
      * @Template("AbcWorkflowBundle:Workflow:edit.html.twig")
+     * @throws NotFoundHttpException
      */
     public function updateAction(Request $request, $id)
     {
-        $workflowManager = $this->getWorkflowManager();
-        $entity          = $workflowManager->findById($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Workflow entity.');
-        }
-
+        $entity     = $this->findWorkflow($id);
         $deleteForm = $this->createDeleteForm($id);
         $editForm   = $this->createEditForm($entity);
+
         $editForm->handleRequest($request);
 
-        if ($editForm->isValid()) {
-            $workflowManager->update($entity);
+        if($editForm->isValid())
+        {
+            $this->getWorkflowManager()->update($entity);
             $this->get('session')->getFlashBag()->add('info', 'Workflow updated successfully');
+
             return $this->redirect($this->generateUrl('workflow_edit', array('id' => $id)));
         }
 
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $entity,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
-
 
     /**
      * Deletes a Workflow entity.
      *
      * @Route("/{id}", name="workflow_delete")
      * @Method("DELETE")
+     * @throws NotFoundHttpException
      */
     public function deleteAction(Request $request, $id)
     {
         $form = $this->createDeleteForm($id);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            $workflowManager = $this->getWorkflowManager();
-            $entity          = $workflowManager->findById($id);
+        if($form->isValid())
+        {
+            $entity          = $this->findWorkflow($id);
 
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Workflow entity.');
-            }
-
-            $workflowManager->delete($entity);
+            $this->getWorkflowManager()->delete($entity);
             $this->get('session')->getFlashBag()->add('info', 'Workflow deleted successfully');
         }
 
         return $this->redirect($this->generateUrl('workflow'));
+    }
+
+    /**
+     * Creates a form to edit a Workflow entity.
+     *
+     * @param WorkflowInterface $entity The entity
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createEditForm(WorkflowInterface $entity)
+    {
+        $form = $this->createForm(
+            new WorkflowType(),
+            $entity,
+            array(
+                'action' => $this->generateUrl('workflow_update', array('id' => $entity->getId())),
+                'method' => 'PUT',
+            )
+        );
+
+        return $form;
+    }
+
+    /**
+     * Creates a form to create a Workflow entity.
+     *
+     * @param WorkflowInterface $entity
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createCreateForm(WorkflowInterface $entity)
+    {
+        $form = $this->createForm(
+            new WorkflowType(),
+            $entity,
+            array(
+                'action' => $this->generateUrl('workflow_create'),
+                'method' => 'POST',
+            )
+        );
+
+        return $form;
     }
 
     /**
@@ -244,21 +228,5 @@ class WorkflowController extends Controller
             ->setMethod('DELETE')
             ->add('submit', 'submit', array('label' => 'Delete', 'icon' => 'trash', 'attr' => array('class' => 'btn-danger')))
             ->getForm();
-    }
-
-    /**
-     * @return WorkflowManager
-     */
-    protected function getWorkflowManager()
-    {
-        return $this->container->get('abc.workflow.workflow_manager');
-    }
-
-    /**
-     * @return ExecutionManagerInterface
-     */
-    private function getExecutionManager()
-    {
-        return $this->container->get('abc.workflow.execution_manager');
     }
 }

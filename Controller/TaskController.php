@@ -5,22 +5,25 @@ namespace Abc\Bundle\WorkflowBundle\Controller;
 use Abc\Bundle\WorkflowBundle\Entity\Task;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Form\TaskType;
+use Abc\Bundle\WorkflowBundle\Model\TaskInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
+use Abc\Bundle\WorkflowBundle\Model\TaskTypeInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskTypeManagerInterface;
+use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Task controller.
  *
  * @Route("/task")
  */
-class TaskController extends Controller
+class TaskController extends BaseController
 {
 
     /**
@@ -31,19 +34,12 @@ class TaskController extends Controller
      * @Template()
      * @param $id
      * @return array
+     * @throws NotFoundHttpException
      */
     public function configureAction($id)
     {
-        $workflowManager = $this->getWorkflowManager();
-        $entity          = $workflowManager->findOneBy(array('id' => $id));
-
-        if(!$entity)
-        {
-            throw $this->createNotFoundException('Unable to find Workflow entity.');
-        }
-
         return array(
-            'entity' => $entity,
+            'entity' => $this->findWorkflow($id)
         );
     }
 
@@ -53,6 +49,7 @@ class TaskController extends Controller
      * @Route("/", name="task_create")
      * @Method("POST")
      * @Template("AbcWorkflowBundle:Task:new.html.twig")
+     * @throws NotFoundHttpException
      */
     public function createAction(Request $request)
     {
@@ -68,27 +65,20 @@ class TaskController extends Controller
             throw $this->createNotFoundException('Unable to find Task type for Task entity.');
         }
 
-        $taskType = $this->getTaskType($data['typeId']);
+        $taskType = $this->findTaskType($data['typeId']);
         $entity->setType($taskType);
 
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
 
-        /** @var Workflow $workflow */
-        $workflow = $workflowManager->findById($form->getData()->getWorkflowId());
-        if(!$workflow)
-        {
-            throw $this->createNotFoundException('Unable to find Workflow entity.');
-        }
+        $workflow = $this->findWorkflow($form->getData()->getWorkflowId());
         $entity->setWorkflow($workflow);
 
         if($form->isValid())
         {
 
             $taskManager->update($entity);
-            //Update date in workflow object
-            $workflow->setUpdatedAt(new \DateTime());
-            $workflowManager->update($workflow);
+            $this->updateWorkflowTimestamp($workflow);
 
             return $this->render('AbcWorkflowBundle:Task:editSuccess.html.twig', array('task' => $entity));
         }
@@ -99,23 +89,17 @@ class TaskController extends Controller
         );
     }
 
-
     /**
      * Displays a form to edit an existing Task entity.
      *
      * @Route("/{id}/edit", name="task_edit")
      * @Method("GET")
      * @Template()
+     * @throws NotFoundHttpException
      */
     public function editAction($id)
     {
-        $taskManager = $this->getTaskManager();
-        $entity      = $taskManager->findById($id);
-
-        if(!$entity)
-        {
-            throw $this->createNotFoundException('Unable to find Task entity.');
-        }
+        $entity = $this->findTask($id);
 
         $editForm = $this->createEditForm($entity);
 
@@ -125,32 +109,26 @@ class TaskController extends Controller
         );
     }
 
-
-
     /**
      * Edits an existing Task entity.
      *
      * @Route("/{id}", name="task_update")
      * @Method("PUT")
      * @Template("AbcWorkflowBundle:Task:edit.html.twig")
+     * @throws NotFoundHttpException
      */
     public function updateAction(Request $request, $id)
     {
         $taskManager = $this->getTaskManager();
-        $entity      = $taskManager->findById($id);
-
-        if(!$entity)
-        {
-            throw $this->createNotFoundException('Unable to find Task entity.');
-        }
-
-        $editForm = $this->createEditForm($entity);
+        $entity      = $this->findTask($id);
+        $editForm    = $this->createEditForm($entity);
         $editForm->handleRequest($request);
 
         if($editForm->isValid())
         {
             //Workaround to update serializable parameters
-            if($entity->getParameters()) {
+            if($entity->getParameters())
+            {
                 $entity->setParameters(clone($entity->getParameters()));
             }
             $taskManager->update($entity);
@@ -165,10 +143,11 @@ class TaskController extends Controller
     }
 
     /**
-     * Orders a Tasks for workflow.
+     * Orders tasks within a workflow
      *
      * @Route("/{id}/order", name="task_sort")
      * @Method("PUT")
+     * @throws NotFoundHttpException
      */
     public function sortAction(Request $request, $id)
     {
@@ -181,6 +160,7 @@ class TaskController extends Controller
         {
             foreach($items as $position => $item)
             {
+                /** @var TaskInterface $task */
                 if($task->getId() == $item)
                 {
                     $task->setPosition($position);
@@ -189,8 +169,8 @@ class TaskController extends Controller
             }
         }
 
-        //Update date in Workflow object
-        $this->updateWorkflowTimestamp($id);
+        // Update date in Workflow object
+        $this->updateWorkflowTimestamp($this->getWorkflowManager()->findById($id));
 
         return new Response('Order updated');
     }
@@ -201,22 +181,21 @@ class TaskController extends Controller
      * @Route("/new/{id}/{type}", name="task_new")
      * @Method("GET")
      * @Template()
+     * @throws NotFoundHttpException
      */
     public function newAction($id, $type)
     {
-        $taskType = $this->getTaskType($type);
+        $taskType = $this->findTaskType($type);
+        $workflow = $this->findWorkflow($id);
 
-        $taskManager = $this->getTaskManager();
+        $task = $this->getTaskManager()->create();
+        $task->setWorkflow($workflow);
+        $task->setType($taskType);
 
-        $entity      = $taskManager->create();
-        $entity->setWorkflowId($id);
-        $entity->setTypeId($type);
-        $entity->setType($taskType);
-
-        $form = $this->createCreateForm($entity);
+        $form = $this->createCreateForm($task);
 
         return array(
-            'entity' => $entity,
+            'entity' => $task,
             'form' => $form->createView(),
         );
     }
@@ -226,54 +205,23 @@ class TaskController extends Controller
      *
      * @Route("/{id}", name="task_delete")
      * @Method("DELETE")
+     * @throws NotFoundHttpException
      */
     public function deleteAction(Request $request, $id)
     {
-        $taskManager = $this->getTaskManager();
-        $entity      = $taskManager->findById($id);
-        $workflowId  = $entity->getWorkflowId();
+        $entity = $this->findTask($id);
 
-        if(!$entity)
-        {
-            throw $this->createNotFoundException('Unable to find Task entity.');
-        }
+        $this->getTaskManager()->delete($entity);
 
-        $taskManager->delete($entity);
-        //Update date in Workflow object
-        $this->updateWorkflowTimestamp($workflowId);
+        $this->updateWorkflowTimestamp($entity->getWorkflow());
 
         return new Response('Task item deleted successfully');
-    }
-
-    /**
-     * @return WorkflowManagerInterface
-     */
-    protected function getWorkflowManager()
-    {
-        return $this->container->get('abc.workflow.workflow_manager');
-    }
-
-    /**
-     * @return TaskManagerInterface
-     */
-    protected function getTaskManager()
-    {
-        return $this->container->get('abc.workflow.task_manager');
-    }
-
-    /**
-     * @return TaskTypeManagerInterface
-     */
-    protected function getTaskTypeManager()
-    {
-        return $this->container->get('abc.workflow.task_type_manager');
     }
 
     /**
      * Creates a form to create a Task entity.
      *
      * @param Task $entity The entity
-     *
      * @return \Symfony\Component\Form\Form The form
      */
     private function createCreateForm(Task $entity)
@@ -291,47 +239,14 @@ class TaskController extends Controller
         return $form;
     }
 
-
-    /**
-     * Get TaskType By Id
-     *
-     * @param int $id
-     * @return TaskType
-     */
-    private function getTaskType($id)
-    {
-        $taskTypeManager = $this->getTaskTypeManager();
-        $taskType        = $taskTypeManager->findById($id);
-
-        if(!$taskType)
-        {
-            throw $this->createNotFoundException('Unable to find TaskType entity.');
-        }
-
-        return $taskType;
-    }
-
-    /**
-     * Updates updated date in Workflow object
-     *
-     * @param $id
-     */
-    private function updateWorkflowTimestamp($id)
-    {
-        $workflowManager = $this->getWorkflowManager();
-        $workflow        = $workflowManager->findById($id);
-        $workflow->setUpdatedAt(new \DateTime());
-        $workflowManager->update($workflow);
-    }
-
     /**
      * Creates a form to edit a Task entity.
      *
-     * @param Task $entity The entity
+     * @param TaskInterface $entity The entity
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createEditForm(Task $entity)
+    private function createEditForm(TaskInterface $entity)
     {
         $form = $this->createForm(
             new TaskType($this->container),
@@ -344,5 +259,16 @@ class TaskController extends Controller
         );
 
         return $form;
+    }
+
+    /**
+     * Updates updated date in Workflow object
+     *
+     * @param WorkflowInterface $workflow
+     */
+    private function updateWorkflowTimestamp(WorkflowInterface $workflow)
+    {
+        $workflow->setUpdatedAt(new \DateTime());
+        $this->getWorkflowManager()->update($workflow);
     }
 }

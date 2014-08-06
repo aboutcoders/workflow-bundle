@@ -12,7 +12,7 @@ use JMS\Serializer\Annotation\SerializedName;
  *
  * @ExclusionPolicy("all")
  */
-class Workflow implements WorkflowInterface, \Serializable
+class Workflow implements WorkflowInterface
 {
     /**
      * @var int
@@ -63,6 +63,11 @@ class Workflow implements WorkflowInterface, \Serializable
      * @Expose
      */
     protected $updatedAt;
+
+    /** @var int */
+    protected $index = 0;
+    /** @var \Serializable */
+    protected $parameters;
 
     /**
      * {@inheritDoc}
@@ -140,7 +145,7 @@ class Workflow implements WorkflowInterface, \Serializable
     /**
      * {@inheritDoc}
      */
-    public function addTask(Task $task)
+    public function addTask(TaskInterface $task)
     {
         $this->tasks[] = $task;
 
@@ -150,7 +155,7 @@ class Workflow implements WorkflowInterface, \Serializable
     /**
      * {@inheritDoc}
      */
-    public function removeTask(Task $task)
+    public function removeTask(TaskInterface $task)
     {
         $this->tasks->removeElement($task);
     }
@@ -183,7 +188,7 @@ class Workflow implements WorkflowInterface, \Serializable
     }
 
     /**
-     * @return \DateTime
+     * {@inheritDoc}
      */
     public function getUpdatedAt()
     {
@@ -191,7 +196,7 @@ class Workflow implements WorkflowInterface, \Serializable
     }
 
     /**
-     * @param \DateTime $updatedAt
+     * {@inheritDoc}
      */
     public function setUpdatedAt($updatedAt)
     {
@@ -199,7 +204,7 @@ class Workflow implements WorkflowInterface, \Serializable
     }
 
     /**
-     * @return \DateTime
+     * {@inheritDoc}
      */
     public function getCreatedAt()
     {
@@ -217,6 +222,38 @@ class Workflow implements WorkflowInterface, \Serializable
     function __toString()
     {
         return $this->name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIndex()
+    {
+        return $this->index;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setIndex($index)
+    {
+        $this->index = $index;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getParameters()
+    {
+        return $this->parameters;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setParameters(\Serializable $parameters = null)
+    {
+        $this->parameters = $parameters;
     }
 
     /**

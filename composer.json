@@ -39,6 +39,7 @@
     ],
     "require": {
         "symfony/symfony": "~2.1",
+        "sensio/framework-extra-bundle": "~3.0",
         "sonata-project/notification-bundle": "~2.2",
         "gedmo/doctrine-extensions": "dev-master",
         "aboutcoders/job-bundle": "dev-master@dev",

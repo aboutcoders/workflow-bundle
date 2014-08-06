@@ -124,7 +124,7 @@ class Task implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function setType(TaskType $type)
+    public function setType(TaskTypeInterface $type)
     {
         $this->type = $type;
     }
@@ -253,5 +253,4 @@ class Task implements TaskInterface
     {
         return $this->description;
     }
-
 }

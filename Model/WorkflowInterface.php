@@ -1,9 +1,10 @@
 <?php
+
 namespace Abc\Bundle\WorkflowBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-interface WorkflowInterface
+interface WorkflowInterface extends \Serializable
 {
     /**
      * @return int
@@ -55,16 +56,16 @@ interface WorkflowInterface
     /**
      * Add Task
      *
-     * @param Task $task
+     * @param TaskInterface $task
      */
-    public function addTask(Task $task);
+    public function addTask(TaskInterface $task);
 
     /**
      * Remove Tasks
      *
-     * @param Task $task
+     * @param TaskInterface $task
      */
-    public function removeTask(Task $task);
+    public function removeTask(TaskInterface $task);
 
     /**
      * Get all workflow executions
@@ -83,4 +84,47 @@ interface WorkflowInterface
      * @param ExecutionInterface $execution
      */
     public function removeExecution(ExecutionInterface $execution);
-} 
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt();
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt();
+
+    /**
+     * @param \DateTime $updatedAt
+     */
+    public function setUpdatedAt($updatedAt);
+
+    /**
+     * Get the index of the currently executed task (must be serializable)
+     *
+     * @return int
+     */
+    public function getIndex();
+
+    /**
+     * Set the index of the currently executed task (must be serializable)
+     *
+     * @param int $index
+     */
+    public function setIndex($index);
+
+    /**
+     * Get parameters of this workflow (must be serializable)
+     *
+     * @return \Serializable|null
+     */
+    public function getParameters();
+
+    /**
+     * Set parameters of this workflow (must be serializable)
+     *
+     * @param \Serializable|null $parameters
+     */
+    public function setParameters(\Serializable $parameters = null);
+}
