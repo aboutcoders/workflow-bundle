@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ asset_url }}"/>
     {% endstylesheets %}
     {% javascripts
+    "bundles/abcworkflow/js/workflow-show.js"
     "bundles/abcworkflow/js/spin.min.js"
     "bundles/abcworkflow/js/ladda.min.js"
     filter='cssrewrite'
@@ -24,7 +25,7 @@
         <li><a href="{{ path('workflow') }}"><span
                         class="glyphicon glyphicon-list"></span> {{ 'Back to the list'|trans }}</a></li>
         <li><a href="#history" data-url="{{ path('execution_history', { 'id': entity.id }) }}"
-               class="ladda-button" data-style="side-down" data-spinner-color="#4183C4"><span
+               class="ladda-button" data-style="zoom-in" data-spinner-color="#4183C4"><span
                         class="ladda-label">{{ 'History'|trans }}</span></a></li>
         <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -74,20 +75,4 @@
         </div>
         <div class="tab-pane active" id="history"></div>
     </div>
-    <script>
-        jQuery('#workflowTabs a').click(function (e) {
-            e.preventDefault();
-            var l = Ladda.create(this);
-            l.start();
-            var url = jQuery(this).attr("data-url");
-            var href = this.hash;
-            var pane = jQuery(this);
-
-            // ajax load from data-url
-            jQuery(href).load(url, function (result) {
-                pane.tab('show');
-                l.stop();
-            });
-        });
-    </script>
 {% endblock %}
