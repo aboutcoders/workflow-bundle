@@ -106,6 +106,18 @@ class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
         $this->subject->findAll();
     }
 
+    public function testFindHistory()
+    {
+        $workflowId = 1;
+        $criteria   = array('workflowId' => $workflowId);
+        $order      = array('createdAt' => 'DESC');
+        $limit      = 20;
+        $this->repository->expects($this->once())
+            ->method('findBy')
+            ->with($criteria, $order, $limit);
+
+        $this->subject->findHistory($workflowId);
+    }
 
     public function testFindBy()
     {

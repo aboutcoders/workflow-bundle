@@ -9,7 +9,6 @@ use Abc\Bundle\WorkflowBundle\Doctrine\WorkflowManager;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Form\WorkflowType;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
-use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -78,9 +77,9 @@ class WorkflowController extends Controller
     private function createCreateForm(Workflow $entity)
     {
         $form = $this->createForm(new WorkflowType(), $entity, array(
-                'action' => $this->generateUrl('workflow_create'),
-                'method' => 'POST',
-            ));
+            'action' => $this->generateUrl('workflow_create'),
+            'method' => 'POST',
+        ));
 
         return $form;
     }
@@ -174,7 +173,7 @@ class WorkflowController extends Controller
     public function executionAction($id)
     {
         $executionManager = $this->getExecutionManager();
-        $entity                   = $executionManager->findById($id);
+        $entity           = $executionManager->findById($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find execution entity.');
@@ -214,15 +213,8 @@ class WorkflowController extends Controller
             throw $this->createNotFoundException('Unable to find execution entity.');
         }
 
-        $executionManager = $this->getExecutionManager();
-        $executions               = $executionManager->findBy(
-            array('workflowId' => $id),
-            array('createdAt' => 'DESC')
-        );
-
         return array(
-            'entity'     => $entity,
-            'executions' => $executions
+            'entity' => $entity
         );
     }
 
@@ -262,9 +254,9 @@ class WorkflowController extends Controller
     private function createEditForm(Workflow $entity)
     {
         $form = $this->createForm(new WorkflowType(), $entity, array(
-                'action' => $this->generateUrl('workflow_update', array('id' => $entity->getId())),
-                'method' => 'PUT',
-            ));
+            'action' => $this->generateUrl('workflow_update', array('id' => $entity->getId())),
+            'method' => 'PUT',
+        ));
 
         return $form;
     }

@@ -1,0 +1,20 @@
+<table class="table">
+    <thead>
+    <tr>
+        <th>{{ 'Status'|trans }}</th>
+        <th>{{ 'Ticket'|trans }}</th>
+        <th>{{ 'Started'|trans }}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in executions %}
+        <tr>
+            <td>
+                {{ include('AbcWorkflowBundle:Workflow:executionStatusLink.html.twig', { item: item, btnSize: 'btn-xs'}) }}
+            </td>
+            <td>{{ item.ticket }}</td>
+            <td>{{ item.createdAt|date('Y-m-d H:i:s') }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

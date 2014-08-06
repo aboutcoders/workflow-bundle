@@ -59,6 +59,17 @@ interface ExecutionManagerInterface
     public function findAll();
 
     /**
+     * Finds workflow history with ticket details
+     *
+     * @param int      $workflowId
+     * @param array    $orderBy Order, default: createdAt DESC
+     * @param int|null $limit   Limit, default: 20
+     * @param int|null $offset
+     * @return array
+     */
+    public function findHistory($workflowId, array $orderBy = array('createdAt' => 'DESC'), $limit = 20, $offset = null);
+
+    /**
      * Returns the entity's fully qualified class name.
      *
      * @return string

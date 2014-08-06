@@ -48,8 +48,7 @@ class ExecutionManager extends BaseExecutionManager
     public function update(ExecutionInterface $item, $andFlush = true)
     {
         $this->objectManager->persist($item);
-        if($andFlush)
-        {
+        if ($andFlush) {
             $this->objectManager->flush();
         }
     }
@@ -71,6 +70,28 @@ class ExecutionManager extends BaseExecutionManager
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
+
+    /**
+     * Finds workflow history with ticket details
+     *
+     * @param int      $workflowId
+     * @param array    $orderBy
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array
+     */
+    public function findHistory($workflowId, array $orderBy = array('createdAt' => 'DESC'), $limit = 20, $offset = null)
+    {
+        $executions = $this->findBy(
+            array('workflowId' => $workflowId),
+            $orderBy,
+            $limit,
+            $offset
+        );
+
+        return $executions;
+    }
+
 
     /**
      * {@inheritDoc}
