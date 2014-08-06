@@ -1,9 +1,3 @@
-<h1>{{ include('AbcWorkflowBundle:Execution:executionStatusLink.html.twig', { item: entity, report: report}) }}</h1>
-<div class="btn-group">
-    <a href="{{ path('workflow_show', { 'id': entity.workflowId }) }}" class="btn btn-default"><span
-                class="glyphicon glyphicon-list"></span> {{ 'Back to Workflow'|trans }}</a>
-</div>
-<hr>
 <div class="progress">
     <div class="progress-bar" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0"
          aria-valuemax="100" style="width: {{ progress }}%;">
@@ -14,7 +8,7 @@
     <tbody>
     <tr>
         <th>{{ 'Id'|trans }}</th>
-        <td>{{ entity.id }}</td>
+        <td>{{ include('AbcWorkflowBundle:Execution:executionStatusLink.html.twig', { item: entity, report: report}) }}</td>
     </tr>
     <tr>
         <th>{{ 'Execution time'|trans }}</th>

@@ -20,20 +20,11 @@
         </tbody>
     </table>
 </div>
-<script>
-    jQuery(function () {
-        jQuery('a.history-details').click(function (e) {
-            e.preventDefault();
-            var url = jQuery(this).attr("data-url");
 
-            if (url) {
-                var l = Ladda.create(this);
-                l.start();
-            }
-            // ajax load from data-url
-            jQuery("execution-history-{{ entity.id }}").load(url, function (result) {
-                l.stop();
-            });
-        });
-    });
-</script>
+{% javascripts
+"bundles/abcworkflow/js/workflow-history.js"
+filter='cssrewrite'
+filter='?jsmin'
+output="js/compiled/global/main.js" %}
+<script src="{{ asset_url }}"></script>
+{% endjavascripts %}
