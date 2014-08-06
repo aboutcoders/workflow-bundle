@@ -128,26 +128,6 @@ class WorkflowController extends Controller
     }
 
     /**
-     * Workflow history.
-     *
-     * @Route("/{id}/history", name="workflow_history")
-     * @Method("GET")
-     * @Template()
-     */
-    public function historyAction($id)
-    {
-        $workflowManager = $this->getWorkflowManager();
-        $entity          = $workflowManager->findById($id);
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find workflow entity.');
-        }
-
-        return array(
-            'entity' => $entity
-        );
-    }
-
-    /**
      * Displays a form to edit an existing Workflow entity.
      *
      * @Route("/{id}/edit", name="workflow_edit")

@@ -1,28 +1,48 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
+    {% stylesheets
+    "bundles/abcworkflow/css/ladda.min.css"
+    "bundles/abcworkflow/css/ladda-themeless.min.css"
+    filter='cssrewrite'
+    output="css/compiled/global/workflow.css"
+    %}
+
+    {% javascripts
+
+    "bundles/abcworkflow/js/ladda.min.js"
+    "bundles/abcworkflow/js/spin.min.js"
+    filter='cssrewrite'
+    filter='?jsmin'
+    output="js/compiled/global/main.js" %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
     <h1>#{{ entity.id }} {{ entity.name }} {% if entity.disabled %}<span
                 class="label label-default">{{ 'Disabled'|trans }}</span>{% endif %}</h1>
-    <div class="btn-group">
-        <a href="{{ path('workflow') }}" class="btn btn-default"><span
-                    class="glyphicon glyphicon-list"></span> {{ 'Back to the list'|trans }}</a>
-        <a href="{{ path('workflow_history', { 'id': entity.id }) }}" class="btn btn-default">{{ 'History'|trans }}</a>
+    <ul class="nav nav-tabs" role="tablist" id="workflowTabs">
+        <li class="active"><a href="#home" role="tab" data-toggle="tab">{{ 'Info'|trans }}</a></li>
 
-        <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <li><a href="{{ path('workflow') }}"><span
+                        class="glyphicon glyphicon-list"></span> {{ 'Back to the list'|trans }}</a></li>
+        <li><a href="#history" data-url="{{ path('execution_history', { 'id': entity.id }) }}">{{ 'History'|trans }}</a>
+        </li>
+
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                 <span
                         class="glyphicon glyphicon-play-circle"></span> {{ 'Run'|trans }} <span class="caret"></span>
-            </button>
+            </a>
             <ul class="dropdown-menu" role="menu">
                 <li><a href="{{ path('workflow_execute', { 'id': entity.id }) }}">{{ 'Execute'|trans }}</a></li>
             </ul>
-        </div>
-        <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                 <span
                         class="glyphicon glyphicon-cog"></span> {{ 'Actions'|trans }} <span
                         class="caret"></span>
-            </button>
+            </a>
             <ul class="dropdown-menu" role="menu">
                 <li><a href="{{ path('task_configure', { 'id': entity.id }) }}"><span
                                 class="glyphicon glyphicon-wrench"></span> {{ 'Configure'|trans }}</a></li>
@@ -30,23 +50,44 @@
                                 class="glyphicon glyphicon-pencil"></span> {{ 'Edit'|trans }}</a></li>
                 <li>{{ form(delete_form) }}</li>
             </ul>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane active" id="home">
+            <br>
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th>{{ 'Description'|trans }}</th>
+                    <td>{{ entity.description }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'Created'|trans }}</th>
+                    <td>{{ entity.createdAt|date('Y-m-d H:i:s') }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'Updated'|trans }}</th>
+                    <td>{{ entity.updatedAt|date('Y-m-d H:i:s') }}</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
+        <div class="tab-pane active" id="history"></div>
     </div>
-    <hr>
-    <table class="table">
-        <tbody>
-        <tr>
-            <th>{{ 'Description'|trans }}</th>
-            <td>{{ entity.description }}</td>
-        </tr>
-        <tr>
-            <th>{{ 'Created'|trans }}</th>
-            <td>{{ entity.createdAt|date('Y-m-d H:i:s') }}</td>
-        </tr>
-        <tr>
-            <th>{{ 'Updated'|trans }}</th>
-            <td>{{ entity.updatedAt|date('Y-m-d H:i:s') }}</td>
-        </tr>
-        </tbody>
-    </table>
+    <script>
+        jQuery('#workflowTabs a').click(function (e) {
+            e.preventDefault();
+
+            var url = jQuery(this).attr("data-url");
+            var href = this.hash;
+            var pane = jQuery(this);
+
+            // ajax load from data-url
+            jQuery(href).load(url, function (result) {
+                pane.tab('show');
+            });
+        });
+    </script>
 {% endblock %}
