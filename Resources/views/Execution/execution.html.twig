@@ -1,7 +1,7 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>{{ include('AbcWorkflowBundle:Workflow:executionStatusLink.html.twig', { item: entity, report: report}) }}</h1>
+    <h1>{{ include('AbcWorkflowBundle:Execution:executionStatusLink.html.twig', { item: entity, report: report}) }}</h1>
     <div class="btn-group">
         <a href="{{ path('workflow_show', { 'id': entity.workflowId }) }}" class="btn btn-default"><span
                     class="glyphicon glyphicon-list"></span> {{ 'Back to Workflow'|trans }}</a>

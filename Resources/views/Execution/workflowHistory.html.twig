@@ -10,7 +10,7 @@
     {% for item in executions %}
         <tr>
             <td>
-                {{ include('AbcWorkflowBundle:Workflow:executionStatusLink.html.twig', { item: item, btnSize: 'btn-xs'}) }}
+                {{ include('AbcWorkflowBundle:Execution:executionStatusLink.html.twig', { item: item, btnSize: 'btn-xs'}) }}
             </td>
             <td>{{ item.ticket }}</td>
             <td>{{ item.createdAt|date('Y-m-d H:i:s') }}</td>

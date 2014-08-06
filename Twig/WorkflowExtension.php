@@ -53,7 +53,7 @@ class WorkflowExtension extends \Twig_Extension
         $executions       = $executionManager->findHistory($workflow->getId());
 
         return $this->container->get('templating')
-            ->render("AbcWorkflowBundle:Task:workflowHistory.html.twig",
+            ->render("AbcWorkflowBundle:Execution:workflowHistory.html.twig",
                 array(
                     'workflow'   => $workflow,
                     'executions' => $executions,

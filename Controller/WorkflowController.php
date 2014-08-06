@@ -127,77 +127,6 @@ class WorkflowController extends Controller
         );
     }
 
-
-    /**
-     * Executes a Workflow.
-     *
-     * @Route("/{id}/execute", name="workflow_execute")
-     * @Method("GET")
-     * @Template()
-     */
-    public function executeAction($id)
-    {
-        $workflowManager = $this->getWorkflowManager();
-        $workflow        = $workflowManager->findById($id);
-
-        if (!$workflow) {
-            throw $this->createNotFoundException('Unable to find Workflow entity.');
-        }
-
-        if ($workflow->isDisabled()) {
-            $this->get('session')->getFlashBag()->add('danger', 'Workflow is Disabled');
-            return $this->redirect($this->generateUrl('workflow_show', array('id' => $workflow->getId())));
-        }
-
-        /** @var ManagerInterface $manager */
-        $manager = $this->get('abc.job.manager');
-
-        $ticket = $manager->addJob('workflow', $workflow);
-
-        $execution = $this->getExecutionManager()->create();
-        $execution->setWorkflow($workflow);
-        $execution->setTicket($ticket);
-
-        $this->getExecutionManager()->update($execution);
-
-        return $this->redirect($this->generateUrl('workflow_execution', array('id' => $execution->getId())));
-    }
-
-    /**
-     * Execution of a Workflow.
-     *
-     * @Route("/{id}/execution", name="workflow_execution")
-     * @Method("GET")
-     * @Template()
-     */
-    public function executionAction($id)
-    {
-        $executionManager = $this->getExecutionManager();
-        $entity           = $executionManager->findById($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find execution entity.');
-        }
-
-        /** @var Manager $manager */
-        $jobManager = $this->get('abc.job.manager');
-
-        /** @var Report $report */
-        $report = $jobManager->getReport($entity->getTicket());
-
-        $progress = 0;
-        if ($report->getStatus() == Status::PROCESSED()) {
-            $progress = 100;
-        }
-
-        return array(
-            'entity'   => $entity,
-            'progress' => $progress,
-            'report'   => $report
-        );
-    }
-
-
     /**
      * Workflow history.
      *
@@ -210,7 +139,7 @@ class WorkflowController extends Controller
         $workflowManager = $this->getWorkflowManager();
         $entity          = $workflowManager->findById($id);
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find execution entity.');
+            throw $this->createNotFoundException('Unable to find workflow entity.');
         }
 
         return array(
