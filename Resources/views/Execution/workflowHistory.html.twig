@@ -1,20 +1,39 @@
-<table class="table">
-    <thead>
-    <tr>
-        <th>{{ 'Status'|trans }}</th>
-        <th>{{ 'Ticket'|trans }}</th>
-        <th>{{ 'Started'|trans }}</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for item in executions %}
+<div id="execution-history-{{ entity.id }}" class="execution-history">
+    <table class="table">
+        <thead>
         <tr>
-            <td>
-                {{ include('AbcWorkflowBundle:Execution:executionStatusLink.html.twig', { item: item, btnSize: 'btn-xs'}) }}
-            </td>
-            <td>{{ item.ticket }}</td>
-            <td>{{ item.createdAt|date('Y-m-d H:i:s') }}</td>
+            <th>{{ 'Status'|trans }}</th>
+            <th>{{ 'Ticket'|trans }}</th>
+            <th>{{ 'Started'|trans }}</th>
         </tr>
-    {% endfor %}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        {% for item in executions %}
+            <tr>
+                <td>
+                    {{ include('AbcWorkflowBundle:Execution:executionStatusLink.html.twig', { item: item, btnSize: 'btn-xs'}) }}
+                </td>
+                <td>{{ item.ticket }}</td>
+                <td>{{ item.createdAt|date('Y-m-d H:i:s') }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    jQuery(function () {
+        jQuery('a.history-details').click(function (e) {
+            e.preventDefault();
+            var url = jQuery(this).attr("data-url");
+
+            if (url) {
+                var l = Ladda.create(this);
+                l.start();
+            }
+            // ajax load from data-url
+            jQuery("execution-history-{{ entity.id }}").load(url, function (result) {
+                l.stop();
+            });
+        });
+    });
+</script>

@@ -25,6 +25,7 @@
     {% set btnClass = 'btn-default' %}
     {% set icon = 'time' %}
 {% endif %}
-<a href="{{ path('workflow_execution', { 'id': item.id }) }}" class="btn {{ btnSize }} {{ btnClass }}">
+<a href="#" class="btn {{ btnSize }} {{ btnClass }} history-details"
+   data-url="{{ path('workflow_execution', { 'id': item.id }) }}">
     <span class="glyphicon glyphicon-{{ icon }}"></span> #{{ item.id }}
 </a>
