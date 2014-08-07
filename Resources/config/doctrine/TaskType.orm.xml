@@ -10,9 +10,8 @@
         <field name="name" type="string" length="255" nullable="false"/>
         <field name="jobType" column="job_type" type="string" length="255" nullable="false"/>
         <field name="formServiceName" column="form_service_name" type="string" length="255" nullable="true"/>
-        <field name="categoryId" column="category_id" type="integer" nullable="true"/>
         <many-to-one field="category" target-entity="Abc\Bundle\WorkflowBundle\Entity\TaskTypeCategory">
-            <join-column name="category_id" referenced-column-name="id"/>
+            <join-column name="category_id" referenced-column-name="id" nullable="true"/>
         </many-to-one>
     </entity>
 
