@@ -1,11 +1,11 @@
 jQuery(function () {
-    jQuery('#workflowTabs a').click(function (e) {
-        e.preventDefault();
+    jQuery('#mainTabs a').click(function (e) {
         var url = jQuery(this).attr("data-url");
         var href = this.hash;
         var pane = jQuery(this);
 
         if (url) {
+            e.preventDefault();
             var l = Ladda.create(this);
             l.start();
         }

@@ -19,7 +19,7 @@
 
     <h1>#{{ entity.id }} {{ entity.name }} {% if entity.disabled %}<span
                 class="label label-default">{{ 'Disabled'|trans }}</span>{% endif %}</h1>
-    <ul class="nav nav-tabs" role="tablist" id="workflowTabs">
+    <ul class="nav nav-tabs" role="tablist" id="mainTabs">
         <li class="active"><a href="#home" role="tab" data-toggle="tab">{{ 'Info'|trans }}</a></li>
 
         <li><a href="{{ path('workflow') }}"><span
