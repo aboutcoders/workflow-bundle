@@ -28,6 +28,11 @@ class TaskType implements TaskTypeInterface
     protected $formServiceName;
 
     /**
+     * @var TaskTypeCategoryInterface
+     */
+    protected $category;
+
+    /**
      * {@inheritdoc}
      */
     public function getId()
@@ -83,6 +88,22 @@ class TaskType implements TaskTypeInterface
     public function setFormServiceName($formServiceName = null)
     {
         $this->formServiceName = $formServiceName;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCategory(TaskTypeCategoryInterface $category)
+    {
+        $this->category = $category;
     }
 
     /**
