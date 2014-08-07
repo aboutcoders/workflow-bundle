@@ -77,6 +77,9 @@ class Configuration implements ConfigurationInterface
             ->children()
             ->scalarNode('task_type_manager')->defaultValue('abc.workflow.task_type_manager.default')->end()
             ->end()
+            ->children()
+            ->scalarNode('task_type_category_manager')->defaultValue('abc.workflow.task_type_category_manager.default')->end()
+            ->end()
             ->end()
             ->end();
     }
