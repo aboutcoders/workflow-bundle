@@ -41,4 +41,15 @@ interface TaskTypeInterface
      * @return void
      */
     public function setFormServiceName($formServiceName = null);
+
+    /**
+     * @return TaskTypeCategory
+     */
+    public function getCategory();
+
+    /**
+     * @param TaskTypeCategoryInterface $category
+     * @return void
+     */
+    public function setCategory(TaskTypeCategoryInterface $category);
 }
