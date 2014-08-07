@@ -2,7 +2,7 @@
     <div class="handle"></div>
     {{ delete_with_confirmation (task.id, path('task_delete', { 'id': task.id }), '&times;', 'close') }}
     <div id="task-data-{{ task.id }}">
-        <h4 class="item-title"><span class="glyphicon glyphicon-{{ task.type.icon }}"></span>{{ task.type }}</h4>
+        <h4 class="item-title"><span class="glyphicon glyphicon-{{ task.type.icon }}"></span> {{ task.type }}</h4>
         {% if task.disabled %}<span
                 class="label label-default pull-right">{{ 'Disabled'|trans }}</span>{% endif %}
         <div class="item-description">{{ task.description }}</div>

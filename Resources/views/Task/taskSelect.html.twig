@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col-md-4">
+        <ul class="nav nav-pills nav-stacked" id="taskCatTabs">
+            {% for category in categories %}
+                <li class="{% if loop.first %}active{% endif %}"><a href="#{{ category.slug }}"
+                                                                    data-toggle="pill"><span
+                                class="glyphicon glyphicon-{{ category.icon }}"></span>{{ category.name }}
+                    </a></li>
+            {% endfor %}
+            <li><a href="#all" data-toggle="pill">{{ 'All'|trans }}</a></li>
+        </ul>
+    </div>
+    <div class="col-md-8">
+        <div class="tab-content">
+            {% for category in categories %}
+                <div class="tab-pane {% if loop.first %}active{% endif %}" id="{{ category.slug }}">
+                    {% for type in category.types %}
+                        <a href="{{ path('task_new', { 'id': entity.id, 'type': type.id }) }}"
+                           class="btn btn-primary btn-lg btn-block new-task">
+                            <span class="glyphicon glyphicon-{{ type.icon }}"></span> {{ type.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <div class="tab-pane" id="all">
+                {% for type in types %}
+                    <a href="{{ path('task_new', { 'id': entity.id, 'type': type.id }) }}"
+                       class="btn btn-primary btn-lg btn-block new-task"><span
+                                class="glyphicon glyphicon-{{ type.icon }}"></span> {{ type.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
