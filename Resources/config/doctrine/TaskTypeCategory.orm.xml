@@ -9,6 +9,7 @@
             <generator strategy="AUTO"/>
         </id>
         <field name="name" type="string" length="255" nullable="false"/>
+        <field name="icon" type="string" length="255" nullable="true"/>
         <field name="slug" type="string" length="255" unique="true">
             <gedmo:slug  fields="name" unique="true" style="camel" updatable="false" separator="_" />
         </field>

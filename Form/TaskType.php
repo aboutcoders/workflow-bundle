@@ -37,7 +37,7 @@ class TaskType extends AbstractType
 
         $builder->add('workflowId', 'hidden');
         $builder->add('typeId', 'hidden');
-        $builder->add('description', 'text', array('label' => 'Task description'));
+        $builder->add('description', 'text', array('label' => 'Task description', 'required' => false));
         $builder->add('disabled', null,
             array(
                 'required'    => false,
@@ -55,7 +55,7 @@ class TaskType extends AbstractType
         );
         $builder->add('schedule', new ScheduleType());
 
-        $builder->addEventListener(FormEvents::SUBMIT , function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
             $data = $event->getData();
             if (!$data->isScheduled()) {
                 $data->setSchedule(null);

@@ -20,6 +20,11 @@ class TaskType implements TaskTypeInterface
     /**
      * @var string
      */
+    protected $icon = "";
+
+    /**
+     * @var string
+     */
     protected $jobType;
 
     /**
@@ -56,6 +61,24 @@ class TaskType implements TaskTypeInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIcon()
+    {
+        return $this->icon;
     }
 
     /**

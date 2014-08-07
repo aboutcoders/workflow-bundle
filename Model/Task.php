@@ -28,7 +28,7 @@ class Task implements TaskInterface
      * @var string
      * @Expose
      */
-    protected $description;
+    protected $description = "";
 
     /**
      * @var TaskType

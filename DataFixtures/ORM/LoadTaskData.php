@@ -36,11 +36,14 @@ class LoadTaskData extends AbstractFixture implements OrderedFixtureInterface, C
         $category1 = $taskTypeCategoryManager->create();
         $category1->setName('General');
         $taskTypeCategoryManager->update($category1);
+        $category1->setIcon('asterisk');
         $category2 = $taskTypeCategoryManager->create();
         $category2->setName('Transcoding');
+        $category2->setIcon('retweet');
         $taskTypeCategoryManager->update($category2);
         $category3 = $taskTypeCategoryManager->create();
         $category3->setName('Export');
+        $category3->setIcon('share-alt');
         $taskTypeCategoryManager->update($category3);
 
         $this->addReference('taskCategory-General', $category1);
@@ -53,6 +56,7 @@ class LoadTaskData extends AbstractFixture implements OrderedFixtureInterface, C
         $item1->setJobType('mailer');
         $item1->setFormServiceName('abc.workflow.task.form.mailer');
         $item1->setCategory($category1);
+        $item1->setIcon('send');
         $taskTypeManager->update($item1);
     }
 }

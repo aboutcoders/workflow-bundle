@@ -25,6 +25,17 @@ interface TaskTypeCategoryInterface
     /**
      * @return string
      */
+    public function getIcon();
+
+    /**
+     * @param string $icon
+     * @return TaskType
+     */
+    public function setIcon($icon);
+
+    /**
+     * @return string
+     */
     public function getSlug();
 
     /**

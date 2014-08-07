@@ -22,6 +22,11 @@ class TaskTypeCategory implements TaskTypeCategoryInterface
     /**
      * @var string
      */
+    protected $icon = "";
+
+    /**
+     * @var string
+     */
     protected $slug;
 
     /**
@@ -54,6 +59,25 @@ class TaskTypeCategory implements TaskTypeCategoryInterface
     {
         return $this->name;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
 
     /**
      * {@inheritdoc}

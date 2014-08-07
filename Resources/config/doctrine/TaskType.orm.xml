@@ -8,6 +8,7 @@
             <generator strategy="AUTO"/>
         </id>
         <field name="name" type="string" length="255" nullable="false"/>
+        <field name="icon" type="string" length="255" nullable="true"/>
         <field name="jobType" column="job_type" type="string" length="255" nullable="false"/>
         <field name="formServiceName" column="form_service_name" type="string" length="255" nullable="true"/>
         <many-to-one field="category" target-entity="Abc\Bundle\WorkflowBundle\Entity\TaskTypeCategory">
