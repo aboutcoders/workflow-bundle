@@ -70,3 +70,14 @@ Display workflow configuration GUI
 {{ workflow_configuration(workflowEntity) }}
 ```
 
+Display workflow history GUI
+
+``` twig
+{{ workflow_history(workflowEntity) }}
+```
+
+Get workflow history via AJAX
+
+``` twig
+{{ path('execution_history', { 'id': workflowId }) }}
+```
