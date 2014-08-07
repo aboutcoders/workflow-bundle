@@ -27,7 +27,7 @@ class TaskTypeCategory implements TaskTypeCategoryInterface
     /**
      * @var ArrayCollection
      */
-    protected $executions;
+    protected $types;
 
     /**
      * {@inheritdoc}

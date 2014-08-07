@@ -12,14 +12,14 @@
                         <div class="col-md-3">
                             <ul class="nav nav-pills nav-stacked" id="taskCatTabs">
                                 {% for category in categories %}
-                                    <li><a href="#{{ category.slug }}" data-toggle="pill">{{ category.name }}</a></li>
+                                    <li class="{% if loop.first %}active{% endif %}"><a href="#{{ category.slug }}" data-toggle="pill">{{ category.name }}</a></li>
                                 {% endfor %}
                             </ul>
                         </div>
                         <div class="col-md-9">
                             <div class="tab-content">
                                 {% for category in categories %}
-                                    <div class="tab-pane" id="{{ category.slug }}">
+                                    <div class="tab-pane {% if loop.first %}active{% endif %}" id="{{ category.slug }}">
                                         {% for type in category.types %}
                                             <a href="{{ path('task_new', { 'id': entity.id, 'type': type.id }) }}"
                                                class="btn btn-primary btn-lg btn-block new-task">{{ type.name }}</a>
