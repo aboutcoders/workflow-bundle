@@ -12,6 +12,7 @@
         <field name="slug" type="string" length="255" unique="true">
             <gedmo:slug  fields="name" unique="true" style="camel" updatable="false" separator="_" />
         </field>
+        <one-to-many field="types" target-entity="Abc\Bundle\WorkflowBundle\Entity\TaskType" mapped-by="category" />
     </entity>
 
 </doctrine-mapping>

@@ -8,11 +8,27 @@
                     <h4 class="modal-title" id="addTaskModalLabel">{{ 'Select task  type'|trans }}</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="well" style="max-width: 400px; margin: 0 auto 10px;">
-                        {% for type in types %}
-                            <a href="{{ path('task_new', { 'id': entity.id, 'type': type.id }) }}"
-                               class="btn btn-primary btn-lg btn-block new-task">{{ type.name }}</a>
-                        {% endfor %}
+                    <div class="row">
+                        <div class="col-md-3">
+                            <ul class="nav nav-pills nav-stacked" id="taskCatTabs">
+                                {% for category in categories %}
+                                    <li><a href="#{{ category.slug }}" data-toggle="pill">{{ category.name }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="tab-content">
+                                {% for category in categories %}
+                                    <div class="tab-pane" id="{{ category.slug }}">
+                                        {% for type in category.types %}
+                                            <a href="{{ path('task_new', { 'id': entity.id, 'type': type.id }) }}"
+                                               class="btn btn-primary btn-lg btn-block new-task">{{ type.name }}</a>
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <div class="modal-footer">

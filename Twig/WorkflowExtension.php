@@ -3,6 +3,7 @@ namespace Abc\Bundle\WorkflowBundle\Twig;
 
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
+use Abc\Bundle\WorkflowBundle\Model\TaskTypeCategoryManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskTypeManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -31,18 +32,21 @@ class WorkflowExtension extends \Twig_Extension
 
     public function workflowConfiguration(WorkflowInterface $workflow)
     {
-        $taskManager    = $this->getTaskManager();
-        $tasTypeManager = $this->getTaskTypeManager();
+        $taskManager            = $this->getTaskManager();
+        $tasTypeManager         = $this->getTaskTypeManager();
+        $tasTypeCategoryManager = $this->getTaskTypeCategoryManager();
 
-        $types = $tasTypeManager->findAll();
-        $tasks = $taskManager->findWorkflowTasks($workflow->getId());
+        $types      = $tasTypeManager->findAll();
+        $categories = $tasTypeCategoryManager->findAll();
+        $tasks      = $taskManager->findWorkflowTasks($workflow->getId());
 
         return $this->container->get('templating')
             ->render("AbcWorkflowBundle:Task:configureWorkflow.html.twig",
                 array(
-                    'entity' => $workflow,
-                    'types'  => $types,
-                    'tasks'  => $tasks
+                    'entity'     => $workflow,
+                    'types'      => $types,
+                    'tasks'      => $tasks,
+                    'categories' => $categories,
                 )
             );
     }
@@ -80,6 +84,14 @@ class WorkflowExtension extends \Twig_Extension
     protected function getTaskTypeManager()
     {
         return $this->container->get('abc.workflow.task_type_manager');
+    }
+
+    /**
+     * @return TaskTypeCategoryManagerInterface
+     */
+    protected function getTaskTypeCategoryManager()
+    {
+        return $this->container->get('abc.workflow.task_type_category_manager');
     }
 
     /**

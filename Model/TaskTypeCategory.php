@@ -2,6 +2,8 @@
 
 namespace Abc\Bundle\WorkflowBundle\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * TaskTypeCategory
  */
@@ -21,6 +23,11 @@ class TaskTypeCategory implements TaskTypeCategoryInterface
      * @var string
      */
     protected $slug;
+
+    /**
+     * @var ArrayCollection
+     */
+    protected $executions;
 
     /**
      * {@inheritdoc}
@@ -55,6 +62,33 @@ class TaskTypeCategory implements TaskTypeCategoryInterface
     {
         return $this->slug;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTypes()
+    {
+        return $this->types;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addType(TaskTypeInterface $type)
+    {
+        $this->types[] = $type;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function removeType(TaskTypeInterface $type)
+    {
+        $this->types->removeElement($type);
+    }
+
 
     /**
      * {@inheritdoc}
