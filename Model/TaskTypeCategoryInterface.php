@@ -19,4 +19,9 @@ interface TaskTypeCategoryInterface
      * @return TaskType
      */
     public function setName($name);
+
+    /**
+     * @return string
+     */
+    public function getSlug();
 }

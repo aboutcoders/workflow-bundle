@@ -2,6 +2,7 @@
 
 namespace Abc\Bundle\WorkflowBundle\DataFixtures\ORM;
 
+use Abc\Bundle\WorkflowBundle\Model\TaskTypeCategoryManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskTypeManagerInterface;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
@@ -29,10 +30,29 @@ class LoadTaskData extends AbstractFixture implements OrderedFixtureInterface, C
         /** @var TaskTypeManagerInterface $taskTypeManager */
         $taskTypeManager = $this->container->get('abc.workflow.task_type_manager');
 
+        /** @var TaskTypeCategoryManagerInterface $taskTypeCategoryManager */
+        $taskTypeCategoryManager = $this->container->get('abc.workflow.task_type_category_manager');
+
+        $category1 = $taskTypeCategoryManager->create();
+        $category1->setName('General');
+        $taskTypeCategoryManager->update($category1);
+        $category2 = $taskTypeCategoryManager->create();
+        $category2->setName('Transcoding');
+        $taskTypeCategoryManager->update($category2);
+        $category3 = $taskTypeCategoryManager->create();
+        $category3->setName('Export');
+        $taskTypeCategoryManager->update($category3);
+
+        $this->addReference('taskCategory-General', $category1);
+        $this->addReference('taskCategory-Transcoding', $category2);
+        $this->addReference('taskCategory-Export', $category3);
+
+
         $item1 = $taskTypeManager->create();
         $item1->setName('Send mail');
         $item1->setJobType('mailer');
         $item1->setFormServiceName('abc.workflow.task.form.mailer');
+        $item1->setCategory($category1);
         $taskTypeManager->update($item1);
     }
 }

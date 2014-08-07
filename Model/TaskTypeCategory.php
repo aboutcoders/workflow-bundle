@@ -18,6 +18,11 @@ class TaskTypeCategory implements TaskTypeCategoryInterface
     protected $name;
 
     /**
+     * @var string
+     */
+    protected $slug;
+
+    /**
      * {@inheritdoc}
      */
     public function getId()
@@ -43,6 +48,13 @@ class TaskTypeCategory implements TaskTypeCategoryInterface
         return $this->name;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
 
     /**
      * {@inheritdoc}
