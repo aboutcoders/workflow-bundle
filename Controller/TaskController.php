@@ -3,7 +3,6 @@
 namespace Abc\Bundle\WorkflowBundle\Controller;
 
 use Abc\Bundle\WorkflowBundle\Entity\Task;
-use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Form\TaskType;
 use Abc\Bundle\WorkflowBundle\Model\TaskInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
@@ -62,7 +61,7 @@ class TaskController extends BaseController
 
         if(!isset($data['typeId']))
         {
-            throw $this->createNotFoundException('Unable to find Task type for Task entity.');
+            throw $this->createNotFoundException('Unable to find task type for task');
         }
 
         $taskType = $this->findTaskType($data['typeId']);
@@ -126,11 +125,6 @@ class TaskController extends BaseController
 
         if($editForm->isValid())
         {
-            //Workaround to update serializable parameters
-            if($entity->getParameters())
-            {
-                $entity->setParameters(clone($entity->getParameters()));
-            }
             $taskManager->update($entity);
 
             return $this->render('AbcWorkflowBundle:Task:editSuccess.html.twig', array('task' => $entity));
@@ -221,10 +215,10 @@ class TaskController extends BaseController
     /**
      * Creates a form to create a Task entity.
      *
-     * @param Task $entity The entity
+     * @param TaskInterface $entity The entity
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createCreateForm(Task $entity)
+    private function createCreateForm(TaskInterface $entity)
     {
         $form = $this->createForm(
             new TaskType($this->container),

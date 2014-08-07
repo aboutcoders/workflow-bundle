@@ -2,6 +2,8 @@
 
 namespace Abc\Bundle\WorkflowBundle\Form;
 
+use Abc\Bundle\WorkflowBundle\Entity\Task;
+use Abc\Bundle\WorkflowBundle\Model\TaskInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
@@ -28,6 +30,11 @@ class TaskType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var Task $task */
+        $task = isset($options['data']) ? $options['data'] : null;
+        $task->setTypeId($task->getType() == null ? null : $task->getType()->getId());
+        $task->setWorkflowId($task->getWorkflow() == null ? null : $task->getWorkflow()->getId());
+
         $builder->add('workflowId', 'hidden');
         $builder->add('typeId', 'hidden');
         $builder->add('description', 'text', array('label' => 'Task description'));
