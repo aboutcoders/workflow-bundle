@@ -4,7 +4,7 @@
             {% for category in categories %}
                 <li class="{% if loop.first %}active{% endif %}"><a href="#{{ category.slug }}"
                                                                     data-toggle="pill"><span
-                                class="glyphicon glyphicon-{{ category.icon }}"></span>{{ category.name }}
+                                class="glyphicon glyphicon-{{ category.icon }}"></span> {{ category.name }}
                     </a></li>
             {% endfor %}
             <li><a href="#all" data-toggle="pill">{{ 'All'|trans }}</a></li>
