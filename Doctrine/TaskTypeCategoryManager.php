@@ -47,7 +47,7 @@ class TaskTypeCategoryManager extends BaseTaskTypeCategoryManager
      * Updates a TaskTypeCategory
      *
      * @param TaskTypeCategoryInterface $item
-     * @param Boolean           $andFlush Whether to flush the changes (default true)
+     * @param Boolean                   $andFlush Whether to flush the changes (default true)
      */
     public function update(TaskTypeCategoryInterface $item, $andFlush = true)
     {
@@ -84,6 +84,13 @@ class TaskTypeCategoryManager extends BaseTaskTypeCategoryManager
         return $this->repository->find($id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function findBySlug($slug)
+    {
+        return $this->repository->findOneBy(array('slug' => $slug));
+    }
 
     /**
      * {@inheritDoc}

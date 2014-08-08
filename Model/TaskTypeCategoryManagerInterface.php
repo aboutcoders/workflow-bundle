@@ -51,6 +51,14 @@ interface TaskTypeCategoryManagerInterface
     public function findById($id);
 
     /**
+     * Finds a TaskTypeCategory by the given slug.
+     *
+     * @param string $slug
+     * @return TaskTypeCategoryInterface
+     */
+    public function findBySlug($slug);
+
+    /**
      * Returns a collection with all instances.
      *
      * @return \Traversable

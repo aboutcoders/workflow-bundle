@@ -117,4 +117,16 @@ class TaskTypeCategoryManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->subject->findBy($criteria);
     }
+
+    public function testFindBySlug()
+    {
+        $slug     = 'ABC';
+        $criteria = array('slug' => $slug);
+
+        $this->repository->expects($this->once())
+            ->method('findOneBy')
+            ->with($criteria);
+
+        $this->subject->findBySlug($slug);
+    }
 }
