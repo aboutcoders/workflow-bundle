@@ -10,8 +10,11 @@ abstract class WorkflowManager implements WorkflowManagerInterface
     public function create()
     {
         $class = $this->getClass();
-        $user  = new $class;
+        /** @var WorkflowInterface $workflow */
+        $workflow = new $class;
+        $workflow->setCreateDirectory(true);
+        $workflow->setRemoveDirectory(true);
 
-        return $user;
+        return $workflow;
     }
 }

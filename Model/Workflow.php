@@ -39,6 +39,18 @@ class Workflow implements WorkflowInterface
     protected $disabled;
 
     /**
+     * @var boolean
+     * @Expose
+     */
+    protected $createDirectory;
+
+    /**
+     * @var boolean
+     * @Expose
+     */
+    protected $removeDirectory;
+
+    /**
      * @var ArrayCollection
      * @SerializedName("tasks")
      * @Expose
@@ -137,6 +149,38 @@ class Workflow implements WorkflowInterface
     public function setDisabled($disabled)
     {
         $this->disabled = $disabled;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCreateDirectory()
+    {
+        return $this->createDirectory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setCreateDirectory($createDirectory)
+    {
+        $this->createDirectory = $createDirectory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getRemoveDirectory()
+    {
+        return $this->removeDirectory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setRemoveDirectory($removeDirectory)
+    {
+        $this->removeDirectory = $removeDirectory;
     }
 
     /**

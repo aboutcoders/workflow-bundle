@@ -12,6 +12,8 @@
         <field name="name" column="name" type="string" length="255"/>
         <field name="description" column="description" type="text" nullable="true"/>
         <field name="disabled" column="is_disabled" type="boolean" />
+        <field name="createDirectory" column="create_directory" type="boolean" />
+        <field name="removeDirectory" column="remove_directory" type="boolean" />
         <field name="createdAt" column="created_at" type="datetime">
             <gedmo:timestampable on="create"/>
         </field>

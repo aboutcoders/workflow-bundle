@@ -26,7 +26,18 @@ class WorkflowType extends AbstractType
                 'label'       => 'Disable this workflow',
             )
         );
-
+        $builder->add('createDirectory', null,
+            array(
+                'widget_type' => 'inline',
+                'label'       => 'Create working directory for execution',
+            )
+        );
+        $builder->add('removeDirectory', null,
+            array(
+                'widget_type' => 'inline',
+                'label'       => 'Remove working directory after execution',
+            )
+        );
     }
 
     /**

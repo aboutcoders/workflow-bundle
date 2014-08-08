@@ -27,5 +27,7 @@ class WorkflowManagerTest extends \PHPUnit_Framework_TestCase
         $entity = $this->subject->create();
 
         $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Entity\Workflow', $entity);
+        $this->assertTrue($entity->getCreateDirectory());
+        $this->assertTrue($entity->getRemoveDirectory());
     }
 }

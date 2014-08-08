@@ -13,6 +13,7 @@ interface WorkflowInterface extends \Serializable
 
     /**
      * @param int $id
+     * @return void
      */
     public function setId($id);
 
@@ -23,6 +24,7 @@ interface WorkflowInterface extends \Serializable
 
     /**
      * @param string $name
+     * @return void
      */
     public function setName($name);
 
@@ -33,6 +35,7 @@ interface WorkflowInterface extends \Serializable
 
     /**
      * @param string $description
+     * @return void
      */
     public function setDescription($description);
 
@@ -43,8 +46,39 @@ interface WorkflowInterface extends \Serializable
 
     /**
      * @param boolean $disabled
+     * @return void
      */
     public function setDisabled($disabled);
+
+    /**
+     * Whether to create a working directory for the execution
+     *
+     * @return boolean
+     */
+    public function getCreateDirectory();
+
+    /**
+     * Set whether to create a working directory for the execution
+     *
+     * @param boolean $createDirectory
+     * @return void
+     */
+    public function setCreateDirectory($createDirectory);
+
+    /**
+     * Whether to destroy the working directory after the execution
+     *
+     * @return boolean
+     */
+    public function getRemoveDirectory();
+
+    /**
+     * Set whether to remove the working directory after the execution
+     *
+     * @param boolean $removeDirectory
+     * @return void
+     */
+    public function setRemoveDirectory($removeDirectory);
 
     /**
      * Get all tasks
@@ -57,6 +91,7 @@ interface WorkflowInterface extends \Serializable
      * Add Task
      *
      * @param TaskInterface $task
+     * @return void
      */
     public function addTask(TaskInterface $task);
 
@@ -64,11 +99,12 @@ interface WorkflowInterface extends \Serializable
      * Remove Tasks
      *
      * @param TaskInterface $task
+     * @return void
      */
     public function removeTask(TaskInterface $task);
 
     /**
-     * Get all workflow executions
+     * Get all executions
      *
      * @return ArrayCollection
      */
@@ -76,12 +112,14 @@ interface WorkflowInterface extends \Serializable
 
     /**
      * @param ExecutionInterface $execution
-     * @return Workflow
+     * @return WorkflowInterface
+     * @return void
      */
     public function addExecution(ExecutionInterface $execution);
 
     /**
      * @param ExecutionInterface $execution
+     * @return void
      */
     public function removeExecution(ExecutionInterface $execution);
 
@@ -97,6 +135,7 @@ interface WorkflowInterface extends \Serializable
 
     /**
      * @param \DateTime $updatedAt
+     * @return void
      */
     public function setUpdatedAt($updatedAt);
 
@@ -111,6 +150,7 @@ interface WorkflowInterface extends \Serializable
      * Set the index of the currently executed task (must be serializable)
      *
      * @param int $index
+     * @return void
      */
     public function setIndex($index);
 
@@ -125,6 +165,7 @@ interface WorkflowInterface extends \Serializable
      * Set parameters of this workflow (must be serializable)
      *
      * @param \Serializable|null $parameters
+     * @return void
      */
     public function setParameters(\Serializable $parameters = null);
 
