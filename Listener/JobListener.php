@@ -12,7 +12,7 @@ use Psr\Log\NullLogger;
 /**
  * @author Hannes Schulz <schulz@daten-bahn.de>
  */
-class WorkflowFilesystemListener
+class JobListener
 {
     /** @var Filesystem */
     protected $filesystem;

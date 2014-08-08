@@ -3,7 +3,7 @@
 namespace Abc\Bundle\WorkflowBundle\Tests\Listener;
 
 use Abc\Bundle\JobBundle\Event\ReportEvent;
-use Abc\Bundle\WorkflowBundle\Listener\WorkflowFilesystemListener;
+use Abc\Bundle\WorkflowBundle\Listener\JobListener;
 use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Context\Context;
 use Abc\Bundle\WorkflowBundle\Model\Workflow;
@@ -13,7 +13,7 @@ use Abc\Filesystem\Filesystem;
 /**
  * @author Hannes Schulz <schulz@daten-bahn.de>
  */
-class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
+class JobListenerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Filesystem|\PHPUnit_Framework_MockObject_MockObject */
     protected $filesystem;
@@ -23,7 +23,7 @@ class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
     protected $rootJob;
     /** @var Context */
     protected $context;
-    /** @var WorkflowFilesystemListener */
+    /** @var JobListener */
     protected $subject;
 
     public function setUp()
@@ -41,7 +41,7 @@ class WorkflowFilesystemListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getContext')
             ->will($this->returnValue($this->context));
 
-        $this->subject = new WorkflowFilesystemListener($this->filesystem);
+        $this->subject = new JobListener($this->filesystem);
     }
 
     /**

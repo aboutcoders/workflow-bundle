@@ -2,11 +2,6 @@
 
 namespace Abc\Bundle\WorkflowBundle\Tests\Integration;
 
-use Abc\Bundle\JobBundle\Job\Context\Context;
-use Abc\Bundle\JobBundle\Model\Job;
-use Abc\Bundle\WorkflowBundle\Listener\WorkflowFilesystemListener;
-use Abc\Bundle\WorkflowBundle\Model\Workflow;
-use Abc\File\FilesystemInterface;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -72,5 +67,12 @@ class ServiceContainerTest extends KernelTestCase
         $subject = $this->container->get('abc.workflow.executable.workflow');
 
         $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutable', $subject);
+    }
+
+    public function testJobListener()
+    {
+        $subject = $this->container->get('abc.workflow.job_listener');
+
+        $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Listener\JobListener', $subject);
     }
 }
