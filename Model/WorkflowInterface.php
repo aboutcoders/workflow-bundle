@@ -127,4 +127,15 @@ interface WorkflowInterface extends \Serializable
      * @param \Serializable|null $parameters
      */
     public function setParameters(\Serializable $parameters = null);
+
+    /**
+     * @return TaskTypeCategory
+     */
+    public function getCategory();
+
+    /**
+     * @param TaskTypeCategoryInterface $category
+     * @return void
+     */
+    public function setCategory(TaskTypeCategoryInterface $category);
 }

@@ -19,5 +19,8 @@
             <gedmo:timestampable on="update"/>
         </field>
         <one-to-many field="executions" target-entity="Abc\Bundle\WorkflowBundle\Entity\Execution" mapped-by="workflow" />
+        <many-to-one field="category" target-entity="Abc\Bundle\WorkflowBundle\Entity\TaskTypeCategory">
+            <join-column name="category_id" referenced-column-name="id" nullable="true"/>
+        </many-to-one>
     </entity>
 </doctrine-mapping>

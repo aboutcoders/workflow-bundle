@@ -16,6 +16,9 @@ class WorkflowType extends AbstractType
     {
         $builder->add('name');
         $builder->add('description');
+        $builder->add('category', null, array(
+            'empty_value' => true
+        ));
         $builder->add('disabled', null,
             array(
                 'required'    => false,

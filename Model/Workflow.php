@@ -70,6 +70,11 @@ class Workflow implements WorkflowInterface
     protected $parameters;
 
     /**
+     * @var TaskTypeCategoryInterface
+     */
+    protected $category;
+
+    /**
      * {@inheritDoc}
      */
     public function getId()
@@ -254,6 +259,22 @@ class Workflow implements WorkflowInterface
     public function setParameters(\Serializable $parameters = null)
     {
         $this->parameters = $parameters;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCategory(TaskTypeCategoryInterface $category)
+    {
+        $this->category = $category;
     }
 
     /**
