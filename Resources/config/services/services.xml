@@ -31,7 +31,7 @@
         </service>
 
 
-        <service id="abc.workflow.job_listener" class="Abc\Bundle\WorkflowBundle\Listener\WorkflowFilesystemListener" public="true">
+        <service id="abc.workflow.job_listener" class="Abc\Bundle\WorkflowBundle\Listener\JobListener" public="true">
             <argument type="service" id="abc.workflow.filesystem" />
             <argument type="service" id="logger" on-invalid="null"/>
 
