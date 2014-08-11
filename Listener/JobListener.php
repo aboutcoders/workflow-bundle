@@ -41,6 +41,8 @@ class JobListener
             return;
         }
 
+        $this->logger->debug('Prepare job {ticket}', array('ticket' => $job->getTicket()));
+
         $workflow = $job->getRootJob()->getParameters();
         if(!$workflow instanceof WorkflowInterface)
         {
@@ -58,6 +60,8 @@ class JobListener
         {
             try
             {
+                $this->logger->debug('Add filesystem to context of job {ticket}', array('ticket' => $job->getTicket()));
+
                 $filesystem = $this->filesystem->createFilesystem($job->getRootJob()->getTicket(), true);
                 $job->getContext()->set('filesystem', $filesystem);
             }
@@ -93,6 +97,8 @@ class JobListener
         {
             try
             {
+                $this->logger->debug('Remove filesystem of job {ticket}', array('ticket' => $event->getReport()->getTicket()));
+
                 $this->filesystem->remove($event->getReport()->getTicket());
             }
             catch(\Exception $e)

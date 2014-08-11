@@ -36,6 +36,7 @@
             <argument type="service" id="logger" on-invalid="null"/>
 
             <tag name="abc.job.event_listener" event="abc.job.prepare" method="onPrepare"/>
+            <tag name="abc.job.event_listener" event="abc.job.report" method="onReport"/>
             <tag name="monolog.logger" channel="abc.workflow"/>
         </service>
 

@@ -28,12 +28,14 @@ class WorkflowType extends AbstractType
         );
         $builder->add('createDirectory', null,
             array(
+                'required'    => false,
                 'widget_type' => 'inline',
                 'label'       => 'Create working directory for execution',
             )
         );
         $builder->add('removeDirectory', null,
             array(
+                'required'    => false,
                 'widget_type' => 'inline',
                 'label'       => 'Remove working directory after execution',
             )
