@@ -2,6 +2,7 @@
 
 namespace Abc\Bundle\WorkflowBundle\Doctrine;
 
+use Abc\Bundle\JobBundle\Job\ManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionInterface;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManager as BaseExecutionManager;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -19,15 +20,19 @@ class ExecutionManager extends BaseExecutionManager
     /** @var ObjectRepository */
     protected $repository;
 
+    protected $jobManager;
+
 
     /**
-     * @param ObjectManager $om
-     * @param string        $class
+     * @param ObjectManager    $om
+     * @param string           $class
+     * @param ManagerInterface $jobManager
      */
-    public function __construct(ObjectManager $om, $class)
+    public function __construct(ObjectManager $om, $class, ManagerInterface $jobManager)
     {
         $this->objectManager = $om;
         $this->repository    = $om->getRepository($class);
+        $this->jobManager    = $jobManager;
 
         $metadata    = $om->getClassMetadata($class);
         $this->class = $metadata->getName();
@@ -82,12 +87,23 @@ class ExecutionManager extends BaseExecutionManager
      */
     public function findHistory($workflowId, array $orderBy = array('createdAt' => 'DESC'), $limit = 20, $offset = null)
     {
+
         $executions = $this->findBy(
             array('workflowId' => $workflowId),
             $orderBy,
             $limit,
             $offset
         );
+
+        foreach ($executions as $key => $execution) {
+            if ($execution->getStatus() != null) {
+                //Dynamically set execution data
+                $report = $this->jobManager->getReport($execution->getTicket());
+                $execution->setStatus($report->getStatus());
+                $execution->setExecutionTime($report->getExecutionTime());
+                $executions[$key] = $execution;
+            }
+        }
 
         return $executions;
     }

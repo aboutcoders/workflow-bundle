@@ -23,6 +23,7 @@
                  class="%abc.workflow.execution_manager.class%" public="false">
             <argument type="service" id="abc.workflow.entity_manager"/>
             <argument>%abc.workflow.model.execution.class%</argument>
+            <argument type="service" id="abc.job.manager"/>
         </service>
 
     </services>
