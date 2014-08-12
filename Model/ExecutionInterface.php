@@ -1,6 +1,8 @@
 <?php
 namespace Abc\Bundle\WorkflowBundle\Model;
 
+use Abc\Bundle\JobBundle\Job\Status;
+
 interface ExecutionInterface
 {
     /**
@@ -32,4 +34,27 @@ interface ExecutionInterface
      * @param WorkflowInterface $workflow
      */
     public function setWorkflow(WorkflowInterface $workflow);
-} 
+
+    /**
+     * @param Status $status
+     * @return void
+     */
+    public function setStatus(Status $status);
+
+    /**
+     * @return Status
+     */
+    public function getStatus();
+
+    /**
+     * @param double $status The execution time in microseconds
+     * @return void
+     */
+    public function setExecutionTime($status);
+
+    /**
+     * @return double Execution time in microseconds
+     */
+    public function getExecutionTime();
+
+}

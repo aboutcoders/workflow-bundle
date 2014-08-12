@@ -2,6 +2,7 @@
 
 namespace Abc\Bundle\WorkflowBundle\Model;
 
+use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\JobBundle\Model\JobInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation\ExclusionPolicy;
@@ -44,6 +45,20 @@ class Execution implements ExecutionInterface
      * @var string
      */
     protected $ticket;
+
+    /**
+     * @var Status
+     * @Type("string")
+     * @Expose
+     */
+    protected $status;
+
+    /**
+     * @var double
+     * @Type("double")
+     * @Expose
+     */
+    protected $executionTime;
 
     /**
      * {@inheritDoc}
@@ -123,5 +138,37 @@ class Execution implements ExecutionInterface
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setStatus(Status $status)
+    {
+        $this->status = $status;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExecutionTime($executionTime)
+    {
+        $this->executionTime = $executionTime;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExecutionTime()
+    {
+        return $this->executionTime;
     }
 }
