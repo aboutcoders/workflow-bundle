@@ -60,6 +60,11 @@ class Execution implements ExecutionInterface
      */
     protected $executionTime;
 
+    function __construct()
+    {
+        $this->status = Status::REQUESTED();
+    }
+
     /**
      * {@inheritDoc}
      */
