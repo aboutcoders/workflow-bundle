@@ -2,9 +2,11 @@
     <table class="table">
         <thead>
         <tr>
-            <th>{{ 'Status'|trans }}</th>
+            <th>{{ 'Id'|trans }}</th>
             <th>{{ 'Ticket'|trans }}</th>
             <th>{{ 'Started'|trans }}</th>
+            <th>{{ 'Status'|trans }}</th>
+            <th>{{ 'Execution time'|trans }}</th>
         </tr>
         </thead>
         <tbody>
@@ -15,6 +17,8 @@
                 </td>
                 <td>{{ item.ticket }}</td>
                 <td>{{ item.createdAt|date('Y-m-d H:i:s') }}</td>
+                <td>{{ item.status }}</td>
+                <td>{{ item.executionTime }}</td>
             </tr>
         {% endfor %}
         </tbody>
