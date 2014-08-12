@@ -19,7 +19,7 @@ class ExecutionManager extends BaseExecutionManager
     protected $class;
     /** @var ObjectRepository */
     protected $repository;
-
+    /** @var ManagerInterface */
     protected $jobManager;
 
 
@@ -96,7 +96,7 @@ class ExecutionManager extends BaseExecutionManager
         );
 
         foreach ($executions as $key => $execution) {
-            if ($execution->getStatus() != null) {
+            if ($execution->getExecutionTime() == null) {
                 //Dynamically set execution data
                 $report = $this->jobManager->getReport($execution->getTicket());
                 $execution->setStatus($report->getStatus());
@@ -122,7 +122,14 @@ class ExecutionManager extends BaseExecutionManager
      */
     public function findById($id)
     {
-        return $this->repository->find($id);
+        $execution = $this->repository->find($id);
+        if ($execution->getExecutionTime() == null) {
+            //Dynamically set execution data
+            $report = $this->jobManager->getReport($execution->getTicket());
+            $execution->setStatus($report->getStatus());
+            $execution->setExecutionTime($report->getExecutionTime());
+        }
+        return $execution;
     }
 
     /**
