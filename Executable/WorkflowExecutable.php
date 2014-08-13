@@ -2,6 +2,7 @@
 
 namespace Abc\Bundle\WorkflowBundle\Executable;
 
+use Abc\Bundle\JobBundle\Job\Exception\TerminateException;
 use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Executable;
 use Abc\Bundle\JobBundle\Job\Status;
@@ -99,7 +100,7 @@ class WorkflowExecutable implements Executable
             if ($job->getCallerJob()->getStatus() != Status::PROCESSED()) {
                 $job->getContext()->get('logger')->debug('Child job {ticket} terminated with status {status}', array('ticket', $job->getCallerJob()->getTicket(), 'status' => $job->getCallerJob()->getStatus()->getName()));
 
-                throw new \Exception('Abort execution (child job terminated without success)');
+                throw new TerminateException('Abort execution (a child job terminated unsuccessfully)');
             }
 
             $job->getContext()->get('logger')->debug('Callback by ticket {ticket}', array('ticket' => $job->getCallerJob()->getTicket()));
