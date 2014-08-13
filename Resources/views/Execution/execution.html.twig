@@ -36,3 +36,10 @@
         <samp style="font-size: 11px;">{{ report.log|nl2br }}</samp>
     </div>
 </div>
+{% javascripts
+"bundles/abcworkflow/js/workflow-history.js"
+filter='cssrewrite'
+filter='?jsmin'
+output="js/compiled/global/main.js" %}
+<script src="{{ asset_url }}"></script>
+{% endjavascripts %}
