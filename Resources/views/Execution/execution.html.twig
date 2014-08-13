@@ -7,12 +7,10 @@
 <table class="table">
     <tbody>
     <tr>
-        <th>{{ 'Number'|trans }}</th>
-        <td>{{ include('AbcWorkflowBundle:Execution:executionStatusLink.html.twig', { item: entity }) }}</td>
-    </tr>
-    <tr>
-        <th>{{ 'Status'|trans }}</th>
-        <td>{{ report.status }}</td>
+        <td colspan="2">
+            {{ include('AbcWorkflowBundle:Execution:executionStatusLink.html.twig', { item: entity }) }} {{ report.status }}
+            <a href="#" class="btn btn-xs history-details"
+               data-url="{{ path('workflow_execution', { 'id': entity.id }) }}"> {{ 'Refresh'|trans }}</a></td>
     </tr>
     <tr>
         <th>{{ 'Execution time'|trans }}</th>

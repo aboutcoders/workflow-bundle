@@ -7,6 +7,7 @@
             <th>{{ 'Started'|trans }}</th>
             <th>{{ 'Status'|trans }}</th>
             <th>{{ 'Execution time'|trans }}</th>
+            <th>{{ 'Details'|trans }}</th>
         </tr>
         </thead>
         <tbody>
@@ -19,6 +20,8 @@
                 <td>{{ item.createdAt|date('Y-m-d H:i:s') }}</td>
                 <td>{{ item.status }}</td>
                 <td>{{ item.executionTime }}</td>
+                <td><a href="#" class="btn btn-xs history-details"
+                       data-url="{{ path('workflow_execution', { 'id': item.id }) }}"> {{ 'Show'|trans }}</a></td>
             </tr>
         {% endfor %}
         </tbody>
