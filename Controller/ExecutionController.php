@@ -48,7 +48,9 @@ class ExecutionController extends BaseController
 
         $execution = $this->getExecutionManager()->execute($ticket, $workflow);
 
-        return $this->redirect($this->generateUrl('workflow_execution', array('id' => $execution->getId())));
+        $this->get('session')->getFlashBag()->add('info', 'Workflow execution triggered (#' . $execution->getExecutionNumber() . '). Check workflow history for details');
+
+        return $this->redirect($this->generateUrl('workflow_show', array('id' => $execution->getWorkflow()->getId())));
     }
 
     /**
