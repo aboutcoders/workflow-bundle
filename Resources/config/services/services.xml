@@ -33,6 +33,7 @@
 
         <service id="abc.workflow.job_listener" class="Abc\Bundle\WorkflowBundle\Listener\JobListener" public="true">
             <argument type="service" id="abc.workflow.filesystem" />
+            <argument type="service" id="abc.workflow.execution_manager" />
             <argument type="service" id="logger" on-invalid="null"/>
 
             <tag name="abc.job.event_listener" event="abc.job.prepare" method="onPrepare"/>

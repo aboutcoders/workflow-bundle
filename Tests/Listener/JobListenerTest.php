@@ -3,9 +3,13 @@
 namespace Abc\Bundle\WorkflowBundle\Tests\Listener;
 
 use Abc\Bundle\JobBundle\Event\ReportEvent;
+use Abc\Bundle\JobBundle\Job\Report\Report;
+use Abc\Bundle\JobBundle\Job\Status;
+use Abc\Bundle\WorkflowBundle\Entity\Execution;
 use Abc\Bundle\WorkflowBundle\Listener\JobListener;
 use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Context\Context;
+use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\Workflow;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Abc\Filesystem\Filesystem;
@@ -25,13 +29,16 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
     protected $context;
     /** @var JobListener */
     protected $subject;
+    /** @var ExecutionManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $executionManager;
 
     public function setUp()
     {
-        $this->filesystem = $this->getMockBuilder('Abc\Filesystem\Filesystem')->disableOriginalConstructor()->getMock();
-        $this->context    = new Context();
-        $this->job        = $this->createJobMock();
-        $this->rootJob    = $this->createJobMock();
+        $this->filesystem       = $this->getMockBuilder('Abc\Filesystem\Filesystem')->disableOriginalConstructor()->getMock();
+        $this->executionManager = $this->getMock('Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface');
+        $this->context          = new Context();
+        $this->job              = $this->createJobMock();
+        $this->rootJob          = $this->createJobMock();
 
         $this->job->expects($this->any())
             ->method('getRootJob')
@@ -41,7 +48,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getContext')
             ->will($this->returnValue($this->context));
 
-        $this->subject = new JobListener($this->filesystem);
+        $this->subject = new JobListener($this->filesystem, $this->executionManager);
     }
 
     /**
@@ -71,27 +78,21 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
 
         $workflowFilesystem = $this->getMockBuilder('Abc\Filesystem\Filesystem')->disableOriginalConstructor()->getMock();
 
-        if($workflow->getCreateDirectory())
-        {
+        if ($workflow->getCreateDirectory()) {
             $this->filesystem->expects($this->once())
                 ->method('createFilesystem')
                 ->with($rootTicket)
                 ->willReturn($workflowFilesystem);
-        }
-        else
-        {
+        } else {
             $this->filesystem->expects($this->never())
                 ->method('createFilesystem');
         }
 
         $this->subject->onPrepare($this->job);
 
-        if($workflow->getCreateDirectory())
-        {
+        if ($workflow->getCreateDirectory()) {
             $this->assertSame($workflowFilesystem, $this->job->getContext()->get('filesystem'));
-        }
-        else
-        {
+        } else {
             $this->assertFalse($this->job->getContext()->has('filesystem'));
         }
     }
@@ -186,8 +187,9 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnReportRemovesFilesystem(WorkflowInterface $workflow)
     {
-        $report = $this->getMock('Abc\Bundle\JobBundle\Job\Report\ReportInterface');
-        $event  = new ReportEvent($report);
+        $report = $this->getReportExpectations();
+
+        $event = new ReportEvent($report);
 
         $ticket = 'ticket';
 
@@ -203,17 +205,32 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getParameters')
             ->willReturn($workflow);
 
-        if($workflow->getRemoveDirectory())
-        {
+        if ($workflow->getRemoveDirectory()) {
             $this->filesystem->expects($this->once())
                 ->method('remove')
                 ->with($ticket);
-        }
-        else
-        {
+        } else {
             $this->filesystem->expects($this->never())
                 ->method('remove');
         }
+
+        $execution = $this->getMock('Abc\Bundle\WorkflowBundle\Model\ExecutionInterface');
+
+        $execution->expects($this->once())
+            ->method('setExecutionTime')
+            ->with(123);
+        $execution->expects($this->once())
+            ->method('setStatus')
+            ->with(Status::PROCESSED());
+
+        $this->executionManager->expects($this->once())
+            ->method('findOneBy')
+            ->with(array('ticket' => $ticket))
+            ->willReturn($execution);
+
+        $this->executionManager->expects($this->once())
+            ->method('update')
+            ->with($execution);
 
         $this->subject->onReport($event);
     }
@@ -224,7 +241,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnReportWithInvalidParameters($parameters = null)
     {
-        $report = $this->getMock('Abc\Bundle\JobBundle\Job\Report\ReportInterface');
+        $report = $this->getReportExpectations();
         $event  = new ReportEvent($report);
 
         $ticket = 'ticket';
@@ -253,7 +270,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnReportSkipsIfNoWorkflow(WorkflowInterface $workflow)
     {
-        $report = $this->getMock('Abc\Bundle\JobBundle\Job\Report\ReportInterface');
+        $report = $this->getReportExpectations();
         $event  = new ReportEvent($report);
 
         $ticket = 'ticket';
@@ -270,7 +287,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnReportCatchesFilesystemExceptions()
     {
-        $report = $this->getMock('Abc\Bundle\JobBundle\Job\Report\ReportInterface');
+        $report = $this->getReportExpectations();
         $event  = new ReportEvent($report);
 
         $report->expects($this->any())
@@ -312,6 +329,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
     public static function createWorkflow($createDirectory, $removeDirectory)
     {
         $workflow = new Workflow();
+        $workflow->setName('testWorkflow');
         $workflow->setCreateDirectory($createDirectory);
         $workflow->setRemoveDirectory($removeDirectory);
 
@@ -324,5 +342,20 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
     private function createJobMock()
     {
         return $this->getMock('Abc\Bundle\JobBundle\Job\Job');
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getReportExpectations()
+    {
+        $report = $this->getMockBuilder('Abc\Bundle\JobBundle\Job\Report\Report')->disableOriginalConstructor()->getMock();
+        $report->expects($this->any())
+            ->method('getExecutionTime')
+            ->willReturn(123);
+        $report->expects($this->any())
+            ->method('getStatus')
+            ->willReturn(Status::PROCESSED());
+        return $report;
     }
 }
