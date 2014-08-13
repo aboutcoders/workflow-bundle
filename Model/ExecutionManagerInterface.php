@@ -9,9 +9,19 @@ interface ExecutionManagerInterface
 {
 
     /**
+     * @param string            $ticket
+     * @param WorkflowInterface $workflow
      * @return ExecutionInterface
      */
-    public function create();
+    public function create($ticket, WorkflowInterface $workflow);
+
+
+    /**
+     * @param string            $ticket
+     * @param WorkflowInterface $workflow
+     * @return ExecutionInterface
+     */
+    public function execute($ticket, WorkflowInterface $workflow);
 
 
     /**

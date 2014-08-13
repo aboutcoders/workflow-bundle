@@ -3,6 +3,7 @@
 namespace Abc\Bundle\WorkflowBundle\Entity;
 
 use Abc\Bundle\JobBundle\Job\ManagerInterface;
+use Abc\Bundle\SequenceBundle\Model\SequenceManagerInterface;
 use Abc\Bundle\WorkflowBundle\Doctrine\ExecutionManager as BaseExecutionManager;
 use Doctrine\ORM\EntityManager;
 
@@ -16,13 +17,18 @@ abstract class ExecutionManager extends BaseExecutionManager
 
 
     /**
-     * @param EntityManager    $em
-     * @param string           $class
-     * @param ManagerInterface $jobManager
+     * @param EntityManager            $em
+     * @param string                   $class
+     * @param ManagerInterface         $jobManager
+     * @param SequenceManagerInterface $sequenceManager
      */
-    public function __construct(EntityManager $em, $class, ManagerInterface $jobManager)
+    public function __construct(
+        EntityManager $em,
+        $class,
+        ManagerInterface $jobManager,
+        SequenceManagerInterface $sequenceManager)
     {
-        parent::__construct($em, $class, $jobManager);
+        parent::__construct($em, $class, $jobManager, $sequenceManager);
         $this->em = $em;
     }
 }

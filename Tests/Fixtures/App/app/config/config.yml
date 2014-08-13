@@ -67,3 +67,6 @@ abc_job:
 abc_workflow:
   db_driver: orm
   filesystem: workflow
+
+abc_sequence:
+  db_driver: orm

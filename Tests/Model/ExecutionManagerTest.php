@@ -2,6 +2,7 @@
 
 namespace Abc\Bundle\WorkflowBundle\Tests\Model;
 
+use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManager;
 
 class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
@@ -22,7 +23,7 @@ class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getClass')
             ->will($this->returnValue('Abc\Bundle\WorkflowBundle\Entity\Execution'));
 
-        $entity = $this->subject->create();
+        $entity = $this->subject->create('ABC', new Workflow());
 
         $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Entity\Execution', $entity);
     }

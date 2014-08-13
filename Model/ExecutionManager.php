@@ -8,11 +8,15 @@ abstract class ExecutionManager implements ExecutionManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function create()
+    public function create($ticket, WorkflowInterface $workflow)
     {
         $class = $this->getClass();
-        $user  = new $class;
+        /** @var ExecutionInterface $execution */
+        $execution = new $class;
 
-        return $user;
+        $execution->setWorkflow($workflow);
+        $execution->setTicket($ticket);
+
+        return $execution;
     }
 }

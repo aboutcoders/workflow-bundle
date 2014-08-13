@@ -57,4 +57,15 @@ interface ExecutionInterface
      */
     public function getExecutionTime();
 
+    /**
+     * @param integer $executionNumber
+     * @return void
+     */
+    public function setExecutionNumber($executionNumber);
+
+    /**
+     * @return integer
+     */
+    public function getExecutionNumber();
+
 }

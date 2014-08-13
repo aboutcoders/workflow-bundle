@@ -9,6 +9,7 @@
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO"/>
         </id>
+        <field name="executionNumber" column="execution_number" type="integer"/>
         <field name="ticket" column="job_ticket" type="string" length="255"/>
         <field name="workflowId" column="workflow_id" type="integer"/>
         <field name="status" type="status" nullable="true"/>

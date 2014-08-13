@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new \Abc\Bundle\SchedulerBundle\AbcSchedulerBundle(),
             new \Abc\Bundle\JobBundle\AbcJobBundle(),
             new \Abc\Bundle\WorkflowBundle\AbcWorkflowBundle(),
+            new \Abc\Bundle\SequenceBundle\AbcSequenceBundle(),
         );
     }
 

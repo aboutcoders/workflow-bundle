@@ -4,6 +4,7 @@ namespace Abc\Bundle\WorkflowBundle\Tests\Executable;
 
 use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Context\Context;
+use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutable;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
@@ -128,10 +129,12 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
             ->method('findById')
             ->willReturn($workflow);
 
-        $execution= new Execution;
+        $execution = new Execution();
+        $execution->setWorkflow($workflow);
+        $execution->setTicket($ticket);
 
         $this->executionManager->expects($this->once())
-            ->method('create')
+            ->method('execute')
             ->willReturn($execution);
 
 
@@ -161,9 +164,7 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
         $task->getParameters(clone $workflowParameters);
 
         $job      = $this->createJob($ticket, 'workflow', $workflow);
-        $childJob = $this->createJob('task-ticket', 'foobar');
-
-        $self = $this;
+        $childJob = $this->createJobInformation(Status::PROCESSED(), 'task-ticket', 'foobar');
 
         $job->expects($this->any())
             ->method('IsTriggeredByCallback')
@@ -190,6 +191,39 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(5, $workflow->getIndex());
     }
 
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Abort execution (child job terminated without success)
+     */
+    public function testExecuteWithChildTerminatesWithException()
+    {
+        $ticket             = 'ticket';
+        $workflowId         = 'workflow-id';
+        $workflowParameters = $this->getMock('\Serializable');
+
+        $workflow = new Workflow();
+        $workflow->setId($workflowId);
+        $workflow->setParameters($workflowParameters);
+        $workflow->setIndex(4);
+
+        $task = new Task();
+        $task->setType(new TaskType());
+        $task->getType()->setJobType('foobar');
+        $task->getParameters(clone $workflowParameters);
+
+        $job      = $this->createJob($ticket, 'workflow', $workflow);
+        $childJob = $this->createJobInformation(Status::CANCELLED(), 'task-ticket', 'foobar');
+
+        $job->expects($this->any())
+            ->method('IsTriggeredByCallback')
+            ->will($this->returnValue(true));
+
+        $job->expects($this->any())
+            ->method('getCallerJob')
+            ->will($this->returnValue($childJob));
+
+        $this->subject->execute($job);
+    }
 
     /**
      * @param mixed $ticket
@@ -219,6 +253,36 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
         $job->expects($this->any())
             ->method('getContext')
             ->will($this->returnValue($context));
+
+        return $job;
+    }
+
+    /**
+     * @param Status $status
+     * @param mixed  $ticket
+     * @param mixed  $type
+     * @param mixed  $parameter
+     * @return Job|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createJobInformation(Status $status, $ticket = null, $type = null, $parameter = null)
+    {
+        $job = $this->getMock('Abc\Bundle\JobBundle\Job\JobInformation');
+
+        $job->expects($this->any())
+            ->method('getTicket')
+            ->will($this->returnValue($ticket));
+
+        $job->expects($this->any())
+            ->method('getType')
+            ->will($this->returnValue($type));
+
+        $job->expects($this->any())
+            ->method('getStatus')
+            ->will($this->returnValue($status));
+
+        $job->expects($this->any())
+            ->method('getParameters')
+            ->will($this->returnValue($parameter));
 
         return $job;
     }

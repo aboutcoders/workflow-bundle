@@ -5,6 +5,7 @@ namespace Abc\Bundle\WorkflowBundle\Tests\Doctrine;
 
 
 use Abc\Bundle\WorkflowBundle\Doctrine\TaskManager;
+use Abc\Bundle\WorkflowBundle\Entity\Task;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -106,6 +107,26 @@ class TaskManagerTest extends \PHPUnit_Framework_TestCase
         $this->subject->findAll();
     }
 
+    public function testFindById()
+    {
+        $id = 1;
+        $this->repository->expects($this->once())
+            ->method('find')
+            ->with($id);
+
+        $this->subject->findById($id);
+    }
+
+
+    public function testFindWorkflowTasks()
+    {
+        $id = 1;
+        $this->repository->expects($this->once())
+            ->method('findBy')
+            ->with(array('workflowId' => $id), array('position' => 'ASC'));
+
+        $this->subject->findWorkflowTasks($id);
+    }
 
     public function testFindBy()
     {

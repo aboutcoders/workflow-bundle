@@ -117,4 +117,15 @@ class TaskTypeManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->subject->findBy($criteria);
     }
+
+    public function testFindById()
+    {
+        $id = 1;
+
+        $this->repository->expects($this->once())
+            ->method('find')
+            ->with($id);
+
+        $this->subject->findById($id);
+    }
 }

@@ -35,6 +35,10 @@
         {
             "type": "vcs",
             "url": "git@bitbucket.org:wciolko/file-distribution-bundle.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@bitbucket.org:wciolko/abc-sequence-bundle.git"
         }
     ],
     "require": {
@@ -43,7 +47,8 @@
         "sonata-project/notification-bundle": "~2.2",
         "gedmo/doctrine-extensions": "dev-master",
         "aboutcoders/job-bundle": "dev-master@dev",
-        "aboutcoders/file-distribution-bundle": "dev-master@dev"
+        "aboutcoders/file-distribution-bundle": "dev-master@dev",
+        "aboutcoders/sequence-bundle": "dev-master@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "~4",

@@ -7,14 +7,18 @@ use Abc\Bundle\JobBundle\Entity\Job;
 use Abc\Bundle\JobBundle\Job\ManagerInterface;
 use Abc\Bundle\JobBundle\Job\Report\Report;
 use Abc\Bundle\JobBundle\Job\Status;
+use Abc\Bundle\SequenceBundle\Model\SequenceManagerInterface;
 use Abc\Bundle\WorkflowBundle\Doctrine\ExecutionManager;
 use Abc\Bundle\WorkflowBundle\Entity\Execution;
+use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var SequenceManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    private $sequenceManager;
     /** @var ManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $jobManager;
     /** @var string */
@@ -31,11 +35,12 @@ class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->class         = 'Abc\Bundle\WorkflowBundle\\Entity\Execution';
-        $this->classMetaData = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
-        $this->objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-        $this->repository    = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
-        $this->jobManager    = $this->getMock('Abc\Bundle\JobBundle\Job\ManagerInterface');
+        $this->class           = 'Abc\Bundle\WorkflowBundle\\Entity\Execution';
+        $this->classMetaData   = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $this->objectManager   = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->repository      = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $this->jobManager      = $this->getMock('Abc\Bundle\JobBundle\Job\ManagerInterface');
+        $this->sequenceManager = $this->getMock('Abc\Bundle\SequenceBundle\Model\SequenceManagerInterface');
 
         $this->objectManager->expects($this->any())
             ->method('getClassMetadata')
@@ -49,7 +54,11 @@ class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->will($this->returnValue($this->repository));
 
-        $this->subject = new ExecutionManager($this->objectManager, $this->class, $this->jobManager);
+        $this->subject = new ExecutionManager(
+            $this->objectManager,
+            $this->class,
+            $this->jobManager,
+            $this->sequenceManager);
     }
 
 
@@ -61,7 +70,7 @@ class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdate()
     {
-        $entity = $this->subject->create();
+        $entity = $this->subject->create('ABC', new Workflow());
 
         $this->objectManager->expects($this->once())
             ->method('persist')
@@ -76,7 +85,7 @@ class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateWithFlush()
     {
-        $entity = $this->subject->create();
+        $entity = $this->subject->create('ABC', new Workflow());
 
         $this->objectManager->expects($this->once())
             ->method('persist')
@@ -91,7 +100,7 @@ class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testDelete()
     {
-        $entity = $this->subject->create();
+        $entity = $this->subject->create('ABC', new Workflow());
 
         $this->objectManager->expects($this->once())
             ->method('remove')
@@ -185,6 +194,11 @@ class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->subject->findHistory($workflowId);
         $this->assertCount(2, $result);
+    }
+
+    public function testExecute()
+    {
+        $this->subject->execute('ABC', new Workflow());
     }
 
     public function testFindBy()

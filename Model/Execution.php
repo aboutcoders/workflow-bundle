@@ -60,6 +60,13 @@ class Execution implements ExecutionInterface
      */
     protected $executionTime;
 
+    /**
+     * @var integer
+     * @Type("integer")
+     * @Expose
+     */
+    protected $executionNumber;
+
     function __construct()
     {
         $this->status = Status::REQUESTED();
@@ -175,5 +182,21 @@ class Execution implements ExecutionInterface
     public function getExecutionTime()
     {
         return $this->executionTime;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExecutionNumber($executionNumber)
+    {
+        $this->executionNumber = $executionNumber;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExecutionNumber()
+    {
+        return $this->executionNumber;
     }
 }

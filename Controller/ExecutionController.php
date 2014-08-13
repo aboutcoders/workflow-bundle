@@ -35,8 +35,7 @@ class ExecutionController extends BaseController
     {
         $workflow = $this->findWorkflow($id);
 
-        if($workflow->isDisabled())
-        {
+        if ($workflow->isDisabled()) {
             $this->get('session')->getFlashBag()->add('danger', 'Workflow is Disabled');
 
             return $this->redirect($this->generateUrl('workflow_show', array('id' => $workflow->getId())));
@@ -47,11 +46,7 @@ class ExecutionController extends BaseController
 
         $ticket = $manager->addJob('workflow', $workflow);
 
-        $execution = $this->getExecutionManager()->create();
-        $execution->setWorkflow($workflow);
-        $execution->setTicket($ticket);
-
-        $this->getExecutionManager()->update($execution);
+        $execution = $this->getExecutionManager()->execute($ticket, $workflow);
 
         return $this->redirect($this->generateUrl('workflow_execution', array('id' => $execution->getId())));
     }
@@ -72,15 +67,14 @@ class ExecutionController extends BaseController
         $report     = $jobManager->getReport($entity->getTicket());
 
         $progress = 0;
-        if($report->getStatus() == Status::PROCESSED())
-        {
+        if ($report->getStatus() == Status::PROCESSED()) {
             $progress = 100;
         }
 
         return array(
-            'entity' => $entity,
+            'entity'   => $entity,
             'progress' => $progress,
-            'report' => $report
+            'report'   => $report
         );
     }
 

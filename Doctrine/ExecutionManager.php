@@ -3,8 +3,10 @@
 namespace Abc\Bundle\WorkflowBundle\Doctrine;
 
 use Abc\Bundle\JobBundle\Job\ManagerInterface;
+use Abc\Bundle\SequenceBundle\Model\SequenceManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionInterface;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManager as BaseExecutionManager;
+use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
@@ -21,22 +23,39 @@ class ExecutionManager extends BaseExecutionManager
     protected $repository;
     /** @var ManagerInterface */
     protected $jobManager;
-
+    /** @var SequenceManagerInterface */
+    protected $sequenceManager;
 
     /**
-     * @param ObjectManager    $om
-     * @param string           $class
-     * @param ManagerInterface $jobManager
+     * @param ObjectManager            $om
+     * @param string                   $class
+     * @param ManagerInterface         $jobManager
+     * @param SequenceManagerInterface $sequenceManager
      */
-    public function __construct(ObjectManager $om, $class, ManagerInterface $jobManager)
+    public function __construct(
+        ObjectManager $om,
+        $class,
+        ManagerInterface $jobManager,
+        SequenceManagerInterface $sequenceManager)
     {
-        $this->objectManager = $om;
-        $this->repository    = $om->getRepository($class);
-        $this->jobManager    = $jobManager;
+        $this->objectManager   = $om;
+        $this->repository      = $om->getRepository($class);
+        $this->jobManager      = $jobManager;
+        $this->sequenceManager = $sequenceManager;
 
         $metadata    = $om->getClassMetadata($class);
         $this->class = $metadata->getName();
     }
+
+    public function create($ticket, WorkflowInterface $workflow)
+    {
+        $execution = parent::create($ticket, $workflow);
+
+        $executionNumber = $this->sequenceManager->getNextValue('workflow-' . $workflow->getId());
+        $execution->setExecutionNumber($executionNumber);
+        return $execution;
+    }
+
 
     /**
      * {@inheritDoc}
@@ -56,6 +75,18 @@ class ExecutionManager extends BaseExecutionManager
         if ($andFlush) {
             $this->objectManager->flush();
         }
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public function execute($ticket, WorkflowInterface $workflow)
+    {
+        $item = $this->create($ticket, $workflow);
+        $this->update($item);
+
+        return $item;
     }
 
     /**
