@@ -5,13 +5,13 @@
         {% set btnClass = 'btn-default' %}
         {% set icon = 'time' %}
     {% elseif item.status == 'PROCESSING' %}
-        {% set btnClass = 'btn-default' %}
+        {% set btnClass = 'btn-info' %}
         {% set icon = 'refresh' %}
     {% elseif item.status == 'PROCESSED' %}
         {% set btnClass = 'btn-success' %}
         {% set icon = 'ok-circle' %}
     {% elseif item.status == 'CANCELLED' %}
-        {% set btnClass = 'btn-warning' %}
+        {% set btnClass = 'btn-default' %}
         {% set icon = 'ban-circle' %}
     {% elseif item.status == 'ERROR' %}
         {% set btnClass = 'btn-danger' %}
@@ -30,7 +30,7 @@
 </a>
 
 {% if item.status == 'REQUESTED' or  item.status == 'PROCESSING' or item.status == 'SLEEPING' %}
-<a href="{{ path('workflow_cancel_execution', { 'id': item.id }) }}" class="btn btn-danger">
+<a href="{{ path('workflow_cancel_execution', { 'id': item.id }) }}" class="btn {{ btnSize }} btn-danger">
     <span class="glyphicon glyphicon-ban-circle"></span> #{{ 'Cancel execution'|trans }}
 </a>
 {% endif %}
