@@ -48,7 +48,7 @@
         "gedmo/doctrine-extensions": "dev-master",
         "aboutcoders/job-bundle": "dev-master@dev",
         "aboutcoders/file-distribution-bundle": "dev-master@dev",
-        "aboutcoders/sequence-bundle": "dev-master@dev"
+        "aboutcoders/sequence-bundle": "~1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4",
