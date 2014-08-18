@@ -53,7 +53,6 @@ class TaskController extends BaseController
     public function createAction(Request $request)
     {
         $taskManager     = $this->getTaskManager();
-        $workflowManager = $this->getWorkflowManager();
 
         $entity = $taskManager->create();
 

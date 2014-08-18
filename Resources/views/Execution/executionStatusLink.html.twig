@@ -28,3 +28,9 @@
    data-url="{{ path('workflow_execution', { 'id': item.id }) }}">
     <span class="glyphicon glyphicon-{{ icon }}" title="{{ item.status }}"></span> #{{ item.executionNumber }}
 </a>
+
+{% if item.status == 'REQUESTED' or  item.status == 'PROCESSING' or item.status == 'SLEEPING' %}
+<a href="{{ path('workflow_cancel_execution', { 'id': item.id }) }}" class="btn btn-danger">
+    <span class="glyphicon glyphicon-ban-circle"></span> #{{ 'Cancel execution'|trans }}
+</a>
+{% endif %}

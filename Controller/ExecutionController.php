@@ -54,6 +54,31 @@ class ExecutionController extends BaseController
     }
 
     /**
+     * Cancel workflow execution.
+     *
+     * @Route("/{id}/cancel", name="workflow_cancel_execution")
+     * @Method("GET")
+     * @Template()
+     */
+    public function cancelAction($id)
+    {
+        $execution = $this->getExecutionManager()->findById($id);
+
+        if (!$execution) {
+            throw $this->createNotFoundException('Unable to find execution');
+        }
+
+        /** @var ManagerInterface $manager */
+        $manager = $this->get('abc.job.manager');
+
+        $manager->cancelJob($execution->getTicket());
+
+        $this->get('session')->getFlashBag()->add('info', 'Workflow execution #' . $execution->getExecutionNumber() . ' cancelled');
+
+        return $this->redirect($this->generateUrl('workflow_show', array('id' => $execution->getWorkflow()->getId())));
+    }
+
+    /**
      * Execution of a Workflow.
      *
      * @Route("/{id}/execution", name="workflow_execution")
