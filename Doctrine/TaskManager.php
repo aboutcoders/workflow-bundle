@@ -54,6 +54,11 @@ class TaskManager extends BaseTaskManager
      */
     public function update(TaskInterface $item, $andFlush = true)
     {
+        // dirty hack to make changes in serializables actually being persisted
+        if ($item->getParameters() != null) {
+            $item->setParameters(clone $item->getParameters());
+        }
+
         $this->objectManager->persist($item);
         if ($andFlush) {
             $this->objectManager->flush();
