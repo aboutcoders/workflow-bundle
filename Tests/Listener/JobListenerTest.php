@@ -185,7 +185,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
      * @param WorkflowInterface $workflow
      * @dataProvider getWorkflow
      */
-    public function testOnReportRemovesFilesystem(WorkflowInterface $workflow)
+    public function testOnTerminateRemovesFilesystem(WorkflowInterface $workflow)
     {
         $report = $this->getReportExpectations();
 
@@ -232,14 +232,14 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
             ->method('update')
             ->with($execution);
 
-        $this->subject->onReport($event);
+        $this->subject->onTerminate($event);
     }
 
     /**
      * @param $parameters
      * @dataProvider getInvalidJobParameters
      */
-    public function testOnReportWithInvalidParameters($parameters = null)
+    public function testOnTerminateWithInvalidParameters($parameters = null)
     {
         $report = $this->getReportExpectations();
         $event  = new ReportEvent($report);
@@ -258,7 +258,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getParameters')
             ->willReturn($parameters);
 
-        $this->subject->onReport($event);
+        $this->subject->onTerminate($event);
 
         $this->filesystem->expects($this->never())
             ->method('remove');
@@ -268,7 +268,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
      * @param WorkflowInterface $workflow
      * @dataProvider getWorkflow
      */
-    public function testOnReportSkipsIfNoWorkflow(WorkflowInterface $workflow)
+    public function testOnTerminateSkipsIfNoWorkflow(WorkflowInterface $workflow)
     {
         $report = $this->getReportExpectations();
         $event  = new ReportEvent($report);
@@ -282,10 +282,10 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
         $report->expects($this->never())
             ->method('getParameters');
 
-        $this->subject->onReport($event);
+        $this->subject->onTerminate($event);
     }
 
-    public function testOnReportCatchesFilesystemExceptions()
+    public function testOnTerminateCatchesFilesystemExceptions()
     {
         $report = $this->getReportExpectations();
         $event  = new ReportEvent($report);
@@ -306,7 +306,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
             ->method('remove')
             ->willThrowException(new \Exception);
 
-        $this->subject->onReport($event);
+        $this->subject->onTerminate($event);
     }
 
     public function getInvalidJobParameters()
