@@ -118,7 +118,7 @@ class ExecutionController extends BaseController
         $response = new Response(json_encode(
                 array(
                     'progress' => $progress,
-                    'message'  => 'Test message'
+                    'message'  => 'Processing'
                 ))
         );
         $response->headers->set('Content-Type', 'application/json');

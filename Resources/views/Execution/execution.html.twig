@@ -15,7 +15,8 @@
 {% endif %}
 
 <div class="progress">
-    <div class="progress-bar {{ progressClass }} progress-bar-striped active" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0"
+    <div class="progress-bar {{ progressClass }} progress-bar-striped active" role="progressbar"
+         aria-valuenow="{{ progress }}" aria-valuemin="0"
          aria-valuemax="100" style="width: {{ progress }}%;">
         {{ progress }}%
     </div>
@@ -57,10 +58,10 @@
                 $.ajax({
                     url: "{{ path('workflow_execution_status', { 'id': entity.id }) }}", success: function (data) {
                         var $progress = jQuery(".progress-bar");
-                        /* update the progress bar width */
                         $progress.css('width', data.progress + '%');
-                        /* and display the numeric value */
+                        $progress.css('aria-valuenow', data.progress);
                         $progress.html(data.progress + '% ' + data.message);
+
                         /* test to see if the job has completed */
                         if (data.progress > 99.999) {
                             clearTimeout($progressObj);
