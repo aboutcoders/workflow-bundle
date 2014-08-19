@@ -1,4 +1,4 @@
-<div class="progress">
+<div class="progress progress-striped active" id="progressouter">
     <div class="progress-bar" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0"
          aria-valuemax="100" style="width: {{ progress }}%;">
         {{ progress }}%
@@ -34,6 +34,27 @@
         <samp style="font-size: 11px;">{{ report.log|nl2br }}</samp>
     </div>
 </div>
+<script>
+    jQuery(document).ready(function () {
+        var $progressPump = setInterval(function () {
+            /* query the completion percentage from the server */
+            jQuery.get("{{ path('workflow_execution_status', { 'id': entity.id }) }}", function (data) {
+                var $progress = jQuery("#progress");
+                /* update the progress bar width */
+                $progress.css('width', data.progress + '%');
+                /* and display the numeric value */
+                $progress.html(data.message + '%');
+
+                /* test to see if the job has completed */
+                if (data > 99.999) {
+                    clearInterval($progressPump);
+                    jQuery("#progressouter").removeClass("active");
+                    $progress.html("Done");
+                }
+            })
+        }, 1000);
+    });
+</script>
 {% javascripts
 "bundles/abcworkflow/js/workflow-history.js"
 filter='cssrewrite'

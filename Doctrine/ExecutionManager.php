@@ -3,9 +3,11 @@
 namespace Abc\Bundle\WorkflowBundle\Doctrine;
 
 use Abc\Bundle\JobBundle\Job\ManagerInterface;
+use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\SequenceBundle\Model\SequenceManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionInterface;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManager as BaseExecutionManager;
+use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -25,23 +27,28 @@ class ExecutionManager extends BaseExecutionManager
     protected $jobManager;
     /** @var SequenceManagerInterface */
     protected $sequenceManager;
+    /** @var TaskManagerInterface */
+    protected $taskManager;
 
     /**
      * @param ObjectManager            $om
      * @param string                   $class
      * @param ManagerInterface         $jobManager
      * @param SequenceManagerInterface $sequenceManager
+     * @param TaskManagerInterface     $taskManager
      */
     public function __construct(
         ObjectManager $om,
         $class,
         ManagerInterface $jobManager,
-        SequenceManagerInterface $sequenceManager)
+        SequenceManagerInterface $sequenceManager,
+        TaskManagerInterface $taskManager)
     {
         $this->objectManager   = $om;
         $this->repository      = $om->getRepository($class);
         $this->jobManager      = $jobManager;
         $this->sequenceManager = $sequenceManager;
+        $this->taskManager     = $taskManager;
 
         $metadata    = $om->getClassMetadata($class);
         $this->class = $metadata->getName();
@@ -77,6 +84,30 @@ class ExecutionManager extends BaseExecutionManager
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function getProgress($ticket)
+    {
+        $report = $this->jobManager->getReport($ticket);
+
+        if ($report->getStatus() == Status::PROCESSED()) {
+            return 100;
+        } else if ($report->getStatus() == Status::CANCELLED()) {
+            return 0;
+        }
+
+        //Calculate progress
+        /** @var WorkflowInterface $workflow */
+        $workflow = $report->getParameters();
+        $index    = $workflow->getIndex();
+        $tasks    = $this->taskManager->findWorkflowTasks($workflow->getId());
+        $total    = count($tasks);
+
+        $progress = 100 - (($total - $index) / $total * 100);
+
+        return (int)round($progress);
+    }
 
     /**
      * {@inheritDoc}

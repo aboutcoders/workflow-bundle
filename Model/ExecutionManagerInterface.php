@@ -2,6 +2,8 @@
 
 namespace Abc\Bundle\WorkflowBundle\Model;
 
+use Abc\Bundle\JobBundle\Job\Report\ReportInterface;
+
 /**
  * @author Wojciech Ciolko <w.ciolko@gmail.com>
  */
@@ -30,6 +32,14 @@ interface ExecutionManagerInterface
      */
     public function update(ExecutionInterface $item);
 
+
+    /**
+     * Get current execution progress
+     *
+     * @param string $ticket
+     * @return integer
+     */
+    public function getProgress($ticket);
 
     /**
      * @param ExecutionInterface $item

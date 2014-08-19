@@ -25,6 +25,7 @@
             <argument>%abc.workflow.model.execution.class%</argument>
             <argument type="service" id="abc.job.manager"/>
             <argument type="service" id="abc.sequence.sequence_manager"/>
+            <argument type="service" id="abc.workflow.task_manager"/>
         </service>
 
     </services>

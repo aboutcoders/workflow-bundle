@@ -192,8 +192,8 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Abort execution (child job terminated without success)
+     * @expectedException \Abc\Bundle\JobBundle\Job\Exception\TerminateException
+     * @expectedExceptionMessage Abort execution (a child job terminated unsuccessfully)
      */
     public function testExecuteWithChildTerminatesWithException()
     {

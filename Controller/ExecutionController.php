@@ -9,12 +9,14 @@ use Abc\Bundle\WorkflowBundle\Doctrine\WorkflowManager;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Form\WorkflowType;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
+use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Execution controller.
@@ -103,6 +105,27 @@ class ExecutionController extends BaseController
             'progress' => $progress,
             'report'   => $report
         );
+    }
+
+    /**
+     * Status of a Workflow execution.
+     *
+     * @Route("/{id}/execution-status", name="workflow_execution_status")
+     * @Method("GET")
+     */
+    public function statusAction($id)
+    {
+        $entity = $this->findExecution($id);
+
+        $progress = $this->getExecutionManager()->getProgress($entity->getTicket());
+
+        $response = new Response(json_encode(
+                array(
+                    'progress' => $progress,
+                    'message'  => 'Test message'
+                ))
+        );
+        $response->headers->set('Content-Type', 'application/json');
     }
 
     /**

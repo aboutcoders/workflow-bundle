@@ -11,3 +11,5 @@ services:
         arguments: [@mailer]
         tags:
             - { name: abc.job.listener, type: mailer, level: debug }
+    abc.logger.formatter:
+        class: Monolog\Formatter\LineFormatter

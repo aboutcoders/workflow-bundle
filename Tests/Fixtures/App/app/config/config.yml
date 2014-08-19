@@ -61,8 +61,10 @@ abc_scheduler:
 
 abc_job:
   db_driver: orm
-  job_logs_dir: "%kernel.logs_dir%"
   rest_api: false
+  log_dir: "%kernel.logs_dir%"
+  logging:
+    formatter: abc.logger.formatter
 
 abc_workflow:
   db_driver: orm

@@ -1,11 +1,10 @@
 jQuery(function () {
     jQuery('#mainTabs a').click(function (e) {
 
-        $(this).tab('show');
-
+        var pane = jQuery(this);
+        pane.tab('show');
         var url = jQuery(this).attr("data-url");
         var href = this.hash;
-        var pane = jQuery(this);
 
         if (url) {
             e.preventDefault();
