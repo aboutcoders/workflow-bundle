@@ -1,5 +1,21 @@
-<div class="progress progress-striped active" id="progressouter">
-    <div class="progress-bar" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0"
+{% if entity.status == 'REQUESTED' %}
+    {% set progressClass = 'progress-bar-info' %}
+{% elseif entity.status == 'PROCESSING' %}
+    {% set progressClass = 'progress-bar-info' %}
+{% elseif entity.status == 'PROCESSED' %}
+    {% set progressClass = 'progress-bar-success' %}
+{% elseif entity.status == 'CANCELLED' %}
+    {% set progressClass = '' %}
+{% elseif entity.status == 'ERROR' %}
+    {% set progressClass = 'progress-bar-danger' %}
+{% elseif entity.status == 'SLEEPING' %}
+    {% set progressClass = 'progress-bar-info' %}
+{% else %}
+    {% set progressClass = 'progress-bar-danger' %}
+{% endif %}
+
+<div class="progress">
+    <div class="progress-bar {{ progressClass }} progress-bar-striped active" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0"
          aria-valuemax="100" style="width: {{ progress }}%;">
         {{ progress }}%
     </div>
@@ -36,23 +52,28 @@
 </div>
 <script>
     jQuery(document).ready(function () {
-        var $progressPump = setInterval(function () {
-            /* query the completion percentage from the server */
-            jQuery.get("{{ path('workflow_execution_status', { 'id': entity.id }) }}", function (data) {
-                var $progress = jQuery("#progress");
-                /* update the progress bar width */
-                $progress.css('width', data.progress + '%');
-                /* and display the numeric value */
-                $progress.html(data.message + '%');
-
-                /* test to see if the job has completed */
-                if (data > 99.999) {
-                    clearInterval($progressPump);
-                    jQuery("#progressouter").removeClass("active");
-                    $progress.html("Done");
-                }
-            })
-        }, 1000);
+        (function poll() {
+            var $progressObj = setTimeout(function () {
+                $.ajax({
+                    url: "{{ path('workflow_execution_status', { 'id': entity.id }) }}", success: function (data) {
+                        var $progress = jQuery(".progress-bar");
+                        /* update the progress bar width */
+                        $progress.css('width', data.progress + '%');
+                        /* and display the numeric value */
+                        $progress.html(data.progress + '% ' + data.message);
+                        /* test to see if the job has completed */
+                        if (data.progress > 99.999) {
+                            clearTimeout($progressObj);
+                            $progress.removeClass("active");
+                            $progress.html("Done");
+                        } else {
+                            //Setup the next poll recursively
+                            poll();
+                        }
+                    }, dataType: "json"
+                });
+            }, 1000);
+        })();
     });
 </script>
 {% javascripts

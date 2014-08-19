@@ -91,10 +91,11 @@ class ExecutionManager extends BaseExecutionManager
     {
         $report = $this->jobManager->getReport($ticket);
 
-        if ($report->getStatus() == Status::PROCESSED()) {
+        if ($report->getStatus() == Status::PROCESSED()
+            || $report->getStatus() == Status::CANCELLED()
+            || $report->getStatus() == Status::ERROR()
+        ) {
             return 100;
-        } else if ($report->getStatus() == Status::CANCELLED()) {
-            return 0;
         }
 
         //Calculate progress

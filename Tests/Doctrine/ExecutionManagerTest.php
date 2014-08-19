@@ -90,12 +90,12 @@ class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetProgressWithStatusInProgressReturnsValidData()
     {
-        $ticket = 'ABC';
+        $ticket   = 'ABC';
         $workflow = new Workflow();
         $workflow->setId(1);
         $workflow->setIndex(1);
 
-        $job1   = new Job();
+        $job1 = new Job();
         $job1->setStatus(Status::PROCESSING());
         $job1->setParameters($workflow);
         $report = new Report($job1);
@@ -328,7 +328,8 @@ class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(100, Status::PROCESSED()),
-            array(0, Status::CANCELLED()),
+            array(100, Status::CANCELLED()),
+            array(100, Status::ERROR()),
         );
     }
 }

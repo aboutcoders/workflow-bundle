@@ -94,11 +94,7 @@ class ExecutionController extends BaseController
         /** @var ManagerInterface $jobManager */
         $jobManager = $this->get('abc.job.manager');
         $report     = $jobManager->getReport($entity->getTicket());
-
-        $progress = 0;
-        if ($report->getStatus() == Status::PROCESSED()) {
-            $progress = 100;
-        }
+        $progress   = $this->getExecutionManager()->getProgress($entity->getTicket());
 
         return array(
             'entity'   => $entity,
@@ -126,6 +122,8 @@ class ExecutionController extends BaseController
                 ))
         );
         $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
     }
 
     /**
