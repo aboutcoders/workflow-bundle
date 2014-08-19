@@ -1,5 +1,8 @@
 jQuery(function () {
     jQuery('#mainTabs a').click(function (e) {
+
+        $(this).tab('show');
+
         var url = jQuery(this).attr("data-url");
         var href = this.hash;
         var pane = jQuery(this);
@@ -15,4 +18,14 @@ jQuery(function () {
             l.stop();
         });
     });
+
+    // store the currently selected tab in the hash value
+    jQuery("ul.nav-tabs > li > a").on("shown.bs.tab", function (e) {
+        var id = jQuery(e.target).attr("href").substr(1);
+        window.location.hash = id;
+    });
+
+    // on load of the page: switch to the currently selected tab
+    var hash = window.location.hash;
+    jQuery('#myTab').find('a[href="' + hash + '"]').tab('show');
 });
