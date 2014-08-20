@@ -6,7 +6,7 @@ use Abc\Bundle\JobBundle\Event\ReportEvent;
 use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Report\Report;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
-use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
+use Abc\Bundle\WorkflowBundle\Workflow\Configuration;
 use Abc\Filesystem\Filesystem;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -49,20 +49,20 @@ class JobListener
 
         $this->logger->debug('Prepare job {ticket}', array('ticket' => $job->getTicket()));
 
-        $workflow = $job->getRootJob()->getParameters();
-        if(!$workflow instanceof WorkflowInterface)
+        $configuration = $job->getRootJob()->getParameters();
+        if(!$configuration instanceof Configuration)
         {
             $this->logger->error(
-                'Failed to set filesystem into context for job {ticket} since job contains unexpected parameter ' . null == $workflow || !is_object(
-                    $workflow
-                ) ? $workflow : get_class($workflow),
+                'Failed to set filesystem into context for job {ticket} since job contains unexpected parameter ' . null == $configuration || !is_object(
+                    $configuration
+                ) ? $configuration : get_class($configuration),
                 array('ticket' => $job->getTicket())
             );
 
             return;
         }
 
-        if($workflow->getCreateDirectory())
+        if($configuration->getCreateDirectory())
         {
             try
             {
@@ -85,23 +85,23 @@ class JobListener
             return;
         }
 
-        $workflow = $event->getReport()->getParameters();
+        $configuration = $event->getReport()->getParameters();
 
         $this->updateExecution($event->getReport());
 
-        if(!$workflow instanceof WorkflowInterface)
+        if(!$configuration instanceof Configuration)
         {
             $this->logger->error(
-                'Failed to process report of job {ticket} since job contains unexpected parameter ' . null == $workflow || !is_object(
-                    $workflow
-                ) ? $workflow : get_class($workflow),
+                'Failed to process report of job {ticket} since job contains unexpected parameter ' . null == $configuration || !is_object(
+                    $configuration
+                ) ? $configuration : get_class($configuration),
                 array('ticket' => $event->getReport()->getTicket())
             );
 
             return;
         }
 
-        if($workflow->getRemoveDirectory())
+        if($configuration->getRemoveDirectory())
         {
             try
             {

@@ -10,8 +10,7 @@ use Abc\Bundle\WorkflowBundle\Listener\JobListener;
 use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Context\Context;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
-use Abc\Bundle\WorkflowBundle\Model\Workflow;
-use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
+use Abc\Bundle\WorkflowBundle\Workflow\Configuration;
 use Abc\Filesystem\Filesystem;
 
 /**
@@ -52,10 +51,10 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param WorkflowInterface $workflow
-     * @dataProvider getWorkflow
+     * @param Configuration $configuration
+     * @dataProvider getConfiguration
      */
-    public function testOnPrepareSetsFilesystem(WorkflowInterface $workflow)
+    public function testOnPrepareSetsFilesystem(Configuration $configuration)
     {
         $ticket     = 'foobar';
         $rootTicket = 'root-ticket';
@@ -74,11 +73,11 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->rootJob->expects($this->once())
             ->method('getParameters')
-            ->willReturn($workflow);
+            ->willReturn($configuration);
 
         $workflowFilesystem = $this->getMockBuilder('Abc\Filesystem\Filesystem')->disableOriginalConstructor()->getMock();
 
-        if ($workflow->getCreateDirectory()) {
+        if ($configuration->getCreateDirectory()) {
             $this->filesystem->expects($this->once())
                 ->method('createFilesystem')
                 ->with($rootTicket)
@@ -90,7 +89,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->subject->onPrepare($this->job);
 
-        if ($workflow->getCreateDirectory()) {
+        if ($configuration->getCreateDirectory()) {
             $this->assertSame($workflowFilesystem, $this->job->getContext()->get('filesystem'));
         } else {
             $this->assertFalse($this->job->getContext()->has('filesystem'));
@@ -116,7 +115,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->rootJob->expects($this->once())
             ->method('getParameters')
-            ->willReturn(self::createWorkflow(true, true));
+            ->willReturn(new Configuration('id', null, true, true));
 
         $this->filesystem->expects($this->once())
             ->method('createFilesystem')
@@ -158,10 +157,10 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param WorkflowInterface $workflow
-     * @dataProvider getWorkflow
+     * @param Configuration $configuration
+     * @dataProvider getConfiguration
      */
-    public function testOnPrepareSkipsIfsNoWorkflow(WorkflowInterface $workflow)
+    public function testOnPrepareSkipsIfsNoWorkflow(Configuration $configuration)
     {
         $ticket = 'foobar';
 
@@ -182,10 +181,10 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param WorkflowInterface $workflow
-     * @dataProvider getWorkflow
+     * @param Configuration $configuration
+     * @dataProvider getConfiguration
      */
-    public function testOnTerminateRemovesFilesystem(WorkflowInterface $workflow)
+    public function testOnTerminateRemovesFilesystem(Configuration $configuration)
     {
         $report = $this->getReportExpectations();
 
@@ -203,9 +202,9 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
 
         $report->expects($this->any())
             ->method('getParameters')
-            ->willReturn($workflow);
+            ->willReturn($configuration);
 
-        if ($workflow->getRemoveDirectory()) {
+        if ($configuration->getRemoveDirectory()) {
             $this->filesystem->expects($this->once())
                 ->method('remove')
                 ->with($ticket);
@@ -265,10 +264,10 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param WorkflowInterface $workflow
-     * @dataProvider getWorkflow
+     * @param Configuration $configuration
+     * @dataProvider getConfiguration
      */
-    public function testOnTerminateSkipsIfNoWorkflow(WorkflowInterface $workflow)
+    public function testOnTerminateSkipsIfNoWorkflow(Configuration $configuration)
     {
         $report = $this->getReportExpectations();
         $event  = new ReportEvent($report);
@@ -300,7 +299,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
 
         $report->expects($this->any())
             ->method('getParameters')
-            ->willReturn($this->createWorkflow(true, true));
+            ->willReturn(new Configuration('id', null, true, true));
 
         $this->filesystem->expects($this->once())
             ->method('remove')
@@ -318,22 +317,12 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public static function getWorkflow()
+    public static function getConfiguration()
     {
         return array(
-            array(static::createWorkflow(true, true)),
-            array(static::createWorkflow(false, false))
+            array(new Configuration('id', null, true, true)),
+            array(new Configuration('id', null, false, false))
         );
-    }
-
-    public static function createWorkflow($createDirectory, $removeDirectory)
-    {
-        $workflow = new Workflow();
-        $workflow->setName('testWorkflow');
-        $workflow->setCreateDirectory($createDirectory);
-        $workflow->setRemoveDirectory($removeDirectory);
-
-        return $workflow;
     }
 
     /**

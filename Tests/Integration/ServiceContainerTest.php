@@ -64,9 +64,9 @@ class ServiceContainerTest extends KernelTestCase
 
     public function testWorkflowExecutable()
     {
-        $subject = $this->container->get('abc.workflow.executable.workflow');
+        $subject = $this->container->get('abc.workflow.executable.workflow_executor');
 
-        $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Workflow\Executor', $subject);
+        $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutor', $subject);
     }
 
     public function testJobListener()
@@ -74,5 +74,12 @@ class ServiceContainerTest extends KernelTestCase
         $subject = $this->container->get('abc.workflow.job_listener');
 
         $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Listener\JobListener', $subject);
+    }
+
+    public function testManager()
+    {
+        $subject = $this->container->get('abc.workflow.manager');
+
+        $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Workflow\ManagerInterface', $subject);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Abc\Bundle\WorkflowBundle\Controller;
 
-use Abc\Bundle\JobBundle\Job\ManagerInterface;
+use Abc\Bundle\WorkflowBundle\Workflow\ManagerInterface;
 use Abc\Bundle\JobBundle\Job\Report\ReportInterface;
 use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\WorkflowBundle\Doctrine\WorkflowManager;
@@ -44,11 +44,9 @@ class ExecutionController extends BaseController
         }
 
         /** @var ManagerInterface $manager */
-        $manager = $this->get('abc.job.manager');
+        $manager = $this->get('abc.workflow.manager');
 
-        $ticket = $manager->addJob('workflow', $workflow);
-
-        $execution = $this->getExecutionManager()->execute($ticket, $workflow);
+        $execution = $manager->execute($id);
 
         $this->get('session')->getFlashBag()->add('info', 'Workflow execution triggered (#' . $execution->getExecutionNumber() . '). Check workflow history for details');
 

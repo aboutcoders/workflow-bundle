@@ -1,41 +1,37 @@
 <?php
 
-namespace Abc\Bundle\WorkflowBundle\Tests\Workflow;
+namespace Abc\Bundle\WorkflowBundle\Tests\Executable;
 
 use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Context\Context;
 use Abc\Bundle\JobBundle\Job\Status;
-use Abc\Bundle\WorkflowBundle\Entity\Workflow;
-use Abc\Bundle\WorkflowBundle\Workflow\Executor;
-use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
+use Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutor;
 use Abc\Bundle\WorkflowBundle\Model\Schedule;
-use Abc\Bundle\WorkflowBundle\Model\Execution;
 use Abc\Bundle\WorkflowBundle\Model\Task;
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskType;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
+use Abc\Bundle\WorkflowBundle\Workflow\Configuration;
+use Abc\Bundle\WorkflowBundle\Workflow\Response;
 use Psr\Log\NullLogger;
 
-class ExecutorTest extends \PHPUnit_Framework_TestCase
+class WorkflowExecutorTest extends \PHPUnit_Framework_TestCase
 {
 
     /** @var TaskManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $taskManager;
     /** @var WorkflowManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $workflowManager;
-    /** @var ExecutionManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $executionManager;
 
-    /** @var Executor */
+    /** @var WorkflowExecutor */
     protected $subject;
 
     public function setUp()
     {
-        $this->workflowManager  = $this->getMock('Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface');
-        $this->taskManager      = $this->getMock('Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface');
-        $this->executionManager = $this->getMock('Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface');
+        $this->workflowManager = $this->getMock('Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface');
+        $this->taskManager     = $this->getMock('Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface');
 
-        $this->subject = new Executor($this->workflowManager, $this->taskManager, $this->executionManager);
+        $this->subject = new WorkflowExecutor($this->workflowManager, $this->taskManager);
     }
 
 
@@ -56,17 +52,17 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
         $workflowId         = 'workflow-id';
         $workflowParameters = $this->getMock('\Serializable');
 
-        $workflow = new Workflow();
-        $workflow->setId($workflowId);
-        $workflow->setParameters($workflowParameters);
+        $configuration = new Configuration($workflowId, $workflowParameters);
 
         $task = new Task();
         $task->setType(new TaskType());
         $task->getType()->setJobType('foobar');
+        $task->getType()->setName('first-task');
         $task->getParameters(clone $workflowParameters);
         $task->setSchedule(new Schedule());
 
-        $job = $this->createJob($ticket, 'workflow', $workflow);
+        $job      = $this->createJob($ticket, 'workflow', $configuration);
+        $response = new Response();
 
         $self = $this;
 
@@ -74,9 +70,9 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
             ->method('isCallback')
             ->will($this->returnValue(false));
 
-        $this->executionManager->expects($this->once())
-            ->method('findOneBy')
-            ->willReturn(new Execution());
+        $job->expects($this->any())
+            ->method('getResponseBody')
+            ->will($this->returnValue($response));
 
         $this->taskManager->expects($this->once())
             ->method('findNextWorkflowTask')
@@ -92,59 +88,10 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
 
         $this->subject->execute($job);
 
-        $this->assertEquals(0, $workflow->getIndex());
+        $this->assertEquals(0, $configuration->getIndex());
         $this->assertTrue($job->getContext()->has('parameters'));
-        $this->assertSame($workflow->getParameters(), $job->getContext()->get('parameters'));
-    }
-
-    public function testExecuteWithRootCreatesExecutionIfNoneExists()
-    {
-        $ticket             = 'ticket';
-        $workflowId         = 'workflow-id';
-        $workflowParameters = $this->getMock('\Serializable');
-
-        $workflow = new Workflow();
-        $workflow->setId($workflowId);
-        $workflow->setParameters($workflowParameters);
-
-        $task = new Task();
-        $task->setType(new TaskType());
-        $task->getType()->setJobType('foobar');
-        $task->getParameters(clone $workflowParameters);
-        $task->setSchedule(new Schedule());
-
-        $job = $this->createJob($ticket, 'workflow', $workflow);
-
-        $self = $this;
-
-        $job->expects($this->any())
-            ->method('isCallback')
-            ->will($this->returnValue(false));
-
-        $this->executionManager->expects($this->once())
-            ->method('findOneBy')
-            ->willReturn(null);
-
-        $this->workflowManager->expects($this->once())
-            ->method('findById')
-            ->willReturn($workflow);
-
-        $execution = new Execution();
-        $execution->setWorkflow($workflow);
-        $execution->setTicket($ticket);
-
-        $this->executionManager->expects($this->once())
-            ->method('execute')
-            ->willReturn($execution);
-
-
-        $this->subject->execute($job);
-
-        $this->assertEquals(0, $workflow->getIndex());
-        $this->assertTrue($job->getContext()->has('parameters'));
-        $this->assertSame($workflow->getParameters(), $job->getContext()->get('parameters'));
-        $this->assertEquals($workflow, $execution->getWorkflow());
-        $this->assertEquals($ticket, $execution->getTicket());
+        $this->assertSame($configuration->getParameters(), $job->getContext()->get('parameters'));
+        $this->assertEquals(array('FIRST-TASK'), $job->getResponseBody()->getActions());
     }
 
     public function testExecuteWithChildAddsNextChildJob()
@@ -153,22 +100,26 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
         $workflowId         = 'workflow-id';
         $workflowParameters = $this->getMock('\Serializable');
 
-        $workflow = new Workflow();
-        $workflow->setId($workflowId);
-        $workflow->setParameters($workflowParameters);
-        $workflow->setIndex(4);
+        $configuration = new Configuration($workflowId, $workflowParameters);
+        $configuration->setIndex(4);
 
         $task = new Task();
         $task->setType(new TaskType());
         $task->getType()->setJobType('foobar');
+        $task->getType()->setName('second-task');
         $task->getParameters(clone $workflowParameters);
 
-        $job      = $this->createJob($ticket, 'workflow', $workflow);
+        $job      = $this->createJob($ticket, 'workflow', $configuration);
         $childJob = $this->createJobInformation(Status::PROCESSED(), 'task-ticket', 'foobar');
+        $response = new Response();
 
         $job->expects($this->any())
             ->method('IsTriggeredByCallback')
             ->will($this->returnValue(true));
+
+        $job->expects($this->any())
+            ->method('getResponseBody')
+            ->will($this->returnValue($response));
 
         $job->expects($this->any())
             ->method('getCallerJob')
@@ -176,7 +127,7 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
 
         $this->taskManager->expects($this->once())
             ->method('findNextWorkflowTask')
-            ->with($workflowId, $workflow->getIndex() + 1)
+            ->with($workflowId, $configuration->getIndex() + 1)
             ->will($this->returnValue($task));
 
         $job->expects($this->once())
@@ -188,7 +139,8 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
 
         $this->subject->execute($job);
 
-        $this->assertEquals(5, $workflow->getIndex());
+        $this->assertEquals(5, $configuration->getIndex());
+        $this->assertEquals(array('SECOND-TASK'), $job->getResponseBody()->getActions());
     }
 
     /**
@@ -201,17 +153,14 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
         $workflowId         = 'workflow-id';
         $workflowParameters = $this->getMock('\Serializable');
 
-        $workflow = new Workflow();
-        $workflow->setId($workflowId);
-        $workflow->setParameters($workflowParameters);
-        $workflow->setIndex(4);
+        $configuration = new Configuration($workflowId, $workflowParameters);
 
         $task = new Task();
         $task->setType(new TaskType());
         $task->getType()->setJobType('foobar');
         $task->getParameters(clone $workflowParameters);
 
-        $job      = $this->createJob($ticket, 'workflow', $workflow);
+        $job      = $this->createJob($ticket, 'workflow', $configuration);
         $childJob = $this->createJobInformation(Status::CANCELLED(), 'task-ticket', 'foobar');
 
         $job->expects($this->any())
