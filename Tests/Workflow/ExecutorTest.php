@@ -1,12 +1,12 @@
 <?php
 
-namespace Abc\Bundle\WorkflowBundle\Tests\Executable;
+namespace Abc\Bundle\WorkflowBundle\Tests\Workflow;
 
 use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Context\Context;
 use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
-use Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutable;
+use Abc\Bundle\WorkflowBundle\Workflow\Executor;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\Schedule;
 use Abc\Bundle\WorkflowBundle\Model\Execution;
@@ -16,7 +16,7 @@ use Abc\Bundle\WorkflowBundle\Model\TaskType;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
 use Psr\Log\NullLogger;
 
-class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
+class ExecutorTest extends \PHPUnit_Framework_TestCase
 {
 
     /** @var TaskManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
@@ -26,7 +26,7 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
     /** @var ExecutionManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $executionManager;
 
-    /** @var WorkflowExecutable */
+    /** @var Executor */
     protected $subject;
 
     public function setUp()
@@ -35,7 +35,7 @@ class WorkflowExecutableTest extends \PHPUnit_Framework_TestCase
         $this->taskManager      = $this->getMock('Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface');
         $this->executionManager = $this->getMock('Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface');
 
-        $this->subject = new WorkflowExecutable($this->workflowManager, $this->taskManager, $this->executionManager);
+        $this->subject = new Executor($this->workflowManager, $this->taskManager, $this->executionManager);
     }
 
 

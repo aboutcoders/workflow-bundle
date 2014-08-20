@@ -15,6 +15,7 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new \Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
             new Sonata\NotificationBundle\SonataNotificationBundle(),
+            new \JMS\SerializerBundle\JMSSerializerBundle(),
             new \Abc\Bundle\FileDistributionBundle\AbcFileDistributionBundle(),
             new \Abc\Bundle\ProcessControlBundle\AbcProcessControlBundle(),
             new \Abc\Bundle\SchedulerBundle\AbcSchedulerBundle(),

@@ -1,6 +1,6 @@
 <?php
 
-namespace Abc\Bundle\WorkflowBundle\Executable;
+namespace Abc\Bundle\WorkflowBundle\Workflow;
 
 use Abc\Bundle\JobBundle\Job\Exception\TerminateException;
 use Abc\Bundle\JobBundle\Job\Job;
@@ -15,7 +15,7 @@ use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
 use Monolog\Logger;
 
-class WorkflowExecutable implements Executable
+class Executor implements Executable
 {
     /** @var TaskManagerInterface */
     protected $taskManager;

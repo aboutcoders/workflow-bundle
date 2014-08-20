@@ -8,7 +8,7 @@
     <parameters>
         <parameter key="abc.workflow.twig.workflow_extension.class">Abc\Bundle\WorkflowBundle\Twig\WorkflowExtension</parameter>
         <parameter key="abc.workflow.task.form.mailer.class">Abc\Bundle\WorkflowBundle\Form\Task\MailerType</parameter>
-        <parameter key="abc.workflow.executable.workflow.class">Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutable</parameter>
+        <parameter key="abc.workflow.executable.workflow.class">Abc\Bundle\WorkflowBundle\Workflow\Executor</parameter>
     </parameters>
 
     <services>
