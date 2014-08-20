@@ -12,7 +12,7 @@
         <field name="executionNumber" column="execution_number" type="integer"/>
         <field name="ticket" column="job_ticket" type="string" length="255"/>
         <field name="workflowId" column="workflow_id" type="integer"/>
-        <field name="status" type="status" nullable="true"/>
+        <field name="status" type="abc.job.status" nullable="true"/>
         <field name="executionTime" column="execution_time" type="integer" nullable="true"/>
         <field name="createdAt" column="created_at" type="datetime">
             <gedmo:timestampable on="create"/>

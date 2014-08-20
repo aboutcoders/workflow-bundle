@@ -9,6 +9,7 @@ use Abc\Bundle\WorkflowBundle\Model\ExecutionInterface;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManager as BaseExecutionManager;
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
+use Abc\Bundle\WorkflowBundle\Workflow\Configuration;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
@@ -99,10 +100,10 @@ class ExecutionManager extends BaseExecutionManager
         }
 
         //Calculate progress
-        /** @var WorkflowInterface $workflow */
-        $workflow = $report->getParameters();
-        $index    = $workflow->getIndex();
-        $tasks    = $this->taskManager->findWorkflowTasks($workflow->getId());
+        /** @var Configuration $configuration */
+        $configuration = $report->getParameters();
+        $index    = $configuration->getIndex();
+        $tasks    = $this->taskManager->findWorkflowTasks($configuration->getId());
         $total    = count($tasks);
 
         $progress = 100 - (($total - $index) / $total * 100);

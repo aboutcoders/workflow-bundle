@@ -76,11 +76,6 @@ class Workflow implements WorkflowInterface
      */
     protected $updatedAt;
 
-    /** @var int */
-    protected $index = 0;
-    /** @var \Serializable */
-    protected $parameters;
-
     /**
      * @var TaskTypeCategoryInterface
      */
@@ -268,43 +263,6 @@ class Workflow implements WorkflowInterface
         $this->createdAt = $createdAt;
     }
 
-    function __toString()
-    {
-        return $this->name;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getIndex()
-    {
-        return $this->index;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setIndex($index)
-    {
-        $this->index = $index;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getParameters()
-    {
-        return $this->parameters;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setParameters(\Serializable $parameters = null)
-    {
-        $this->parameters = $parameters;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -321,24 +279,8 @@ class Workflow implements WorkflowInterface
         $this->category = $category;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function serialize()
+    function __toString()
     {
-        $attributes = get_object_vars($this);
-        return serialize($attributes);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function unserialize($serialized)
-    {
-        $data       = unserialize($serialized);
-        $attributes = get_object_vars($this);
-        foreach ($attributes as $key => $attribute) {
-            $this->$key = $data[$key];
-        }
+        return $this->name;
     }
 }

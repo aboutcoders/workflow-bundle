@@ -4,7 +4,7 @@ namespace Abc\Bundle\WorkflowBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-interface WorkflowInterface extends \Serializable
+interface WorkflowInterface
 {
     /**
      * @return int
@@ -138,36 +138,6 @@ interface WorkflowInterface extends \Serializable
      * @return void
      */
     public function setUpdatedAt($updatedAt);
-
-    /**
-     * Get the index of the currently executed task (must be serializable)
-     *
-     * @return int
-     */
-    public function getIndex();
-
-    /**
-     * Set the index of the currently executed task (must be serializable)
-     *
-     * @param int $index
-     * @return void
-     */
-    public function setIndex($index);
-
-    /**
-     * Get parameters of this workflow (must be serializable)
-     *
-     * @return \Serializable|null
-     */
-    public function getParameters();
-
-    /**
-     * Set parameters of this workflow (must be serializable)
-     *
-     * @param \Serializable|null $parameters
-     * @return void
-     */
-    public function setParameters(\Serializable $parameters = null);
 
     /**
      * @return TaskTypeCategory

@@ -12,6 +12,7 @@ use Abc\Bundle\WorkflowBundle\Doctrine\ExecutionManager;
 use Abc\Bundle\WorkflowBundle\Entity\Execution;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
+use Abc\Bundle\WorkflowBundle\Workflow\Configuration;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -91,13 +92,12 @@ class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
     public function testGetProgressWithStatusInProgressReturnsValidData()
     {
         $ticket   = 'ABC';
-        $workflow = new Workflow();
-        $workflow->setId(1);
-        $workflow->setIndex(1);
+        $configuration = new Configuration(1);
+        $configuration->setIndex(1);
 
         $job1 = new Job();
         $job1->setStatus(Status::PROCESSING());
-        $job1->setParameters($workflow);
+        $job1->setParameters($configuration);
         $report = new Report($job1);
         $this->jobManager->expects($this->once())
             ->method('getReport')
@@ -106,7 +106,7 @@ class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->taskManager->expects($this->once())
             ->method('findWorkflowTasks')
-            ->with($workflow->getId())
+            ->with($configuration->getId())
             ->willReturn(array(1, 2, 3, 4));
 
         $this->assertEquals(25, $this->subject->getProgress($ticket));
