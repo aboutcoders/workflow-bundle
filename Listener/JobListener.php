@@ -42,14 +42,16 @@ class JobListener
      */
     public function onPrepare(Job $job)
     {
-        if ($job->getRootJob()->getType() != 'workflow') {
+        if($job->getRootJob()->getType() != 'workflow')
+        {
             return;
         }
 
         $this->logger->debug('Prepare job {ticket}', array('ticket' => $job->getTicket()));
 
         $workflow = $job->getRootJob()->getParameters();
-        if (!$workflow instanceof WorkflowInterface) {
+        if(!$workflow instanceof WorkflowInterface)
+        {
             $this->logger->error(
                 'Failed to set filesystem into context for job {ticket} since job contains unexpected parameter ' . null == $workflow || !is_object(
                     $workflow
@@ -60,21 +62,26 @@ class JobListener
             return;
         }
 
-        if ($workflow->getCreateDirectory()) {
-            try {
+        if($workflow->getCreateDirectory())
+        {
+            try
+            {
                 $this->logger->debug('Add filesystem to context of job {ticket}', array('ticket' => $job->getTicket()));
 
                 $filesystem = $this->filesystem->createFilesystem($job->getRootJob()->getTicket(), true);
                 $job->getContext()->set('filesystem', $filesystem);
-            } catch (\Exception $e) {
+            }
+            catch(\Exception $e)
+            {
                 $this->logger->error('Failed to set filesystem in context for job {ticket} ({exception})', array('ticket', $job->getTicket(), 'exception' => $e));
             }
         }
     }
 
-    public function onReport(ReportEvent $event)
+    public function onTerminate(ReportEvent $event)
     {
-        if ($event->getReport()->getType() != 'workflow') {
+        if($event->getReport()->getType() != 'workflow')
+        {
             return;
         }
 
@@ -82,7 +89,8 @@ class JobListener
 
         $this->updateExecution($event->getReport());
 
-        if (!$workflow instanceof WorkflowInterface) {
+        if(!$workflow instanceof WorkflowInterface)
+        {
             $this->logger->error(
                 'Failed to process report of job {ticket} since job contains unexpected parameter ' . null == $workflow || !is_object(
                     $workflow
@@ -93,12 +101,16 @@ class JobListener
             return;
         }
 
-        if ($workflow->getRemoveDirectory()) {
-            try {
+        if($workflow->getRemoveDirectory())
+        {
+            try
+            {
                 $this->logger->debug('Remove filesystem of job {ticket}', array('ticket' => $event->getReport()->getTicket()));
 
                 $this->filesystem->remove($event->getReport()->getTicket());
-            } catch (\Exception $e) {
+            }
+            catch(\Exception $e)
+            {
                 $this->logger->error('Failed to remove working directory for job {ticket} ({exception})', array('ticket', $event->getReport()->getTicket(), 'exception' => $e));
             }
         }
@@ -112,7 +124,8 @@ class JobListener
     protected function updateExecution(Report $report)
     {
         $execution = $this->executionManager->findOneBy(array('ticket' => $report->getTicket()));
-        if ($execution) {
+        if($execution)
+        {
             $execution->setExecutionTime($report->getExecutionTime());
             $execution->setStatus($report->getStatus());
             $this->executionManager->update($execution);
