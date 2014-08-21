@@ -45,6 +45,7 @@ class Response
      */
     public function setActions(array $actions)
     {
+        $this->actions = array();
         foreach($actions as $name)
         {
             $this->addAction($name);
@@ -68,6 +69,4 @@ class Response
             unset($this->actions[$pos]);
         }
     }
-
-
 }
