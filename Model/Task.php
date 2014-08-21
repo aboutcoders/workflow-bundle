@@ -43,6 +43,14 @@ class Task implements TaskInterface
     protected $position;
 
     /**
+     * Number of days to keep workspace data
+     *
+     * @var int
+     * @Expose
+     */
+    protected $clearWorkspaceAfter = 15;
+
+    /**
      * @var boolean
      * @Expose
      */
@@ -151,6 +159,23 @@ class Task implements TaskInterface
     public function setPosition($position)
     {
         $this->position = $position;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getClearWorkspaceAfter()
+    {
+        return $this->clearWorkspaceAfter;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setClearWorkspaceAfter($clearWorkspaceAfter)
+    {
+        $this->clearWorkspaceAfter = $clearWorkspaceAfter;
     }
 
     /**

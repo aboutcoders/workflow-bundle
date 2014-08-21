@@ -12,6 +12,7 @@
         <field name="workflowId" column="workflow_id" type="integer"/>
         <field name="description" column="description" type="string" length="255" nullable="true"/>
         <field name="typeId" column="type_id" type="integer"/>
+        <field name="clearWorkspaceAfter" column="clear_workspace_after" type="integer"/>
         <field name="parameters" type="abc.job.serializable" nullable="true"/>
         <field name="scheduleId" column="schedule_id" type="integer" nullable="true"/>
         <field name="disabled" column="is_disabled" type="boolean"/>
