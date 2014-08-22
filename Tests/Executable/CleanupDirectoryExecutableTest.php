@@ -34,7 +34,7 @@ class CleanupDirectoryExecutableTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteWithInValidParametersThrowsException()
     {
-        $job = $this->createJob('ticket', 'abc.target_platform.task.cleanup_directory');
+        $job = $this->createJob('ticket', 'abc.workflow.task.cleanup_directory');
         $this->subject->execute($job);
 
     }
@@ -56,7 +56,7 @@ class CleanupDirectoryExecutableTest extends \PHPUnit_Framework_TestCase
             ->method('remove')
             ->with('/');
 
-        $job = $this->createJob('ticket', 'abc.target_platform.task.cleanup_directory', $parameter);
+        $job = $this->createJob('ticket', 'abc.workflow.task.cleanup_directory', $parameter);
         $job->expects($this->once())->method('removeSchedule');
 
         $this->subject->execute($job);
