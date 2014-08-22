@@ -68,7 +68,7 @@ class ExecutionController extends BaseController
             throw $this->createNotFoundException('Unable to find execution');
         }
 
-        /** @var ManagerInterface $manager */
+        /** @var \Abc\Bundle\JobBundle\Job\ManagerInterface $manager */
         $manager = $this->get('abc.job.manager');
 
         $manager->cancelJob($execution->getTicket());
@@ -89,7 +89,7 @@ class ExecutionController extends BaseController
     {
         $entity = $this->findExecution($id);
 
-        /** @var ManagerInterface $jobManager */
+        /** @var \Abc\Bundle\JobBundle\Job\ManagerInterface $jobManager */
         $jobManager = $this->get('abc.job.manager');
         $report     = $jobManager->getReport($entity->getTicket());
         $progress   = $this->getExecutionManager()->getProgress($entity->getTicket());
