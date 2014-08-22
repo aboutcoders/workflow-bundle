@@ -34,52 +34,32 @@ class ServiceContainerTest extends KernelTestCase
         $this->application->setCatchExceptions(false);
     }
 
-    public function testTwigWorkflowExtension()
+    /**
+     * @param string $service
+     * @param string $type
+     * @dataProvider getServices
+     */
+    public function testGetFromContainer($service, $type)
     {
-        $subject = $this->container->get('abc.workflow.workflow_extension');
+        $subject = $this->container->get($service);
 
-        $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Twig\WorkflowExtension', $subject);
+        $this->assertInstanceOf($type, $subject);
     }
 
-    public function testWorkflowManager()
+    /**
+     * @return array
+     */
+    public function getServices()
     {
-        $subject = $this->container->get('abc.workflow.workflow_manager');
-
-        $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface', $subject);
-    }
-
-    public function testWorkflowExecutionManager()
-    {
-        $subject = $this->container->get('abc.workflow.execution_manager');
-
-        $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface', $subject);
-    }
-
-    public function testMailerForm()
-    {
-        $subject = $this->container->get('abc.workflow.task.form.mailer');
-
-        $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Form\Task\MailerType', $subject);
-    }
-
-    public function testWorkflowExecutable()
-    {
-        $subject = $this->container->get('abc.workflow.executable.workflow_executor');
-
-        $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutor', $subject);
-    }
-
-    public function testJobListener()
-    {
-        $subject = $this->container->get('abc.workflow.job_listener');
-
-        $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Listener\JobListener', $subject);
-    }
-
-    public function testManager()
-    {
-        $subject = $this->container->get('abc.workflow.manager');
-
-        $this->assertInstanceOf('Abc\Bundle\WorkflowBundle\Workflow\ManagerInterface', $subject);
+        return array(
+            array('abc.workflow.workflow_extension', 'Abc\Bundle\WorkflowBundle\Twig\WorkflowExtension'),
+            array('abc.workflow.workflow_manager', 'Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface'),
+            array('abc.workflow.execution_manager', 'Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface'),
+            array('abc.workflow.task.form.mailer', 'Abc\Bundle\WorkflowBundle\Form\Task\MailerType'),
+            array('abc.workflow.executable.workflow_executor', 'Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutor'),
+            array('abc.workflow.executable.cleanup_directory', 'Abc\Bundle\WorkflowBundle\Executable\CleanupDirectoryExecutable'),
+            array('abc.workflow.job_listener', 'Abc\Bundle\WorkflowBundle\Listener\JobListener'),
+            array('abc.workflow.manager', 'Abc\Bundle\WorkflowBundle\Workflow\ManagerInterface'),
+        );
     }
 }
