@@ -44,16 +44,6 @@ interface TaskInterface
     public function setPosition($position);
 
     /**
-     * @return int
-     */
-    public function getClearWorkspaceAfter();
-
-    /**
-     * @param int $clearWorkspaceAfter
-     */
-    public function setClearWorkspaceAfter($clearWorkspaceAfter);
-
-    /**
      * @return TaskType
      */
     public function getType();

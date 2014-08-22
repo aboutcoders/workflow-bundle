@@ -38,7 +38,6 @@ class TaskType extends AbstractType
         $builder->add('workflowId', 'hidden');
         $builder->add('typeId', 'hidden');
         $builder->add('description', 'text', array('label' => 'Task description', 'required' => false));
-        $builder->add('clearWorkspaceAfter', 'integer', array('label' => 'Remove workspace after X days', 'required' => true));
         $builder->add('disabled', null,
             array(
                 'required'    => false,
