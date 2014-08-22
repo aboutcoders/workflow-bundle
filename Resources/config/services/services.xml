@@ -47,7 +47,7 @@
 
             <tag name="abc.job.event_listener" event="abc.job.prepare" method="onPrepare"/>
             <tag name="abc.job.event_listener" event="abc.job.terminate" method="onTerminate"/>
-            <tag name="monolog.logger" channel="abc.workflow"/>
+            <tag name="monolog.logger" channel="abc.workflow.listener.job"/>
         </service>
 
     </services>
