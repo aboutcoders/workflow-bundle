@@ -32,12 +32,12 @@
         <service id="abc.workflow.executable.workflow_executor" class="%abc.workflow.executable.workflow.class%">
             <argument type="service" id="abc.workflow.workflow_manager" />
             <argument type="service" id="abc.workflow.task_manager" />
-            <tag name="abc.job.listener" type="workflow" level="debug" />
+            <tag name="abc.job.listener" type="workflow" />
         </service>
 
         <service id="abc.workflow.executable.cleanup_directory" class="%abc.workflow.executable.cleanup_directory.class%">
             <argument type="service" id="abc.file_distribution.filesystem_factory" />
-            <tag name="abc.job.listener" type="abc.workflow.task.cleanup_directory" level="debug" />
+            <tag name="abc.job.listener" type="abc.workflow.task.cleanup_directory" />
         </service>
 
         <service id="abc.workflow.job_listener" class="Abc\Bundle\WorkflowBundle\Listener\JobListener" public="true">
