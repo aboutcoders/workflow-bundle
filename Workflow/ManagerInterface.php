@@ -21,4 +21,4 @@ interface ManagerInterface
      * @throws WorkflowNotFoundException If a workflow with the given id does not exist
      */
     public function execute($id, \Serializable $parameters = null, ScheduleInterface $schedule = null, $response = null);
-} 
+}

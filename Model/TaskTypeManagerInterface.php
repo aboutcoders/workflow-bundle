@@ -15,7 +15,6 @@ interface TaskTypeManagerInterface
      */
     public function create();
 
-
     /**
      * Updates a TaskType.
      *
@@ -23,7 +22,6 @@ interface TaskTypeManagerInterface
      * @return void
      */
     public function update(TaskTypeInterface $item);
-
 
     /**
      * Deletes a TaskType.
@@ -33,12 +31,11 @@ interface TaskTypeManagerInterface
      */
     public function delete(TaskTypeInterface $item);
 
-
     /**
      * Finds a TaskType by the given criteria.
      *
      * @param array $criteria
-     * @return TaskTypeInterface
+     * @return array
      */
     public function findBy(array $criteria);
 
@@ -46,9 +43,15 @@ interface TaskTypeManagerInterface
      * Finds a TaskType by the given id.
      *
      * @param string $id
-     * @return TaskTypeInterface
+     * @return TaskTypeInterface|null
      */
     public function findById($id);
+
+    /**
+     * @param string $type
+     * @return TaskTypeInterface|null
+     */
+    public function findByType($type);
 
     /**
      * Returns a collection with all instances.
@@ -56,7 +59,6 @@ interface TaskTypeManagerInterface
      * @return \Traversable
      */
     public function findAll();
-
 
     /**
      * Returns the TaskType's fully qualified class name.

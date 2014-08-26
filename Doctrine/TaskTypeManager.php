@@ -84,6 +84,14 @@ class TaskTypeManager extends BaseTaskTypeManager
         return $this->repository->find($id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function findByType($type)
+    {
+        return $this->repository->findOneBy(array('jobType' => $type));
+    }
+
 
     /**
      * {@inheritDoc}

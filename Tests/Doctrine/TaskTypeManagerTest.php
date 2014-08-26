@@ -128,4 +128,15 @@ class TaskTypeManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->subject->findById($id);
     }
+
+    public function testFindByType()
+    {
+        $type = 'type';
+
+        $this->repository->expects($this->once())
+            ->method('findOneBy')
+            ->with(array('jobType' => $type));
+
+        $this->subject->findByType($type);
+    }
 }
