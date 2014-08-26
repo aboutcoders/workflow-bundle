@@ -2,12 +2,14 @@
 
 namespace Abc\Bundle\WorkflowBundle\Listener;
 
+use Abc\Bundle\JobBundle\Event\JobEvent;
+use Abc\Bundle\JobBundle\Event\JobEvents;
 use Abc\Bundle\JobBundle\Event\ReportEvent;
 use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Report\Report;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Abc\Bundle\WorkflowBundle\Workflow\Configuration;
-use Abc\Filesystem\Filesystem;
+use Abc\Filesystem\FilesystemInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -16,7 +18,7 @@ use Psr\Log\NullLogger;
  */
 class JobListener
 {
-    /** @var Filesystem */
+    /** @var FilesystemInterface */
     protected $filesystem;
     /** @var LoggerInterface */
     protected $logger;
@@ -24,11 +26,11 @@ class JobListener
     protected $executionManager;
 
     /**
-     * @param Filesystem                $filesystem
+     * @param FilesystemInterface       $filesystem
      * @param ExecutionManagerInterface $executionManager
      * @param LoggerInterface|null      $logger
      */
-    public function __construct(Filesystem $filesystem, ExecutionManagerInterface $executionManager, LoggerInterface $logger = null)
+    public function __construct(FilesystemInterface $filesystem, ExecutionManagerInterface $executionManager, LoggerInterface $logger = null)
     {
         $this->filesystem       = $filesystem;
         $this->executionManager = $executionManager;
@@ -38,25 +40,25 @@ class JobListener
     /**
      * Registers a filesystem of type Abc\Filesystem\Filesystem with the key 'filesystem'
      *
-     * @param Job $job
+     * @param JobEvent $event
      */
-    public function onPrepare(Job $job)
+    public function onPrepare(JobEvent $event)
     {
-        if($job->getRootJob()->getType() != 'workflow')
+        if($event->getRootJob()->getType() != 'workflow')
         {
             return;
         }
 
-        $this->logger->debug('Prepare job {ticket}', array('ticket' => $job->getTicket()));
+        $this->logger->debug('Handle event {name}', array('name' => JobEvents::JOB_PREPARE));
 
-        $configuration = $job->getRootJob()->getParameters();
+        $configuration = $event->getRootJob()->getParameters();
         if(!$configuration instanceof Configuration)
         {
             $this->logger->error(
                 'Failed to set filesystem into context for job {ticket} since job contains unexpected parameter ' . null == $configuration || !is_object(
                     $configuration
                 ) ? $configuration : get_class($configuration),
-                array('ticket' => $job->getTicket())
+                array('ticket' => $event->getTicket())
             );
 
             return;
@@ -66,14 +68,14 @@ class JobListener
         {
             try
             {
-                $this->logger->debug('Add filesystem to context of job {ticket}', array('ticket' => $job->getTicket()));
+                $this->logger->debug('Add filesystem to context of job {ticket}', array('ticket' => $event->getTicket()));
 
-                $filesystem = $this->filesystem->createFilesystem($job->getRootJob()->getTicket(), true);
-                $job->getContext()->set('filesystem', $filesystem);
+                $filesystem = $this->filesystem->createFilesystem($event->getRootJob()->getTicket(), true);
+                $event->getContext()->set('filesystem', $filesystem);
             }
             catch(\Exception $e)
             {
-                $this->logger->error('Failed to set filesystem in context for job {ticket} ({exception})', array('ticket', $job->getTicket(), 'exception' => $e));
+                $this->logger->error('Failed to set filesystem in context for job {ticket} ({exception})', array('ticket', $event->getTicket(), 'exception' => $e));
             }
         }
     }
@@ -84,6 +86,8 @@ class JobListener
         {
             return;
         }
+
+        $this->logger->debug('Handle event {name}', array('name' => JobEvents::JOB_TERMINATED));
 
         $configuration = $event->getReport()->getParameters();
 
@@ -101,11 +105,11 @@ class JobListener
             return;
         }
 
-        if($configuration->getRemoveDirectory())
+        if($configuration->getRemoveDirectory() && $this->filesystem->exists($event->getReport()->getTicket()))
         {
             try
             {
-                $this->logger->debug('Remove filesystem of job {ticket}', array('ticket' => $event->getReport()->getTicket()));
+                $this->logger->debug('Remove {path} from filesystem', array('path' => $event->getReport()->getTicket()));
 
                 $this->filesystem->remove($event->getReport()->getTicket());
             }
@@ -113,6 +117,10 @@ class JobListener
             {
                 $this->logger->error('Failed to remove working directory for job {ticket} ({exception})', array('ticket', $event->getReport()->getTicket(), 'exception' => $e));
             }
+        }
+        else
+        {
+            $this->logger->debug('Removal of filesystem for job {ticket} is disabled', array('ticket' => $event->getReport()->getTicket()));
         }
     }
 

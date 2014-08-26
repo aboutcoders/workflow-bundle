@@ -2,12 +2,13 @@
 
 namespace Abc\Bundle\WorkflowBundle\Tests\Listener;
 
+use Abc\Bundle\JobBundle\Event\JobEvent;
 use Abc\Bundle\JobBundle\Event\ReportEvent;
+use Abc\Bundle\JobBundle\Job\JobInformation;
 use Abc\Bundle\JobBundle\Job\Report\Report;
 use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\WorkflowBundle\Entity\Execution;
 use Abc\Bundle\WorkflowBundle\Listener\JobListener;
-use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Context\Context;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Abc\Bundle\WorkflowBundle\Workflow\Configuration;
@@ -20,9 +21,9 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Filesystem|\PHPUnit_Framework_MockObject_MockObject */
     protected $filesystem;
-    /** @var Job|\PHPUnit_Framework_MockObject_MockObject */
-    protected $job;
-    /** @var Job|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var JobEvent|\PHPUnit_Framework_MockObject_MockObject */
+    protected $jobEvent;
+    /** @var JobInformation|\PHPUnit_Framework_MockObject_MockObject */
     protected $rootJob;
     /** @var Context */
     protected $context;
@@ -36,14 +37,14 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
         $this->filesystem       = $this->getMockBuilder('Abc\Filesystem\Filesystem')->disableOriginalConstructor()->getMock();
         $this->executionManager = $this->getMock('Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface');
         $this->context          = new Context();
-        $this->job              = $this->createJobMock();
+        $this->jobEvent         = $this->createJoEventMock();
         $this->rootJob          = $this->createJobMock();
 
-        $this->job->expects($this->any())
+        $this->jobEvent->expects($this->any())
             ->method('getRootJob')
             ->will($this->returnValue($this->rootJob));
 
-        $this->job->expects($this->any())
+        $this->jobEvent->expects($this->any())
             ->method('getContext')
             ->will($this->returnValue($this->context));
 
@@ -59,7 +60,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
         $ticket     = 'foobar';
         $rootTicket = 'root-ticket';
 
-        $this->job->expects($this->any())
+        $this->jobEvent->expects($this->any())
             ->method('getTicket')
             ->willReturn($ticket);
 
@@ -77,22 +78,28 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
 
         $workflowFilesystem = $this->getMockBuilder('Abc\Filesystem\Filesystem')->disableOriginalConstructor()->getMock();
 
-        if ($configuration->getCreateDirectory()) {
+        if($configuration->getCreateDirectory())
+        {
             $this->filesystem->expects($this->once())
                 ->method('createFilesystem')
                 ->with($rootTicket)
                 ->willReturn($workflowFilesystem);
-        } else {
+        }
+        else
+        {
             $this->filesystem->expects($this->never())
                 ->method('createFilesystem');
         }
 
-        $this->subject->onPrepare($this->job);
+        $this->subject->onPrepare($this->jobEvent);
 
-        if ($configuration->getCreateDirectory()) {
-            $this->assertSame($workflowFilesystem, $this->job->getContext()->get('filesystem'));
-        } else {
-            $this->assertFalse($this->job->getContext()->has('filesystem'));
+        if($configuration->getCreateDirectory())
+        {
+            $this->assertSame($workflowFilesystem, $this->jobEvent->getContext()->get('filesystem'));
+        }
+        else
+        {
+            $this->assertFalse($this->jobEvent->getContext()->has('filesystem'));
         }
     }
 
@@ -101,7 +108,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
         $ticket     = 'foobar';
         $rootTicket = 'root-ticket';
 
-        $this->job->expects($this->any())
+        $this->jobEvent->expects($this->any())
             ->method('getTicket')
             ->willReturn($ticket);
 
@@ -121,7 +128,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
             ->method('createFilesystem')
             ->willThrowException(new \Exception);
 
-        $this->subject->onPrepare($this->job);
+        $this->subject->onPrepare($this->jobEvent);
 
     }
 
@@ -134,7 +141,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
         $ticket     = 'foobar';
         $rootTicket = 'root-ticket';
 
-        $this->job->expects($this->any())
+        $this->jobEvent->expects($this->any())
             ->method('getTicket')
             ->willReturn($ticket);
 
@@ -153,7 +160,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
         $this->filesystem->expects($this->never())
             ->method('createFilesystem');
 
-        $this->subject->onPrepare($this->job);
+        $this->subject->onPrepare($this->jobEvent);
     }
 
     /**
@@ -164,7 +171,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
     {
         $ticket = 'foobar';
 
-        $this->job->expects($this->any())
+        $this->jobEvent->expects($this->any())
             ->method('getTicket')
             ->will($this->returnValue($ticket));
 
@@ -175,7 +182,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
         $this->rootJob->expects($this->never())
             ->method('getParameters');
 
-        $this->subject->onPrepare($this->job);
+        $this->subject->onPrepare($this->jobEvent);
 
         $this->assertFalse($this->context->has('filesystem'));
     }
@@ -204,11 +211,19 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getParameters')
             ->willReturn($configuration);
 
-        if ($configuration->getRemoveDirectory()) {
+        if($configuration->getRemoveDirectory())
+        {
+            $this->filesystem->expects($this->once())
+                ->method('exists')
+                ->with($ticket)
+                ->willReturn(true);
+
             $this->filesystem->expects($this->once())
                 ->method('remove')
                 ->with($ticket);
-        } else {
+        }
+        else
+        {
             $this->filesystem->expects($this->never())
                 ->method('remove');
         }
@@ -302,6 +317,10 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(new Configuration('id', null, true, true));
 
         $this->filesystem->expects($this->once())
+            ->method('exists')
+            ->willReturn(true);
+
+        $this->filesystem->expects($this->once())
             ->method('remove')
             ->willThrowException(new \Exception);
 
@@ -326,11 +345,19 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Job|\PHPUnit_Framework_MockObject_MockObject
+     * @return JobInformation|\PHPUnit_Framework_MockObject_MockObject
      */
     private function createJobMock()
     {
         return $this->getMock('Abc\Bundle\JobBundle\Job\Job');
+    }
+
+    /**
+     * @return JobEvent|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createJoEventMock()
+    {
+        return $this->getMockBuilder('Abc\Bundle\JobBundle\Event\JobEvent')->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -345,6 +372,7 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
         $report->expects($this->any())
             ->method('getStatus')
             ->willReturn(Status::PROCESSED());
+
         return $report;
     }
 }
