@@ -190,8 +190,10 @@ class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
 
         $job1 = new Job();
         $job1->setStatus(Status::REQUESTED());
+        $job1->setCreatedAt(new \DateTime);
         $job2 = new Job();
         $job2->setStatus(Status::CANCELLED());
+        $job2->setCreatedAt(new \DateTime);
         $report1 = new Report($job1);
         $report2 = new Report($job2);
 
@@ -287,7 +289,8 @@ class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
 
         $job1 = new Job();
         $job1->setStatus(Status::REQUESTED());
-        $job1->setExecutionTime(333);
+        $job1->setCreatedAt(new \DateTime('2010-01-01 00:00:00'));
+        $job1->setTerminatedAt(new \DateTime('2010-01-01 00:00:05'));
         $report1 = new Report($job1);
 
         $this->jobManager->expects($this->at(0))
@@ -298,7 +301,7 @@ class ExecutionManagerTest extends \PHPUnit_Framework_TestCase
         $result = $this->subject->findById($ticket);
 
         $this->assertEquals(Status::REQUESTED(), $result->getStatus());
-        $this->assertEquals(333, $result->getExecutionTime());
+        $this->assertEquals(5, $result->getExecutionTime());
     }
 
     public function testFindByIdWithStoredData()

@@ -61,6 +61,7 @@ class ExecutionManager extends BaseExecutionManager
 
         $executionNumber = $this->sequenceManager->getNextValue('workflow-' . $workflow->getId());
         $execution->setExecutionNumber($executionNumber);
+
         return $execution;
     }
 
@@ -80,7 +81,8 @@ class ExecutionManager extends BaseExecutionManager
     public function update(ExecutionInterface $item, $andFlush = true)
     {
         $this->objectManager->persist($item);
-        if ($andFlush) {
+        if($andFlush)
+        {
             $this->objectManager->flush();
         }
     }
@@ -92,19 +94,20 @@ class ExecutionManager extends BaseExecutionManager
     {
         $report = $this->jobManager->getReport($ticket);
 
-        if ($report->getStatus() == Status::PROCESSED()
+        if($report->getStatus() == Status::PROCESSED()
             || $report->getStatus() == Status::CANCELLED()
             || $report->getStatus() == Status::ERROR()
-        ) {
+        )
+        {
             return 100;
         }
 
         //Calculate progress
         /** @var Configuration $configuration */
         $configuration = $report->getParameters();
-        $index    = $configuration->getIndex();
-        $tasks    = $this->taskManager->findWorkflowTasks($configuration->getId());
-        $total    = count($tasks);
+        $index         = $configuration->getIndex();
+        $tasks         = $this->taskManager->findWorkflowTasks($configuration->getId());
+        $total         = count($tasks);
 
         $progress = 100 - (($total - $index) / $total * 100);
 
@@ -159,8 +162,10 @@ class ExecutionManager extends BaseExecutionManager
             $offset
         );
 
-        foreach ($executions as $key => $execution) {
-            if ($execution->getExecutionTime() == null) {
+        foreach($executions as $key => $execution)
+        {
+            if($execution->getExecutionTime() == null)
+            {
                 //Dynamically set execution data
                 $report = $this->jobManager->getReport($execution->getTicket());
                 $execution->setStatus($report->getStatus());
@@ -187,12 +192,16 @@ class ExecutionManager extends BaseExecutionManager
     public function findById($id)
     {
         $execution = $this->repository->find($id);
-        if ($execution->getExecutionTime() == null) {
+
+        if($execution->getExecutionTime() == null)
+        {
             //Dynamically set execution data
             $report = $this->jobManager->getReport($execution->getTicket());
+
             $execution->setStatus($report->getStatus());
             $execution->setExecutionTime($report->getExecutionTime());
         }
+
         return $execution;
     }
 
