@@ -46,7 +46,7 @@
             <argument type="service" id="logger" on-invalid="null"/>
 
             <tag name="abc.job.event_listener" event="abc.job.prepare" method="onPrepare"/>
-            <tag name="abc.job.event_listener" event="abc.job.terminate" method="onTerminate"/>
+            <tag name="abc.job.event_listener" event="abc.job.terminated" method="onTerminated"/>
             <tag name="monolog.logger" channel="abc.workflow.listener.job"/>
         </service>
 

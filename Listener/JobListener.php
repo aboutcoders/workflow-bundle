@@ -78,7 +78,7 @@ class JobListener
         }
     }
 
-    public function onTerminate(ReportEvent $event)
+    public function onTerminated(ReportEvent $event)
     {
         if($event->getReport()->getType() != 'workflow')
         {
