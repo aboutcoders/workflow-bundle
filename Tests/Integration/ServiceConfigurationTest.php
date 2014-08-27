@@ -58,8 +58,10 @@ class ServiceConfigurationTest extends KernelTestCase
             array('abc.workflow.workflow_manager', 'Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface'),
             array('abc.workflow.execution_manager', 'Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface'),
             array('abc.workflow.task.form.mailer', 'Abc\Bundle\WorkflowBundle\Form\Task\MailerType'),
+            array('abc.workflow.task.form.distribute_artifacts', 'Abc\Bundle\WorkflowBundle\Form\Task\DistributeArtifactsType'),
             array('abc.workflow.executable.workflow_executor', 'Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutor'),
             array('abc.workflow.executable.cleanup_directory', 'Abc\Bundle\WorkflowBundle\Executable\CleanupDirectoryExecutable'),
+            array('abc.workflow.executable.distribute_artifacts', 'Abc\Bundle\WorkflowBundle\Executable\ArtifactDistributor'),
             array('abc.workflow.job_listener', 'Abc\Bundle\WorkflowBundle\Listener\JobListener'),
             array('abc.workflow.manager', 'Abc\Bundle\WorkflowBundle\Workflow\ManagerInterface'),
         );

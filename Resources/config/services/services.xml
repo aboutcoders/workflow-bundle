@@ -7,8 +7,10 @@
     <parameters>
         <parameter key="abc.workflow.twig.workflow_extension.class">Abc\Bundle\WorkflowBundle\Twig\WorkflowExtension</parameter>
         <parameter key="abc.workflow.task.form.mailer.class">Abc\Bundle\WorkflowBundle\Form\Task\MailerType</parameter>
-        <parameter key="abc.workflow.executable.workflow.class">Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutor</parameter>
+        <parameter key="abc.workflow.task.form.distribute_artifacts.class">Abc\Bundle\WorkflowBundle\Form\Task\DistributeArtifactsType</parameter>
         <parameter key="abc.workflow.executable.cleanup_directory.class">Abc\Bundle\WorkflowBundle\Executable\CleanupDirectoryExecutable</parameter>
+        <parameter key="abc.workflow.executable.distribute_artifacts.class">Abc\Bundle\WorkflowBundle\Executable\ArtifactDistributor</parameter>
+        <parameter key="abc.workflow.executable.workflow.class">Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutor</parameter>
     </parameters>
 
     <services>
@@ -29,6 +31,11 @@
             <tag name="abc.workflow.task.form" />
         </service>
 
+        <service id="abc.workflow.task.form.distribute_artifacts" class="%abc.workflow.task.form.distribute_artifacts.class%">
+            <argument type="service" id="abc.file_distribution.definition_manager" />
+            <tag name="abc.workflow.task.form" />
+        </service>
+
         <service id="abc.workflow.executable.workflow_executor" class="%abc.workflow.executable.workflow.class%">
             <argument type="service" id="abc.workflow.workflow_manager" />
             <argument type="service" id="abc.workflow.task_manager" />
@@ -38,6 +45,13 @@
         <service id="abc.workflow.executable.cleanup_directory" class="%abc.workflow.executable.cleanup_directory.class%">
             <argument type="service" id="abc.file_distribution.filesystem_factory" />
             <tag name="abc.job.listener" type="abc.workflow.task.cleanup_directory" />
+        </service>
+
+        <service id="abc.workflow.executable.distribute_artifacts" class="%abc.workflow.executable.distribute_artifacts.class%">
+            <argument type="service" id="abc.file_distribution.definition_manager" />
+            <argument type="service" id="abc.file_distribution.filesystem_factory" />
+            <argument type="service" id="abc.job.manager"/>
+            <tag name="abc.job.listener" type="workflow_distribute_artifacts" />
         </service>
 
         <service id="abc.workflow.job_listener" class="Abc\Bundle\WorkflowBundle\Listener\JobListener" public="true">
