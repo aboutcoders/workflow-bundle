@@ -6,6 +6,7 @@ use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\CategoryManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskTypeManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
+use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -26,12 +27,13 @@ class WorkflowExtension extends \Twig_Extension
     {
         return array(
             'workflow_configuration' => new \Twig_Function_Method($this, 'workflowConfiguration', array('is_safe' => array('html'))),
-            'workflow_history'       => new \Twig_Function_Method($this, 'workflowHistory', array('is_safe' => array('html'))),
+            'workflow_history' => new \Twig_Function_Method($this, 'workflowHistory', array('is_safe' => array('html'))),
         );
     }
 
-    public function workflowConfiguration(WorkflowInterface $workflow)
+    public function workflowConfiguration($workflowId)
     {
+        $workflow               = $this->getWorkflowManager()->findById($workflowId);
         $taskManager            = $this->getTaskManager();
         $tasTypeManager         = $this->getTaskTypeManager();
         $tasTypeCategoryManager = $this->getCategoryManager();
@@ -41,11 +43,12 @@ class WorkflowExtension extends \Twig_Extension
         $tasks      = $taskManager->findWorkflowTasks($workflow->getId());
 
         return $this->container->get('templating')
-            ->render("AbcWorkflowBundle:Task:configureWorkflow.html.twig",
+            ->render(
+                "AbcWorkflowBundle:Task:configureWorkflow.html.twig",
                 array(
-                    'entity'     => $workflow,
-                    'types'      => $types,
-                    'tasks'      => $tasks,
+                    'entity' => $workflow,
+                    'types' => $types,
+                    'tasks' => $tasks,
                     'categories' => $categories,
                 )
             );
@@ -57,9 +60,10 @@ class WorkflowExtension extends \Twig_Extension
         $executions       = $executionManager->findHistory($workflow->getId());
 
         return $this->container->get('templating')
-            ->render("AbcWorkflowBundle:Execution:workflowHistory.html.twig",
+            ->render(
+                "AbcWorkflowBundle:Execution:workflowHistory.html.twig",
                 array(
-                    'workflow'   => $workflow,
+                    'workflow' => $workflow,
                     'executions' => $executions,
                 )
             );
@@ -100,5 +104,13 @@ class WorkflowExtension extends \Twig_Extension
     private function getExecutionManager()
     {
         return $this->container->get('abc.workflow.execution_manager');
+    }
+
+    /**
+     * @return WorkflowManagerInterface
+     */
+    private function getWorkflowManager()
+    {
+        return $this->container->get('abc.workflow.workflow_manager');
     }
 } 
