@@ -3,6 +3,7 @@
 namespace Abc\Bundle\WorkflowBundle\Model;
 
 use Abc\Bundle\JobBundle\Job\Report\ReportInterface;
+use Abc\Bundle\WorkflowBundle\Workflow\ManagerInterface;
 
 /**
  * @author Wojciech Ciolko <w.ciolko@gmail.com>
@@ -11,20 +12,17 @@ interface ExecutionManagerInterface
 {
 
     /**
-     * @param string            $ticket
-     * @param WorkflowInterface $workflow
-     * @return ExecutionInterface
+     * @param ManagerInterface $manager
+     * @return void
      */
-    public function create($ticket, WorkflowInterface $workflow);
-
+    public function setManager(ManagerInterface $manager);
 
     /**
      * @param string            $ticket
      * @param WorkflowInterface $workflow
      * @return ExecutionInterface
      */
-    public function execute($ticket, WorkflowInterface $workflow);
-
+    public function create($ticket, WorkflowInterface $workflow);
 
     /**
      * @param ExecutionInterface $item
@@ -32,21 +30,11 @@ interface ExecutionManagerInterface
      */
     public function update(ExecutionInterface $item);
 
-
-    /**
-     * Get current execution progress
-     *
-     * @param string $ticket
-     * @return integer
-     */
-    public function getProgress($ticket);
-
     /**
      * @param ExecutionInterface $item
      * @return void
      */
     public function delete(ExecutionInterface $item);
-
 
     /**
      * @param array    $criteria

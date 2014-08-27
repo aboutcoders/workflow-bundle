@@ -33,7 +33,6 @@ class TaskTypeCategoryManager extends BaseTaskTypeCategoryManager
         $this->class = $metadata->getName();
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -41,7 +40,6 @@ class TaskTypeCategoryManager extends BaseTaskTypeCategoryManager
     {
         return $this->class;
     }
-
 
     /**
      * Updates a TaskTypeCategory
@@ -57,7 +55,6 @@ class TaskTypeCategoryManager extends BaseTaskTypeCategoryManager
         }
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -66,7 +63,6 @@ class TaskTypeCategoryManager extends BaseTaskTypeCategoryManager
         $this->objectManager->remove($item);
         $this->objectManager->flush();
     }
-
 
     /**
      * {@inheritDoc}

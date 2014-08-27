@@ -2,12 +2,10 @@
 
 namespace Abc\Bundle\WorkflowBundle\Doctrine;
 
-use Abc\Bundle\JobBundle\Job\ManagerInterface;
 use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\SequenceBundle\Model\SequenceManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionInterface;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManager as BaseExecutionManager;
-use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Abc\Bundle\WorkflowBundle\Workflow\Configuration;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -28,33 +26,28 @@ class ExecutionManager extends BaseExecutionManager
     protected $jobManager;
     /** @var SequenceManagerInterface */
     protected $sequenceManager;
-    /** @var TaskManagerInterface */
-    protected $taskManager;
 
     /**
      * @param ObjectManager            $om
      * @param string                   $class
-     * @param ManagerInterface         $jobManager
      * @param SequenceManagerInterface $sequenceManager
-     * @param TaskManagerInterface     $taskManager
      */
     public function __construct(
         ObjectManager $om,
         $class,
-        ManagerInterface $jobManager,
-        SequenceManagerInterface $sequenceManager,
-        TaskManagerInterface $taskManager)
+        SequenceManagerInterface $sequenceManager)
     {
         $this->objectManager   = $om;
         $this->repository      = $om->getRepository($class);
-        $this->jobManager      = $jobManager;
         $this->sequenceManager = $sequenceManager;
-        $this->taskManager     = $taskManager;
 
         $metadata    = $om->getClassMetadata($class);
         $this->class = $metadata->getName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function create($ticket, WorkflowInterface $workflow)
     {
         $execution = parent::create($ticket, $workflow);
@@ -64,7 +57,6 @@ class ExecutionManager extends BaseExecutionManager
 
         return $execution;
     }
-
 
     /**
      * {@inheritDoc}
@@ -90,50 +82,11 @@ class ExecutionManager extends BaseExecutionManager
     /**
      * {@inheritDoc}
      */
-    public function getProgress($ticket)
-    {
-        $report = $this->jobManager->getReport($ticket);
-
-        if($report->getStatus() == Status::PROCESSED()
-            || $report->getStatus() == Status::CANCELLED()
-            || $report->getStatus() == Status::ERROR()
-        )
-        {
-            return 100;
-        }
-
-        //Calculate progress
-        /** @var Configuration $configuration */
-        $configuration = $report->getParameters();
-        $index         = $configuration->getIndex();
-        $tasks         = $this->taskManager->findWorkflowTasks($configuration->getId());
-        $total         = count($tasks);
-
-        $progress = 100 - (($total - $index) / $total * 100);
-
-        return (int)round($progress);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function execute($ticket, WorkflowInterface $workflow)
-    {
-        $item = $this->create($ticket, $workflow);
-        $this->update($item);
-
-        return $item;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function delete(ExecutionInterface $item)
     {
         $this->objectManager->remove($item);
         $this->objectManager->flush();
     }
-
 
     /**
      * {@inheritDoc}
@@ -144,17 +97,10 @@ class ExecutionManager extends BaseExecutionManager
     }
 
     /**
-     * Finds workflow history with ticket details
-     *
-     * @param int      $workflowId
-     * @param array    $orderBy
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array
+     * {@inheritDoc}
      */
     public function findHistory($workflowId, array $orderBy = array('createdAt' => 'DESC'), $limit = 20, $offset = null)
     {
-
         $executions = $this->findBy(
             array('workflowId' => $workflowId),
             $orderBy,
@@ -164,10 +110,10 @@ class ExecutionManager extends BaseExecutionManager
 
         foreach($executions as $key => $execution)
         {
-            if($execution->getExecutionTime() == null)
+            /** @var ExecutionInterface $execution */
+            if(!in_array($execution->getStatus()->getValue(), Status::getTerminatedStatusValues()))
             {
-                //Dynamically set execution data
-                $report = $this->jobManager->getReport($execution->getTicket());
+                $report = $this->manager->getReport($execution->getTicket());
                 $execution->setStatus($report->getStatus());
                 $execution->setExecutionTime($report->getExecutionTime());
                 $executions[$key] = $execution;
@@ -176,7 +122,6 @@ class ExecutionManager extends BaseExecutionManager
 
         return $executions;
     }
-
 
     /**
      * {@inheritDoc}
@@ -193,11 +138,9 @@ class ExecutionManager extends BaseExecutionManager
     {
         $execution = $this->repository->find($id);
 
-        if($execution->getExecutionTime() == null)
+        if(!in_array($execution->getStatus()->getValue(), Status::getTerminatedStatusValues()))
         {
-            //Dynamically set execution data
-            $report = $this->jobManager->getReport($execution->getTicket());
-
+            $report = $this->manager->getReport($execution->getTicket());
             $execution->setStatus($report->getStatus());
             $execution->setExecutionTime($report->getExecutionTime());
         }

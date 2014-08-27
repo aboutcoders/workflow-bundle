@@ -10,6 +10,7 @@ use Abc\Bundle\WorkflowBundle\Model\TaskTypeInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskTypeManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
+use Abc\Bundle\WorkflowBundle\Workflow\ManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -74,6 +75,14 @@ class BaseController extends Controller
         }
 
         throw $this->createNotFoundException(sprintf('Unable to find workflow with id "%s"', $id));
+    }
+
+    /**
+     * @return ManagerInterface
+     */
+    public function getManager()
+    {
+        $manager = $this->get('abc.workflow.manager');
     }
 
     /**

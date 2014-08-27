@@ -33,7 +33,6 @@ class TaskTypeManager extends BaseTaskTypeManager
         $this->class = $metadata->getName();
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -41,7 +40,6 @@ class TaskTypeManager extends BaseTaskTypeManager
     {
         return $this->class;
     }
-
 
     /**
      * Updates a TaskType
@@ -57,7 +55,6 @@ class TaskTypeManager extends BaseTaskTypeManager
         }
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -66,7 +63,6 @@ class TaskTypeManager extends BaseTaskTypeManager
         $this->objectManager->remove($item);
         $this->objectManager->flush();
     }
-
 
     /**
      * {@inheritDoc}
@@ -91,7 +87,6 @@ class TaskTypeManager extends BaseTaskTypeManager
     {
         return $this->repository->findOneBy(array('jobType' => $type));
     }
-
 
     /**
      * {@inheritDoc}

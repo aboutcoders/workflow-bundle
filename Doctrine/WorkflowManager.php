@@ -19,7 +19,6 @@ class WorkflowManager extends BaseWorkflowManager
     /** @var ObjectRepository */
     protected $repository;
 
-
     /**
      * @param ObjectManager $om
      * @param string        $class
@@ -33,7 +32,6 @@ class WorkflowManager extends BaseWorkflowManager
         $this->class = $metadata->getName();
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -41,7 +39,6 @@ class WorkflowManager extends BaseWorkflowManager
     {
         return $this->class;
     }
-
 
     /**
      * Updates a Workflow
@@ -57,7 +54,6 @@ class WorkflowManager extends BaseWorkflowManager
         }
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -66,7 +62,6 @@ class WorkflowManager extends BaseWorkflowManager
         $this->objectManager->remove($item);
         $this->objectManager->flush();
     }
-
 
     /**
      * {@inheritDoc}

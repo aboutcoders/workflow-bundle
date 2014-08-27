@@ -2,20 +2,20 @@
 
 namespace Abc\Bundle\WorkflowBundle\Controller;
 
-use Abc\Bundle\WorkflowBundle\Workflow\ManagerInterface;
 use Abc\Bundle\JobBundle\Job\Report\ReportInterface;
 use Abc\Bundle\JobBundle\Job\Status;
-use Abc\Bundle\WorkflowBundle\Doctrine\WorkflowManager;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
+use Abc\Bundle\WorkflowBundle\Doctrine\WorkflowManager;
 use Abc\Bundle\WorkflowBundle\Form\WorkflowType;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Abc\Bundle\WorkflowBundle\Workflow\ManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -43,10 +43,7 @@ class ExecutionController extends BaseController
             return $this->redirect($this->generateUrl('workflow_show', array('id' => $workflow->getId())));
         }
 
-        /** @var ManagerInterface $manager */
-        $manager = $this->get('abc.workflow.manager');
-
-        $execution = $manager->execute($id);
+        $execution = $this->getManager()->execute($id);
 
         $this->get('session')->getFlashBag()->add('info', 'Workflow execution triggered (#' . $execution->getExecutionNumber() . '). Check workflow history for details');
 
@@ -68,10 +65,7 @@ class ExecutionController extends BaseController
             throw $this->createNotFoundException('Unable to find execution');
         }
 
-        /** @var \Abc\Bundle\JobBundle\Job\ManagerInterface $manager */
-        $manager = $this->get('abc.job.manager');
-
-        $manager->cancelJob($execution->getTicket());
+        $this->getManager()->cancel($execution->getTicket());
 
         $this->get('session')->getFlashBag()->add('info', 'Workflow execution #' . $execution->getExecutionNumber() . ' cancelled');
 
@@ -89,10 +83,8 @@ class ExecutionController extends BaseController
     {
         $entity = $this->findExecution($id);
 
-        /** @var \Abc\Bundle\JobBundle\Job\ManagerInterface $jobManager */
-        $jobManager = $this->get('abc.job.manager');
-        $report     = $jobManager->getReport($entity->getTicket());
-        $progress   = $this->getExecutionManager()->getProgress($entity->getTicket());
+        $report     = $this->getManager()->getReport($entity->getTicket());
+        $progress   = $this->getManager()->getProgress($entity->getTicket());
 
         return array(
             'entity'   => $entity,
@@ -111,7 +103,7 @@ class ExecutionController extends BaseController
     {
         $entity = $this->findExecution($id);
 
-        $progress = $this->getExecutionManager()->getProgress($entity->getTicket());
+        $progress = $this->getManager()->getProgress($entity->getTicket());
 
         $response = new Response(json_encode(
                 array(

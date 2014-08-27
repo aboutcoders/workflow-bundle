@@ -18,7 +18,10 @@
         <service id="abc.workflow.manager" class="Abc\Bundle\WorkflowBundle\Workflow\Manager" public="true">
             <argument type="service" id="abc.job.manager"/>
             <argument type="service" id="abc.workflow.workflow_manager"/>
-            <argument type="service" id="abc.workflow.execution_manager"/>
+            <argument type="service" id="abc.workflow.task_manager"/>
+            <call method="setExecutionManager">
+                <argument type="service" id="abc.workflow.execution_manager" />
+            </call>
         </service>
 
         <service id="abc.workflow.workflow_extension" class="%abc.workflow.twig.workflow_extension.class%">

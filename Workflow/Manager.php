@@ -3,9 +3,13 @@
 namespace Abc\Bundle\WorkflowBundle\Workflow;
 
 use Abc\Bundle\JobBundle\Job as Job;
+use Abc\Bundle\JobBundle\Job\Exception\TicketNotFoundException;
+use Abc\Bundle\JobBundle\Job\Report\ReportInterface;
+use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\SchedulerBundle\Model\ScheduleInterface;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionInterface;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
+use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
 use Abc\Bundle\WorkflowBundle\Workflow\Exception\WorkflowNotFoundException;
 
@@ -14,32 +18,38 @@ use Abc\Bundle\WorkflowBundle\Workflow\Exception\WorkflowNotFoundException;
  */
 class Manager implements ManagerInterface
 {
-    /** @var WorkflowManagerInterface */
-    protected $workflowManager;
+
     /** @var ExecutionManagerInterface */
     protected $executionManager;
     /** @var Job\ManagerInterface */
     protected $jobManager;
+    /** @var TaskManagerInterface */
+    protected $taskManager;
+    /** @var WorkflowManagerInterface */
+    protected $workflowManager;
 
     /**
-     * @param Job\ManagerInterface      $jobManager
-     * @param WorkflowManagerInterface  $workflowManager
-     * @param ExecutionManagerInterface $executionManager
+     * @param Job\ManagerInterface     $jobManager
+     * @param WorkflowManagerInterface $workflowManager
+     * @param TaskManagerInterface     $taskManager
      */
-    function __construct(Job\ManagerInterface $jobManager, WorkflowManagerInterface $workflowManager, ExecutionManagerInterface $executionManager)
+    function __construct(Job\ManagerInterface $jobManager, WorkflowManagerInterface $workflowManager, TaskManagerInterface $taskManager)
     {
-        $this->jobManager       = $jobManager;
-        $this->workflowManager  = $workflowManager;
-        $this->executionManager = $executionManager;
+        $this->jobManager      = $jobManager;
+        $this->workflowManager = $workflowManager;
+        $this->taskManager     = $taskManager;
     }
 
     /**
-     * @param int               $id
-     * @param \Serializable     $parameters
-     * @param ScheduleInterface $schedule
-     * @param mixed|null        $response
-     * @return ExecutionInterface
-     * @throws WorkflowNotFoundException If a workflow with the given id does not exist
+     * {@inheritDoc}
+     */
+    public function cancel($ticket)
+    {
+        $this->jobManager->cancelJob($ticket);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function execute($id, \Serializable $parameters = null, ScheduleInterface $schedule = null, $response = null)
     {
@@ -63,5 +73,52 @@ class Manager implements ManagerInterface
         $this->executionManager->update($execution);
 
         return $execution;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getProgress($ticket)
+    {
+        $report = $this->getReport($ticket);
+
+        if($report->getStatus() == Status::PROCESSED() || $report->getStatus() == Status::CANCELLED() || $report->getStatus() == Status::ERROR())
+        {
+            return 100;
+        }
+
+        /** @var Configuration $configuration */
+        $configuration = $report->getParameters();
+        $index         = $configuration->getIndex();
+        $tasks         = $this->taskManager->findWorkflowTasks($configuration->getId());
+        $total         = count($tasks);
+
+        $progress = 100 - (($total - $index) / $total * 100);
+
+        return (int)round($progress);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getReport($ticket)
+    {
+        return $this->jobManager->getReport($ticket);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getStatus($ticket)
+    {
+        return $this->jobManager->getStatus($ticket);
+    }
+
+    /**
+     * @param ExecutionManagerInterface $manager
+     */
+    public function setExecutionManager(ExecutionManagerInterface $manager)
+    {
+        $this->executionManager = $manager;
     }
 }

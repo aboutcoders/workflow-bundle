@@ -22,7 +22,6 @@ class TaskManager extends BaseTaskManager
     /** @var EntityRepository */
     protected $repository;
 
-
     /**
      * @param ObjectManager $om
      * @param string        $class
@@ -36,7 +35,6 @@ class TaskManager extends BaseTaskManager
         $this->class = $metadata->getName();
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -44,7 +42,6 @@ class TaskManager extends BaseTaskManager
     {
         return $this->class;
     }
-
 
     /**
      * Updates a Task
@@ -65,7 +62,6 @@ class TaskManager extends BaseTaskManager
         }
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -74,7 +70,6 @@ class TaskManager extends BaseTaskManager
         $this->objectManager->remove($item);
         $this->objectManager->flush();
     }
-
 
     /**
      * {@inheritDoc}
@@ -93,11 +88,7 @@ class TaskManager extends BaseTaskManager
     }
 
     /**
-     * Finds next task Task to execute by the given workflow id.
-     *
-     * @param int $workflowId
-     * @param int $index
-     * @return TaskInterface|null
+     * {@inheritDoc}
      */
     public function findNextWorkflowTask($workflowId, $index = 0)
     {
