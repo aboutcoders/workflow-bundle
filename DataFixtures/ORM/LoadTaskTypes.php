@@ -48,7 +48,7 @@ class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface, 
 
         $distributeArtifactsType = $taskTypeManager->create();
         $distributeArtifactsType->setName('Distribute artifacts');
-        $distributeArtifactsType->setJobType('"workflow_distribute_artifacts');
+        $distributeArtifactsType->setJobType('workflow_distribute_artifacts');
         $distributeArtifactsType->setFormServiceName('abc.workflow.task.form.distribute_artifacts');
         $distributeArtifactsType->setCategory($category);
         $distributeArtifactsType->setIcon('transfer');
