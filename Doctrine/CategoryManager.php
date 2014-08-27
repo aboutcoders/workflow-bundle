@@ -63,6 +63,16 @@ class CategoryManager extends BaseCategoryManager
     }
 
     /**
+     * @param string $name
+     * @return boolean
+     */
+    public function exists($name)
+    {
+        // TODO: Implement exists() method.
+    }
+
+
+    /**
      * {@inheritDoc}
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)

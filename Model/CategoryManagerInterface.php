@@ -26,6 +26,12 @@ interface CategoryManagerInterface
     public function delete(CategoryInterface $item);
 
     /**
+     * @param string $name
+     * @return boolean
+     */
+    public function exists($name);
+
+    /**
      * @param array $criteria
      * @return CategoryInterface
      */
