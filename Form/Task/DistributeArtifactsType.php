@@ -43,7 +43,7 @@ class DistributeArtifactsType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Abc\Bundle\WorkflowBundle\Executable'
-        ));
+                'data_class' => 'Abc\Bundle\WorkflowBundle\Executable\DistributeArtifactsParameter'
+            ));
     }
 }
