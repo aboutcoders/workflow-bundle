@@ -82,7 +82,7 @@ class BaseController extends Controller
      */
     public function getManager()
     {
-        $manager = $this->get('abc.workflow.manager');
+        return $this->get('abc.workflow.manager');
     }
 
     /**
