@@ -2,7 +2,7 @@
 
 namespace Abc\Bundle\WorkflowBundle\DataFixtures\ORM;
 
-use Abc\Bundle\WorkflowBundle\Model\TaskTypeCategoryManagerInterface;
+use Abc\Bundle\WorkflowBundle\Model\CategoryManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskTypeManagerInterface;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
@@ -30,13 +30,13 @@ class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface, 
         /** @var TaskTypeManagerInterface $taskTypeManager */
         $taskTypeManager = $this->container->get('abc.workflow.task_type_manager');
 
-        /** @var TaskTypeCategoryManagerInterface $taskTypeCategoryManager */
-        $taskTypeCategoryManager = $this->container->get('abc.workflow.task_type_category_manager');
+        /** @var CategoryManagerInterface $categoryManager */
+        $categoryManager = $this->container->get('abc.workflow.category_manager');
 
-        $category = $taskTypeCategoryManager->create();
+        $category = $categoryManager->create();
         $category->setName('General');
         $category->setIcon('asterisk');
-        $taskTypeCategoryManager->update($category);
+        $categoryManager->update($category);
 
         $mailerType = $taskTypeManager->create();
         $mailerType->setName('Send mail');

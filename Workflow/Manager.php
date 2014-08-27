@@ -48,6 +48,11 @@ class Manager implements ManagerInterface
         $this->jobManager->cancelJob($ticket);
     }
 
+    public function create($name, $category = null, $createDirectory = true, $removeDirectory = true)
+    {
+
+    }
+
     /**
      * {@inheritDoc}
      */

@@ -3,7 +3,7 @@ namespace Abc\Bundle\WorkflowBundle\Twig;
 
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
-use Abc\Bundle\WorkflowBundle\Model\TaskTypeCategoryManagerInterface;
+use Abc\Bundle\WorkflowBundle\Model\CategoryManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskTypeManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -34,7 +34,7 @@ class WorkflowExtension extends \Twig_Extension
     {
         $taskManager            = $this->getTaskManager();
         $tasTypeManager         = $this->getTaskTypeManager();
-        $tasTypeCategoryManager = $this->getTaskTypeCategoryManager();
+        $tasTypeCategoryManager = $this->getCategoryManager();
 
         $types      = $tasTypeManager->findAll();
         $categories = $tasTypeCategoryManager->findAll();
@@ -87,11 +87,11 @@ class WorkflowExtension extends \Twig_Extension
     }
 
     /**
-     * @return TaskTypeCategoryManagerInterface
+     * @return CategoryManagerInterface
      */
-    protected function getTaskTypeCategoryManager()
+    protected function getCategoryManager()
     {
-        return $this->container->get('abc.workflow.task_type_category_manager');
+        return $this->container->get('abc.workflow.category_manager');
     }
 
     /**

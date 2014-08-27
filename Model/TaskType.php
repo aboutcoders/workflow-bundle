@@ -33,7 +33,7 @@ class TaskType implements TaskTypeInterface
     protected $formServiceName;
 
     /**
-     * @var TaskTypeCategoryInterface
+     * @var CategoryInterface
      */
     protected $category;
 
@@ -124,7 +124,7 @@ class TaskType implements TaskTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function setCategory(TaskTypeCategoryInterface $category)
+    public function setCategory(CategoryInterface $category)
     {
         $this->category = $category;
     }

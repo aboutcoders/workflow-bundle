@@ -5,9 +5,9 @@ namespace Abc\Bundle\WorkflowBundle\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * TaskTypeCategory
+ * Category
  */
-class TaskTypeCategory implements TaskTypeCategoryInterface
+class Category implements CategoryInterface
 {
     /**
      * @var integer

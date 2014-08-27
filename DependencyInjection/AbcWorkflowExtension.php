@@ -81,7 +81,7 @@ class AbcWorkflowExtension extends Extension
 
         $container->setAlias('abc.workflow.task_manager', $config['task_manager']);
         $container->setAlias('abc.workflow.task_type_manager', $config['task_type_manager']);
-        $container->setAlias('abc.workflow.task_type_category_manager', $config['task_type_category_manager']);
+        $container->setAlias('abc.workflow.category_manager', $config['category_manager']);
 
         $this->remapParametersNamespaces(
             $config,

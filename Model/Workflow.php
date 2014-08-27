@@ -77,7 +77,7 @@ class Workflow implements WorkflowInterface
     protected $updatedAt;
 
     /**
-     * @var TaskTypeCategoryInterface
+     * @var CategoryInterface
      */
     protected $category;
 
@@ -274,7 +274,7 @@ class Workflow implements WorkflowInterface
     /**
      * {@inheritdoc}
      */
-    public function setCategory(TaskTypeCategoryInterface $category)
+    public function setCategory(CategoryInterface $category)
     {
         $this->category = $category;
     }

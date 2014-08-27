@@ -2,13 +2,13 @@
 
 namespace Abc\Bundle\WorkflowBundle\Entity;
 
-use Abc\Bundle\WorkflowBundle\Doctrine\TaskTypeCategoryManager as BaseTaskTypeCategoryManager;
+use Abc\Bundle\WorkflowBundle\Doctrine\CategoryManager as BaseCategoryManager;
 use Doctrine\ORM\EntityManager;
 
 /**
  * @author Wojciech Ciolko <w.ciolko@gmail.com>
  */
-class TaskTypeCategoryManager extends BaseTaskTypeCategoryManager
+class CategoryManager extends BaseCategoryManager
 {
     /** @var EntityManager */
     protected $em;

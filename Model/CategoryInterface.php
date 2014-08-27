@@ -4,7 +4,7 @@ namespace Abc\Bundle\WorkflowBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-interface TaskTypeCategoryInterface
+interface CategoryInterface
 {
     /**
      * @return integer

@@ -1,7 +1,7 @@
 <?php
 namespace Abc\Bundle\WorkflowBundle\Model;
 
-abstract class TaskTypeCategoryManager implements TaskTypeCategoryManagerInterface
+abstract class CategoryManager implements CategoryManagerInterface
 {
 
     /**

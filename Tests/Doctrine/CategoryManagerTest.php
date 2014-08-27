@@ -1,15 +1,13 @@
 <?php
 
-
 namespace Abc\Bundle\WorkflowBundle\Tests\Doctrine;
 
-
-use Abc\Bundle\WorkflowBundle\Doctrine\TaskTypeCategoryManager;
+use Abc\Bundle\WorkflowBundle\Doctrine\CategoryManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
-class TaskTypeCategoryManagerTest extends \PHPUnit_Framework_TestCase
+class CategoryManagerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var string */
     private $class;
@@ -20,13 +18,13 @@ class TaskTypeCategoryManagerTest extends \PHPUnit_Framework_TestCase
     /** @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject */
     private $repository;
 
-    /** @var TaskTypeCategoryManager */
+    /** @var CategoryManager */
     private $subject;
 
 
     public function setUp()
     {
-        $this->class         = 'Abc\Bundle\WorkflowBundle\Entity\TaskTypeCategory';
+        $this->class         = 'Abc\Bundle\WorkflowBundle\Entity\Category';
         $this->classMetaData = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
         $this->objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $this->repository    = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
@@ -43,7 +41,7 @@ class TaskTypeCategoryManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->will($this->returnValue($this->repository));
 
-        $this->subject = new TaskTypeCategoryManager($this->objectManager, $this->class);
+        $this->subject = new CategoryManager($this->objectManager, $this->class);
     }
 
 

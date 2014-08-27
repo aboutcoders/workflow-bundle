@@ -2,15 +2,15 @@
 
 namespace Abc\Bundle\WorkflowBundle\Doctrine;
 
-use Abc\Bundle\WorkflowBundle\Model\TaskTypeCategoryInterface;
-use Abc\Bundle\WorkflowBundle\Model\TaskTypeCategoryManager as BaseTaskTypeCategoryManager;
+use Abc\Bundle\WorkflowBundle\Model\CategoryInterface;
+use Abc\Bundle\WorkflowBundle\Model\CategoryManager as BaseCategoryManager;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 /**
  * @author Wojciech Ciolko <w.ciolko@gmail.com>
  */
-class TaskTypeCategoryManager extends BaseTaskTypeCategoryManager
+class CategoryManager extends BaseCategoryManager
 {
     /** @var ObjectManager */
     protected $objectManager;
@@ -42,12 +42,10 @@ class TaskTypeCategoryManager extends BaseTaskTypeCategoryManager
     }
 
     /**
-     * Updates a TaskTypeCategory
-     *
-     * @param TaskTypeCategoryInterface $item
+     * @param CategoryInterface $item
      * @param Boolean                   $andFlush Whether to flush the changes (default true)
      */
-    public function update(TaskTypeCategoryInterface $item, $andFlush = true)
+    public function update(CategoryInterface $item, $andFlush = true)
     {
         $this->objectManager->persist($item);
         if ($andFlush) {
@@ -58,7 +56,7 @@ class TaskTypeCategoryManager extends BaseTaskTypeCategoryManager
     /**
      * {@inheritDoc}
      */
-    public function delete(TaskTypeCategoryInterface $item)
+    public function delete(CategoryInterface $item)
     {
         $this->objectManager->remove($item);
         $this->objectManager->flush();

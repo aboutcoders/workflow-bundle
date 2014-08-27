@@ -140,13 +140,13 @@ interface WorkflowInterface
     public function setUpdatedAt($updatedAt);
 
     /**
-     * @return TaskTypeCategory
+     * @return Category
      */
     public function getCategory();
 
     /**
-     * @param TaskTypeCategoryInterface $category
+     * @param CategoryInterface $category
      * @return void
      */
-    public function setCategory(TaskTypeCategoryInterface $category);
+    public function setCategory(CategoryInterface $category);
 }

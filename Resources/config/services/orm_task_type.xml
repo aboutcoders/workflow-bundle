@@ -7,8 +7,8 @@
     <parameters>
         <parameter key="abc.workflow.task_type_manager.class">Abc\Bundle\WorkflowBundle\Doctrine\TaskTypeManager</parameter>
         <parameter key="abc.workflow.model.task_type.class">Abc\Bundle\WorkflowBundle\Entity\TaskType</parameter>
-        <parameter key="abc.workflow.task_type_category_manager.class">Abc\Bundle\WorkflowBundle\Doctrine\TaskTypeCategoryManager</parameter>
-        <parameter key="abc.workflow.model.task_type_category.class">Abc\Bundle\WorkflowBundle\Entity\TaskTypeCategory</parameter>
+        <parameter key="abc.workflow.category_manager.class">Abc\Bundle\WorkflowBundle\Doctrine\CategoryManager</parameter>
+        <parameter key="abc.workflow.model.category.class">Abc\Bundle\WorkflowBundle\Entity\Category</parameter>
     </parameters>
 
     <services>
@@ -16,9 +16,9 @@
             <argument type="service" id="abc.workflow.entity_manager" />
             <argument>%abc.workflow.model.task_type.class%</argument>
         </service>
-        <service id="abc.workflow.task_type_category_manager.default" class="%abc.workflow.task_type_category_manager.class%" public="false">
+        <service id="abc.workflow.category_manager.default" class="%abc.workflow.category_manager.class%" public="false">
             <argument type="service" id="abc.workflow.entity_manager" />
-            <argument>%abc.workflow.model.task_type_category.class%</argument>
+            <argument>%abc.workflow.model.category.class%</argument>
         </service>
     </services>
 
