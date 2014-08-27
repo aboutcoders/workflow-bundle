@@ -19,6 +19,7 @@
             <argument type="service" id="abc.job.manager"/>
             <argument type="service" id="abc.workflow.workflow_manager"/>
             <argument type="service" id="abc.workflow.task_manager"/>
+            <argument type="service" id="abc.workflow.category_manager"/>
             <call method="setExecutionManager">
                 <argument type="service" id="abc.workflow.execution_manager" />
             </call>

@@ -7,6 +7,7 @@ use Abc\Bundle\JobBundle\Job\Exception\TicketNotFoundException;
 use Abc\Bundle\JobBundle\Job\Report\ReportInterface;
 use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\SchedulerBundle\Model\ScheduleInterface;
+use Abc\Bundle\WorkflowBundle\Model\CategoryManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionInterface;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
@@ -18,7 +19,8 @@ use Abc\Bundle\WorkflowBundle\Workflow\Exception\WorkflowNotFoundException;
  */
 class Manager implements ManagerInterface
 {
-
+    /** @var  CategoryManagerInterface */
+    protected $categoryManager;
     /** @var ExecutionManagerInterface */
     protected $executionManager;
     /** @var Job\ManagerInterface */
@@ -32,12 +34,36 @@ class Manager implements ManagerInterface
      * @param Job\ManagerInterface     $jobManager
      * @param WorkflowManagerInterface $workflowManager
      * @param TaskManagerInterface     $taskManager
+     * @param CategoryManagerInterface $categoryManager
      */
-    function __construct(Job\ManagerInterface $jobManager, WorkflowManagerInterface $workflowManager, TaskManagerInterface $taskManager)
+    function __construct(Job\ManagerInterface $jobManager, WorkflowManagerInterface $workflowManager, TaskManagerInterface $taskManager, CategoryManagerInterface $categoryManager)
     {
         $this->jobManager      = $jobManager;
         $this->workflowManager = $workflowManager;
         $this->taskManager     = $taskManager;
+        $this->categoryManager = $categoryManager;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function create($name, $categoryName = null, $createDirectory = true, $removeDirectory = true)
+    {
+        if($categoryName != null && !$this->categoryManager->exists($categoryName))
+        {
+            $category = $this->categoryManager->create();
+            $category->setName($categoryName);
+            $this->categoryManager->update($category);
+        }
+
+        $workflow = $this->workflowManager->create();
+        $workflow->setName($name);
+        $workflow->setCreateDirectory($createDirectory);
+        $workflow->setRemoveDirectory($removeDirectory);
+        $workflow->setDisabled(false);
+        $this->workflowManager->update($workflow);
+
+        return $workflow->getId();
     }
 
     /**
@@ -48,10 +74,6 @@ class Manager implements ManagerInterface
         $this->jobManager->cancelJob($ticket);
     }
 
-    public function create($name, $category = null, $createDirectory = true, $removeDirectory = true)
-    {
-
-    }
 
     /**
      * {@inheritDoc}

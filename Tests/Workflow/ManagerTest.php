@@ -5,6 +5,8 @@ namespace Abc\Bundle\WorkflowBundle\Tests\Workflow;
 use Abc\Bundle\JobBundle\Job\ManagerInterface as JobManager;
 use Abc\Bundle\JobBundle\Job\Report\ReportInterface;
 use Abc\Bundle\JobBundle\Job\Status;
+use Abc\Bundle\WorkflowBundle\Model\Category;
+use Abc\Bundle\WorkflowBundle\Model\CategoryManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\Execution;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
@@ -20,6 +22,8 @@ use Abc\Bundle\WorkflowBundle\Workflow\Configuration;
 class ManagerTest extends \PHPUnit_Framework_TestCase
 {
 
+    /** @var  CategoryManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $categoryManager;
     /** @var JobManager|\PHPUnit_Framework_MockObject_MockObject */
     private $jobManager;
     /** @var ExecutionManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
@@ -35,14 +39,81 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $this->categoryManager  = $this->getMock('Abc\Bundle\WorkflowBundle\Model\CategoryManagerInterface');
         $this->jobManager       = $this->getMock('Abc\Bundle\JobBundle\Job\ManagerInterface');
         $this->executionManager = $this->getMock('Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface');
         $this->taskManager      = $this->getMock('Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface');
         $this->workflowManager  = $this->getMock('Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface');
 
-        $this->subject = new Manager($this->jobManager, $this->workflowManager, $this->taskManager);
+        $this->subject = new Manager($this->jobManager, $this->workflowManager, $this->taskManager, $this->categoryManager);
         $this->subject->setExecutionManager($this->executionManager);
     }
+
+    /**
+     *
+     * @param      $categoryExists
+     * @param      $name
+     * @param null $categoryName
+     * @param bool $createDirectory
+     * @param bool $removeDirectory
+     * @dataProvider getCreateData
+     */
+    public function testCreate($categoryExists, $name, $categoryName = null, $createDirectory = null, $removeDirectory = null)
+    {
+        $self = $this;
+
+        if($categoryName != null)
+        {
+            $this->categoryManager->expects($this->once())
+                ->method('exists')
+                ->with($categoryName)
+                ->willReturn($categoryExists);
+
+            if(!$categoryExists)
+            {
+                $this->categoryManager->expects($this->once())
+                    ->method('create')
+                    ->willReturn(new Category());
+
+                $this->categoryManager->expects($this->once())
+                    ->method('update')
+                    ->willReturnCallback(
+                        function (Category $category) use ($self, $categoryName)
+                        {
+                            $self->assertEquals($categoryName, $category->getName());
+                        }
+                    );
+            }
+        }
+
+        if($categoryName == null || $categoryExists)
+        {
+            $this->categoryManager->expects($this->never())
+                ->method('create');
+
+            $this->categoryManager->expects($this->never())
+                ->method('update');
+        }
+
+        $this->workflowManager->expects($this->once())
+            ->method('create')
+            ->willReturn(new Workflow());
+
+        $this->workflowManager->expects($this->once())
+            ->method('update')
+            ->willReturnCallback(
+                function (Workflow $workflow) use ($self, $name, $createDirectory, $removeDirectory)
+                {
+                    $self->assertEquals($name, $workflow->getName());
+                    $self->assertEquals($createDirectory, $workflow->getCreateDirectory());
+                    $self->assertEquals($removeDirectory, $workflow->getRemoveDirectory());
+                    $this->assertFalse($workflow->isDisabled());
+                }
+            );
+
+        $this->subject->create($name, $categoryName, $createDirectory, $removeDirectory);
+    }
+
 
     public function testCancel()
     {
@@ -148,8 +219,8 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetProgressWithProcessingJob($status, $index, array $tasks, $expectedProgress)
     {
-        $ticket = 'ticket';
-        $report = $this->getMock('Abc\Bundle\JobBundle\Job\Report\ReportInterface');
+        $ticket        = 'ticket';
+        $report        = $this->getMock('Abc\Bundle\JobBundle\Job\Report\ReportInterface');
         $configuration = new Configuration(1);
         $configuration->setIndex($index);
 
@@ -173,6 +244,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedProgress, $this->subject->getProgress($ticket));
     }
+
 
     public function testGetReport()
     {
@@ -198,6 +270,16 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($status);
 
         $this->assertSame($status, $this->subject->getStatus($ticket));
+    }
+
+    public static function getCreateData()
+    {
+        return array(
+            array(false, 'workflow-name', 'category-name', true, true),
+            array(true, 'workflow-name', 'category-name', true, true),
+            array(true, null, 'category-name', true, true),
+            array(true, null, 'category-name', false, false)
+        );
     }
 
     public function getExecuteData()

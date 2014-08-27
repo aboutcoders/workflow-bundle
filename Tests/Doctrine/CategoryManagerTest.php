@@ -3,6 +3,7 @@
 namespace Abc\Bundle\WorkflowBundle\Tests\Doctrine;
 
 use Abc\Bundle\WorkflowBundle\Doctrine\CategoryManager;
+use Abc\Bundle\WorkflowBundle\Model\Category;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -50,6 +51,25 @@ class CategoryManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->class, $this->subject->getClass());
     }
 
+    public function testExistsWithMatchFound()
+    {
+        $this->repository->expects($this->once())
+            ->method('findBy')
+            ->with(array('name' => 'foobar'))
+            ->willReturn(array(new Category()));
+
+        $this->assertTrue($this->subject->exists('foobar'));
+    }
+
+    public function testExistsWithNoMatchFound()
+    {
+        $this->repository->expects($this->once())
+            ->method('findBy')
+            ->with(array('name' => 'foobar'))
+            ->willReturn(array());
+
+        $this->assertFalse($this->subject->exists('foobar'));
+    }
 
     public function testUpdate()
     {

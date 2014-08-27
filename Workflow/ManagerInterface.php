@@ -14,6 +14,16 @@ use Abc\Bundle\WorkflowBundle\Workflow\Exception\WorkflowNotFoundException;
  */
 interface ManagerInterface
 {
+    /**
+     * Creates a new workflow
+     *
+     * @param string      $name
+     * @param string|null $categoryName
+     * @param bool        $createDirectory
+     * @param bool        $removeDirectory
+     * @return int The unique id of the created workflow
+     */
+    public function create($name, $categoryName = null, $createDirectory = true, $removeDirectory = true);
 
     /**
      * @param string $ticket
@@ -51,5 +61,4 @@ interface ManagerInterface
      * @throws TicketNotFoundException
      */
     public function getStatus($ticket);
-
 }

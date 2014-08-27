@@ -63,14 +63,14 @@ class CategoryManager extends BaseCategoryManager
     }
 
     /**
-     * @param string $name
-     * @return boolean
+     * {@inheritDoc}
      */
     public function exists($name)
     {
-        // TODO: Implement exists() method.
-    }
+        $categories = $this->findBy(array('name' => $name));
 
+        return count($categories) > 0;
+    }
 
     /**
      * {@inheritDoc}
