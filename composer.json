@@ -46,7 +46,7 @@
         "sensio/framework-extra-bundle": "~3.0",
         "sonata-project/notification-bundle": "~2.2",
         "gedmo/doctrine-extensions": "dev-master",
-        "aboutcoders/job-bundle": "dev-master@dev",
+        "aboutcoders/job-bundle": "~1.0",
         "aboutcoders/file-distribution-bundle": "~1.0",
         "aboutcoders/sequence-bundle": "~1.0"
     },
