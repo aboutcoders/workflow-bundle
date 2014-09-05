@@ -5,6 +5,7 @@ namespace Abc\Bundle\WorkflowBundle\Executable;
 use Abc\Bundle\JobBundle\Job\Exception\TerminateException;
 use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Executable;
+use Abc\Bundle\JobBundle\Job\Response\ErrorResponse;
 use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\JobBundle\Model\JobInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskInterface;
@@ -14,6 +15,10 @@ use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
 use Abc\Bundle\WorkflowBundle\Workflow\Configuration;
 use Abc\Bundle\WorkflowBundle\Workflow\Response;
 
+/**
+ * @author Wojciech Ciolko <w.ciolko@gmail.com>
+ * @author Hannes Schulz <schulz@daten-bahn.de>
+ */
 class WorkflowExecutor implements Executable
 {
     /** @var TaskManagerInterface */
@@ -74,7 +79,6 @@ class WorkflowExecutor implements Executable
                 }
             }
         }
-
     }
 
     /**
@@ -110,7 +114,14 @@ class WorkflowExecutor implements Executable
                     array('ticket', $job->getCallerJob()->getTicket(), 'status' => $job->getCallerJob()->getStatus()->getName())
                 );
 
-                throw new TerminateException('Abort execution (a child job terminated unsuccessfully)');
+                if($response instanceof ErrorResponse)
+                {
+                    throw new TerminateException($response->getMessage(), $response->getCode());
+                }
+                else
+                {
+                    throw new TerminateException('Abort execution (a child job terminated unsuccessfully)');
+                }
             }
 
             $job->getContext()->get('logger')->debug('Callback by ticket {ticket}', array('ticket' => $job->getCallerJob()->getTicket()));

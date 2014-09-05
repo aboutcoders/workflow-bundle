@@ -2,8 +2,10 @@
 
 namespace Abc\Bundle\WorkflowBundle\Tests\Executable;
 
+use Abc\Bundle\JobBundle\Job\Exception\TerminateException;
 use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Context\Context;
+use Abc\Bundle\JobBundle\Job\Response\ErrorResponse;
 use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutor;
 use Abc\Bundle\WorkflowBundle\Model\Schedule;
@@ -143,11 +145,50 @@ class WorkflowExecutorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('SECOND-TASK'), $job->getResponseBody()->getActions());
     }
 
+
+    public function testExecuteThrowsTerminateExceptionOnChildJobError()
+    {
+        $ticket             = 'ticket';
+        $workflowId         = 'workflow-id';
+        $workflowParameters = $this->getMock('\Serializable');
+
+        $configuration = new Configuration($workflowId, $workflowParameters);
+
+        $task = new Task();
+        $task->setType(new TaskType());
+        $task->getType()->setJobType('foobar');
+        $task->getParameters(clone $workflowParameters);
+
+        $job      = $this->createJob($ticket, 'workflow', $configuration);
+        $childJob = $this->createJobInformation(Status::ERROR(), 'task-ticket', 'foobar');
+
+        $job->expects($this->once())
+            ->method('getResponseBody')
+            ->willReturn(new ErrorResponse('foobar', 100));
+
+        $job->expects($this->any())
+            ->method('IsTriggeredByCallback')
+            ->will($this->returnValue(true));
+
+        $job->expects($this->any())
+            ->method('getCallerJob')
+            ->will($this->returnValue($childJob));
+
+        try
+        {
+            $this->subject->execute($job);
+        }
+        catch(TerminateException $e)
+        {
+            $this->assertEquals('foobar', $e->getMessage());
+            $this->assertEquals(100, $e->getCode());
+        }
+    }
+
     /**
      * @expectedException \Abc\Bundle\JobBundle\Job\Exception\TerminateException
-     * @expectedExceptionMessage Abort execution (a child job terminated unsuccessfully)
      */
-    public function testExecuteWithChildTerminatesWithException()
+    public function testExecuteThrowsTerminateExceptionOnChildJobCanceled()
     {
         $ticket             = 'ticket';
         $workflowId         = 'workflow-id';
