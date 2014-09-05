@@ -70,16 +70,16 @@ class WorkflowExecutorTest extends \PHPUnit_Framework_TestCase
 
         $job->expects($this->any())
             ->method('isCallback')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $job->expects($this->any())
             ->method('getResponseBody')
-            ->will($this->returnValue($response));
+            ->willReturn($response);
 
         $this->taskManager->expects($this->once())
             ->method('findNextWorkflowTask')
             ->with($workflowId, 0)
-            ->will($this->returnValue($task));
+            ->willReturn($task);
 
         $job->expects($this->once())
             ->method('addChildJob')
@@ -117,20 +117,20 @@ class WorkflowExecutorTest extends \PHPUnit_Framework_TestCase
 
         $job->expects($this->any())
             ->method('IsTriggeredByCallback')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $job->expects($this->any())
             ->method('getResponseBody')
-            ->will($this->returnValue($response));
+            ->willReturn($response);
 
         $job->expects($this->any())
             ->method('getCallerJob')
-            ->will($this->returnValue($childJob));
+            ->willReturn($childJob);
 
         $this->taskManager->expects($this->once())
             ->method('findNextWorkflowTask')
             ->with($workflowId, $configuration->getIndex() + 1)
-            ->will($this->returnValue($task));
+            ->willReturn($task);
 
         $job->expects($this->once())
             ->method('addChildJob')
@@ -168,11 +168,11 @@ class WorkflowExecutorTest extends \PHPUnit_Framework_TestCase
 
         $job->expects($this->any())
             ->method('IsTriggeredByCallback')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $job->expects($this->any())
             ->method('getCallerJob')
-            ->will($this->returnValue($childJob));
+            ->willReturn($childJob);
 
         try
         {
@@ -206,11 +206,11 @@ class WorkflowExecutorTest extends \PHPUnit_Framework_TestCase
 
         $job->expects($this->any())
             ->method('IsTriggeredByCallback')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $job->expects($this->any())
             ->method('getCallerJob')
-            ->will($this->returnValue($childJob));
+            ->willReturn($childJob);
 
         $this->subject->execute($job);
     }
@@ -227,22 +227,22 @@ class WorkflowExecutorTest extends \PHPUnit_Framework_TestCase
 
         $job->expects($this->any())
             ->method('getTicket')
-            ->will($this->returnValue($ticket));
+            ->willReturn($ticket);
 
         $job->expects($this->any())
             ->method('getType')
-            ->will($this->returnValue($type));
+            ->willReturn($type);
 
         $job->expects($this->any())
             ->method('getParameters')
-            ->will($this->returnValue($parameter));
+            ->willReturn($parameter);
 
         $context = new Context();
         $context->set('logger', new NullLogger());
 
         $job->expects($this->any())
             ->method('getContext')
-            ->will($this->returnValue($context));
+            ->willReturn($context);
 
         return $job;
     }
@@ -260,19 +260,19 @@ class WorkflowExecutorTest extends \PHPUnit_Framework_TestCase
 
         $job->expects($this->any())
             ->method('getTicket')
-            ->will($this->returnValue($ticket));
+            ->willReturn($ticket);
 
         $job->expects($this->any())
             ->method('getType')
-            ->will($this->returnValue($type));
+            ->willReturn($type);
 
         $job->expects($this->any())
             ->method('getStatus')
-            ->will($this->returnValue($status));
+            ->willReturn($status);
 
         $job->expects($this->any())
             ->method('getParameters')
-            ->will($this->returnValue($parameter));
+            ->willReturn($parameter);
 
         return $job;
     }

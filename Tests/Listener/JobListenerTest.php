@@ -42,11 +42,11 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->jobEvent->expects($this->any())
             ->method('getRootJob')
-            ->will($this->returnValue($this->rootJob));
+            ->willReturn($this->rootJob);
 
         $this->jobEvent->expects($this->any())
             ->method('getContext')
-            ->will($this->returnValue($this->context));
+            ->willReturn($this->context);
 
         $this->subject = new JobListener($this->filesystem, $this->executionManager);
     }
@@ -173,11 +173,11 @@ class JobListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->jobEvent->expects($this->any())
             ->method('getTicket')
-            ->will($this->returnValue($ticket));
+            ->willReturn($ticket);
 
         $this->rootJob->expects($this->once())
             ->method('getType')
-            ->will($this->returnValue('foobar'));
+            ->willReturn('foobar');
 
         $this->rootJob->expects($this->never())
             ->method('getParameters');

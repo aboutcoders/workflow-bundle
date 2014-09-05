@@ -31,15 +31,15 @@ class WorkflowManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->objectManager->expects($this->any())
             ->method('getClassMetadata')
-            ->will($this->returnValue($this->classMetaData));
+            ->willReturn($this->classMetaData);
 
         $this->classMetaData->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue($this->class));
+            ->willReturn($this->class);
 
         $this->objectManager->expects($this->any())
             ->method('getRepository')
-            ->will($this->returnValue($this->repository));
+            ->willReturn($this->repository);
 
         $this->subject = new WorkflowManager($this->objectManager, $this->class);
     }

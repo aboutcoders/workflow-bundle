@@ -1,12 +1,15 @@
 <?php
 namespace Abc\Bundle\WorkflowBundle\Form;
 
-use Abc\FileDistributionBundle\Form\FieldValueChangeSubscriber;
+use Abc\Bundle\FileDistributionBundle\Form\FieldValueChangeSubscriber;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormEvent;
 
 class TaskValueChangeSubscriber extends FieldValueChangeSubscriber
 {
+    /**
+     * @param array $providers
+     */
     public function __construct(array $providers)
     {
         parent::__construct($providers);
@@ -41,13 +44,14 @@ class TaskValueChangeSubscriber extends FieldValueChangeSubscriber
     }
 
     /**
-     * @param Form   $form         Main form.
+     * @param Form   $form Main form.
      * @param string $providerName Provider.
      */
     protected function buildTypeSettingsForm(Form $form, $providerName)
     {
         //Add provider form
-        if ($providerName && isset($this->providers[$providerName])) {
+        if($providerName && isset($this->providers[$providerName]))
+        {
             $provider = $this->providers[$providerName];
             // delegate form structure building for specific provider
             $provider->buildForm($form);

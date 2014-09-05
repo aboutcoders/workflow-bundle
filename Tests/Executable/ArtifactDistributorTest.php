@@ -84,18 +84,18 @@ class ArtifactDistributorTest extends \PHPUnit_Framework_TestCase
         $definition
             ->expects($this->any())
             ->method('getUrl')
-            ->will($this->returnValue('http://domain.tld'));
+            ->willReturn('http://domain.tld');
 
         $this->definitionManager
             ->expects($this->any())
             ->method('findOneBy')
-            ->will($this->returnValue($definition));
+            ->willReturn($definition);
 
         $this->filesystemFactory
             ->expects($this->any())
             ->method('create')
             ->with($definition)
-            ->will($this->returnValue($this->destinationFilesystem));
+            ->willReturn($this->destinationFilesystem);
     }
 
     private function getJobExpectations($emptyParameters = false)
@@ -106,17 +106,21 @@ class ArtifactDistributorTest extends \PHPUnit_Framework_TestCase
         $this->context->set('logger', new NullLogger());
         $this->context->set('filesystem', $workflowFilesystem);
         $this->jobParameters = new DistributeArtifactsParameter();
-        if (!$emptyParameters) {
+
+        if(!$emptyParameters)
+        {
             $this->jobParameters->setDefinitionId(1);
         }
 
         $this->job = $this->getMock('Abc\Bundle\JobBundle\Job\Job');
+
         $this->job->expects($this->any())
             ->method('getContext')
-            ->will($this->returnValue($this->context));
+            ->willReturn($this->context);
+
         $this->job->expects($this->any())
             ->method('getParameters')
-            ->will($this->returnValue($this->jobParameters));
+            ->willReturn($this->jobParameters);
     }
 }
  

@@ -18,7 +18,7 @@ interface CategoryInterface
 
     /**
      * @param string $name
-     * @return TaskType
+     * @return TaskTypeInterface The current instance
      */
     public function setName($name);
 
@@ -29,7 +29,7 @@ interface CategoryInterface
 
     /**
      * @param string $icon
-     * @return TaskType
+     * @return TaskTypeInterface The current instance
      */
     public function setIcon($icon);
 
@@ -39,22 +39,17 @@ interface CategoryInterface
     public function getSlug();
 
     /**
-     * Get all types
-     *
      * @return ArrayCollection
      */
     public function getTypes();
 
     /**
-     * Add Task
-     *
      * @param TaskTypeInterface $type
+     * @return TaskTypeInterface  The current instance
      */
     public function addType(TaskTypeInterface $type);
 
     /**
-     * Remove Types
-     *
      * @param TaskTypeInterface $type
      */
     public function removeType(TaskTypeInterface $type);

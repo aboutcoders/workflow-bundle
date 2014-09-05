@@ -1,6 +1,6 @@
 <?php
 
-namespace Abc\Bundle\WorkflowBundle\Form\Task;
+namespace Abc\Bundle\WorkflowBundle\Form\Type;
 
 use Abc\Bundle\FileDistributionBundle\Model\DefinitionManagerInterface;
 use Symfony\Component\Form\AbstractType;

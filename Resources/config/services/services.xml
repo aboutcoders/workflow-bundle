@@ -6,8 +6,8 @@
 
     <parameters>
         <parameter key="abc.workflow.twig.workflow_extension.class">Abc\Bundle\WorkflowBundle\Twig\WorkflowExtension</parameter>
-        <parameter key="abc.workflow.task.form.mailer.class">Abc\Bundle\WorkflowBundle\Form\Task\MailerType</parameter>
-        <parameter key="abc.workflow.task.form.distribute_artifacts.class">Abc\Bundle\WorkflowBundle\Form\Task\DistributeArtifactsType</parameter>
+        <parameter key="abc.workflow.task.form.mailer.class">Abc\Bundle\WorkflowBundle\Form\Type\MailerType</parameter>
+        <parameter key="abc.workflow.task.form.distribute_artifacts.class">Abc\Bundle\WorkflowBundle\Form\Type\DistributeArtifactsType</parameter>
         <parameter key="abc.workflow.executable.cleanup_directory.class">Abc\Bundle\WorkflowBundle\Executable\CleanupDirectoryExecutable</parameter>
         <parameter key="abc.workflow.executable.distribute_artifacts.class">Abc\Bundle\WorkflowBundle\Executable\ArtifactDistributor</parameter>
         <parameter key="abc.workflow.executable.workflow.class">Abc\Bundle\WorkflowBundle\Executable\WorkflowExecutor</parameter>

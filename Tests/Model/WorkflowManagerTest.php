@@ -22,7 +22,7 @@ class WorkflowManagerTest extends \PHPUnit_Framework_TestCase
     {
         $this->subject->expects($this->any())
             ->method('getClass')
-            ->will($this->returnValue('Abc\Bundle\WorkflowBundle\Entity\Workflow'));
+            ->willReturn('Abc\Bundle\WorkflowBundle\Entity\Workflow');
 
         $entity = $this->subject->create();
 

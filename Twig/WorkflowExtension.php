@@ -1,4 +1,5 @@
 <?php
+
 namespace Abc\Bundle\WorkflowBundle\Twig;
 
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
@@ -31,14 +32,18 @@ class WorkflowExtension extends \Twig_Extension
         );
     }
 
+    /**
+     * @param $workflowId
+     * @return int The workflow id
+     */
     public function workflowConfiguration($workflowId)
     {
         $workflow               = $this->getWorkflowManager()->findById($workflowId);
         $taskManager            = $this->getTaskManager();
-        $tasTypeManager         = $this->getTaskTypeManager();
+        $taskTypeManager         = $this->getTaskTypeManager();
         $tasTypeCategoryManager = $this->getCategoryManager();
 
-        $types      = $tasTypeManager->findAll();
+        $types      = $taskTypeManager->findAll();
         $categories = $tasTypeCategoryManager->findAll();
         $tasks      = $taskManager->findWorkflowTasks($workflow->getId());
 

@@ -14,5 +14,4 @@ abstract class CategoryManager implements CategoryManagerInterface
 
         return $user;
     }
-
 }

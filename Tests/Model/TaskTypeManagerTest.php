@@ -22,7 +22,7 @@ class TaskTypeManagerTest extends \PHPUnit_Framework_TestCase
     {
         $this->subject->expects($this->any())
             ->method('getClass')
-            ->will($this->returnValue('Abc\Bundle\WorkflowBundle\Entity\TaskType'));
+            ->willReturn('Abc\Bundle\WorkflowBundle\Entity\TaskType');
 
         $entity = $this->subject->create();
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Abc\Bundle\WorkflowBundle\Form;
+namespace Abc\Bundle\WorkflowBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

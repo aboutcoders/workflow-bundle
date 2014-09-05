@@ -71,28 +71,26 @@ class CleanupDirectoryExecutableTest extends \PHPUnit_Framework_TestCase
      */
     private function createJob($ticket = null, $type = null, $parameter = null)
     {
-        $job = $this->getMock('Abc\Bundle\JobBundle\Job\Job');
-
-        $job->expects($this->any())
-            ->method('getTicket')
-            ->will($this->returnValue($ticket));
-
-        $job->expects($this->any())
-            ->method('getType')
-            ->will($this->returnValue($type));
-
-        $job->expects($this->any())
-            ->method('getParameters')
-            ->will($this->returnValue($parameter));
-
+        $job     = $this->getMock('Abc\Bundle\JobBundle\Job\Job');
         $context = new Context();
         $context->set('logger', new NullLogger());
 
         $job->expects($this->any())
+            ->method('getTicket')
+            ->willReturn($ticket);
+
+        $job->expects($this->any())
+            ->method('getType')
+            ->willReturn($type);
+
+        $job->expects($this->any())
+            ->method('getParameters')
+            ->willReturn($parameter);
+
+        $job->expects($this->any())
             ->method('getContext')
-            ->will($this->returnValue($context));
+            ->willReturn($context);
 
         return $job;
     }
 }
- 

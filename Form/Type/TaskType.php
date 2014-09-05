@@ -1,6 +1,6 @@
 <?php
 
-namespace Abc\Bundle\WorkflowBundle\Form;
+namespace Abc\Bundle\WorkflowBundle\Form\Type;
 
 use Abc\Bundle\WorkflowBundle\Entity\Task;
 use Abc\Bundle\WorkflowBundle\Model\TaskInterface;
@@ -27,11 +27,18 @@ class TaskType extends AbstractType
     /**
      * @param FormBuilderInterface $builder
      * @param array                $options
+     * @throws \InvalidArgumentException
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var Task $task */
         $task = isset($options['data']) ? $options['data'] : null;
+
+        if($task == null)
+        {
+            throw new \InvalidArgumentException('The option with key "data" of type Abc\Bundle\WorkflowBundle\Entity\Task must be set');
+        }
+
         $task->setTypeId($task->getType() == null ? null : $task->getType()->getId());
         $task->setWorkflowId($task->getWorkflow() == null ? null : $task->getWorkflow()->getId());
 
