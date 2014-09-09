@@ -60,13 +60,16 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testSerializable()
     {
-        $subject = new Configuration(1, new Configuration(1), false, false);
+        $subject = new Configuration(1);
         $subject->setIndex(2);
+        $subject->setCreateDirectory(true);
+        $subject->setRemoveDirectory(true);
+        $subject->setParameters(new Configuration(1));
+        $subject->setId(1);
 
         $data         = serialize($subject);
         $deserialized = unserialize($data);
 
         $this->assertEquals($subject, $deserialized);
-
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Abc\Bundle\WorkflowBundle\Doctrine;
 
+use Abc\Bundle\JobBundle\Job\ManagerInterface;
 use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\SequenceBundle\Model\SequenceManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionInterface;

@@ -24,7 +24,6 @@ class TaskManagerTest extends \PHPUnit_Framework_TestCase
     /** @var TaskManager */
     private $subject;
 
-
     public function setUp()
     {
         $this->class         = 'Abc\Bundle\WorkflowBundle\Entity\Task';
@@ -47,12 +46,10 @@ class TaskManagerTest extends \PHPUnit_Framework_TestCase
         $this->subject = new TaskManager($this->objectManager, $this->class);
     }
 
-
     public function testGetClass()
     {
         $this->assertEquals($this->class, $this->subject->getClass());
     }
-
 
     public function testUpdate()
     {
@@ -68,7 +65,6 @@ class TaskManagerTest extends \PHPUnit_Framework_TestCase
         $this->subject->update($entity);
     }
 
-
     public function testUpdateWithFlush()
     {
         $entity = $this->subject->create();
@@ -82,7 +78,6 @@ class TaskManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->subject->update($entity, false);
     }
-
 
     public function testDelete()
     {
@@ -98,13 +93,23 @@ class TaskManagerTest extends \PHPUnit_Framework_TestCase
         $this->subject->delete($entity);
     }
 
-
     public function testFindAll()
     {
         $this->repository->expects($this->once())
             ->method('findAll');
 
         $this->subject->findAll();
+    }
+
+    public function testFindBy()
+    {
+        $criteria = array('foo');
+
+        $this->repository->expects($this->once())
+            ->method('findBy')
+            ->with($criteria);
+
+        $this->subject->findBy($criteria);
     }
 
     public function testFindById()
@@ -117,7 +122,6 @@ class TaskManagerTest extends \PHPUnit_Framework_TestCase
         $this->subject->findById($id);
     }
 
-
     public function testFindWorkflowTasks()
     {
         $id = 1;
@@ -126,16 +130,5 @@ class TaskManagerTest extends \PHPUnit_Framework_TestCase
             ->with(array('workflowId' => $id), array('position' => 'ASC'));
 
         $this->subject->findWorkflowTasks($id);
-    }
-
-    public function testFindBy()
-    {
-        $criteria = array('foo');
-
-        $this->repository->expects($this->once())
-            ->method('findBy')
-            ->with($criteria);
-
-        $this->subject->findBy($criteria);
     }
 }

@@ -87,7 +87,6 @@ class WorkflowManager extends BaseWorkflowManager
         return $this->repository->find($id);
     }
 
-
     /**
      * {@inheritDoc}
      */

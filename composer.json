@@ -30,6 +30,10 @@
         },
         {
             "type": "vcs",
+            "url": "git@bitbucket.org:wciolko/abc-frontend-bundle.git"
+        },
+        {
+            "type": "vcs",
             "url": "git@bitbucket.org:wciolko/file-distribution.git"
         },
         {
@@ -46,6 +50,9 @@
         "sensio/framework-extra-bundle": "~3.0",
         "sonata-project/notification-bundle": "~2.2",
         "gedmo/doctrine-extensions": "dev-master",
+        "symfony/assetic-bundle": "~2.3",
+        "aboutcoders/frontend-bundle": "~1.1",
+        "mopa/bootstrap-bundle": "dev-master",
         "aboutcoders/job-bundle": "~1.0",
         "aboutcoders/file-distribution-bundle": "~1.0",
         "aboutcoders/sequence-bundle": "~1.0"

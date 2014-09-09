@@ -35,8 +35,8 @@ doctrine:
         path:     "%kernel.cache_dir%/sqlite.db"
         types:
             json: Sonata\Doctrine\Types\JsonType
-            status: Abc\Bundle\JobBundle\Doctrine\Types\StatusType
-            serializable: Abc\Bundle\JobBundle\Doctrine\Types\SerializableType
+            abc.job.status: Abc\Bundle\JobBundle\Doctrine\Types\StatusType
+            abc.job.serializable: Abc\Bundle\JobBundle\Doctrine\Types\SerializableType
 
     orm:
         auto_generate_proxy_classes: true
@@ -48,6 +48,27 @@ swiftmailer:
 sonata_notification:
     consumers:
         register_default: false
+
+# Assetic Configuration
+assetic:
+    debug:          true
+    use_controller: false
+    bundles:
+          - AbcWorkflowBundle
+    filters:
+        cssrewrite: ~
+        cssmin: ~
+        jsmin: ~
+
+mopa_bootstrap:
+    form:
+        show_legend: false # default is true
+        show_child_legend: false # default is true
+        collection:
+            widget_remove_btn:
+                icon: trash
+            widget_add_btn:
+                icon: plus-sign
 
 abc_file_distribution:
     db_driver: orm # there are no other valid values yet

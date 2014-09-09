@@ -4,7 +4,7 @@ namespace Abc\Bundle\WorkflowBundle\Controller;
 
 use Abc\Bundle\WorkflowBundle\Doctrine\WorkflowManager;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
-use Abc\Bundle\WorkflowBundle\Form\WorkflowType;
+use Abc\Bundle\WorkflowBundle\Form\Type\WorkflowType;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;

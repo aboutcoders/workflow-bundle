@@ -28,7 +28,7 @@ class ServiceConfigurationTest extends KernelTestCase
         self::bootKernel();
         $this->em = static::$kernel->getContainer()
             ->get('doctrine')
-            ->getManager();;
+            ->getManager();
 
         $this->container   = static::$kernel->getContainer();
         $this->application = new Application(static::$kernel);

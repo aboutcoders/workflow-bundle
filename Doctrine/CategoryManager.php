@@ -19,7 +19,6 @@ class CategoryManager extends BaseCategoryManager
     /** @var ObjectRepository */
     protected $repository;
 
-
     /**
      * @param ObjectManager $om
      * @param string        $class

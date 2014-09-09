@@ -1,2 +1,7 @@
-abc_workflow:
+abc_workflow_tasks:
     resource: "@AbcWorkflowBundle/Resources/config/routing.yml"
+    prefix:   /
+
+abc_workflows:
+    resource: "@AbcWorkflowBundle/Resources/config/routing_optional.yml"
+    prefix:   /

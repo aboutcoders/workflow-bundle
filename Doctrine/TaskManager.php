@@ -114,7 +114,6 @@ class TaskManager extends BaseTaskManager
         return $this->repository->find($id);
     }
 
-
     /**
      * {@inheritDoc}
      */

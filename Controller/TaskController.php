@@ -3,7 +3,7 @@
 namespace Abc\Bundle\WorkflowBundle\Controller;
 
 use Abc\Bundle\WorkflowBundle\Entity\Task;
-use Abc\Bundle\WorkflowBundle\Form\TaskType;
+use Abc\Bundle\WorkflowBundle\Form\Type\TaskType;
 use Abc\Bundle\WorkflowBundle\Model\TaskInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskTypeInterface;

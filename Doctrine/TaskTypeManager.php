@@ -19,7 +19,6 @@ class TaskTypeManager extends BaseTaskTypeManager
     /** @var ObjectRepository */
     protected $repository;
 
-
     /**
      * @param ObjectManager $om
      * @param string        $class

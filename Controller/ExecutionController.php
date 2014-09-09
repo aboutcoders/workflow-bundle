@@ -6,7 +6,6 @@ use Abc\Bundle\JobBundle\Job\Report\ReportInterface;
 use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
 use Abc\Bundle\WorkflowBundle\Doctrine\WorkflowManager;
-use Abc\Bundle\WorkflowBundle\Form\WorkflowType;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
