@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Abc\Bundle\WorkflowBundle\Tests\Controller;
 
 use Abc\Bundle\WorkflowBundle\DataFixtures\ORM\LoadTaskTypes;
@@ -8,7 +7,9 @@ use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-
+/**
+ * @author Hannes Schulz <schulz@daten-bahn.de>
+ */
 class TaskControllerTest extends WebTestCase
 {
     /** @var Application */

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Abc\Bundle\WorkflowBundle\Tests\Controller;
 
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
@@ -10,6 +9,9 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
+/**
+ * @author Hannes Schulz <schulz@daten-bahn.de>
+ */
 class ExecutionControllerTest extends WebTestCase
 {
     /** @var Application */

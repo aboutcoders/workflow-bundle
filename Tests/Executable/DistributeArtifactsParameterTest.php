@@ -1,11 +1,12 @@
 <?php
 
-
 namespace Abc\Bundle\WorkflowBundle\Tests\Executable;
-
 
 use Abc\Bundle\WorkflowBundle\Executable\DistributeArtifactsParameter;
 
+/**
+ * @author Hannes Schulz <schulz@daten-bahn.de>
+ */
 class DistributeArtifactsParameterTest extends \PHPUnit_Framework_TestCase
 {
     public function testSerializable()
