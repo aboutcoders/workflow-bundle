@@ -74,7 +74,6 @@ class Manager implements ManagerInterface
         $this->jobManager->cancelJob($ticket);
     }
 
-
     /**
      * {@inheritDoc}
      */

@@ -25,10 +25,10 @@
             <gedmo:sortable-position/>
         </field>
         <many-to-one field="workflow" target-entity="Abc\Bundle\WorkflowBundle\Entity\Workflow" inversed-by="tasks">
-            <join-column name="workflow_id" referenced-column-name="id"/>
+            <join-column name="workflow_id" referenced-column-name="id" on-delete="CASCADE"/>
         </many-to-one>
         <many-to-one field="type" target-entity="Abc\Bundle\WorkflowBundle\Entity\TaskType">
-            <join-column name="type_id" referenced-column-name="id"/>
+            <join-column name="type_id" referenced-column-name="id" on-delete="CASCADE"/>
         </many-to-one>
 
         <!-- namespace issue, see: /vendor/gedmo/doctrine-extensions/schemas/orm/doctrine-extensions-mapping-2-1.xsd -->
