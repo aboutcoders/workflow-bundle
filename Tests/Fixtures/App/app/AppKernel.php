@@ -22,7 +22,7 @@ class AppKernel extends Kernel
             new Abc\Bundle\FileDistributionBundle\AbcFileDistributionBundle(),
             new Abc\Bundle\ProcessControlBundle\AbcProcessControlBundle(),
             new Abc\Bundle\SchedulerBundle\AbcSchedulerBundle(),
-            new Abc\FrontendBundle\AbcFrontendBundle(),
+            new Abc\Bundle\FrontendBundle\AbcFrontendBundle(),
             new Abc\Bundle\JobBundle\AbcJobBundle(),
             new Abc\Bundle\SequenceBundle\AbcSequenceBundle(),
             new Abc\Bundle\WorkflowBundle\AbcWorkflowBundle(),
