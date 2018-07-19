@@ -3,7 +3,7 @@
     "type": "symfony-bundle",
     "description": "A symfony bundle that allows to define and manage workflows",
     "keywords": ["job", "workflow", "schedule", "scheduler", "bundle", "request", "task", "background", "asynchronous"],
-    "homepage": "https://bitbucket.org/wciolko/abc-workflow-bundle",
+    "homepage": "https://github.com/aboutcoders/workflow-bundle",
     "license": "AboutCoders",
     "authors": [
         {
@@ -11,26 +11,11 @@
             "email": "w.ciolko@gmail.com"
         }
     ],
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@bitbucket.org:wciolko/abc-frontend-bundle.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@bitbucket.org:hasc/job-bundle.git"
-        }
-    ],
     "require": {
-        "symfony/symfony": "~2.1",
+        "symfony/symfony": "~3.1",
         "sensio/framework-extra-bundle": "~3.0",
-        "sonata-project/notification-bundle": "~2.2",
         "gedmo/doctrine-extensions": "~2.0",
-        "symfony/assetic-bundle": "~2.3",
-        "aboutcoders/frontend-bundle": "~1.2",
-        "mopa/bootstrap-bundle": "~3.0",
-        "aboutcoders/job-bundle": "~1.2",
-        "aboutcoders/file-distribution-bundle": "~1.0",
+        "aboutcoders/job-bundle": "~1.0",
         "aboutcoders/sequence-bundle": "~1.0"
     },
     "require-dev": {
