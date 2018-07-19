@@ -4,7 +4,7 @@
     "description": "A symfony bundle that allows to define and manage workflows",
     "keywords": ["job", "workflow", "schedule", "scheduler", "bundle", "request", "task", "background", "asynchronous"],
     "homepage": "https://github.com/aboutcoders/workflow-bundle",
-    "license": "AboutCoders",
+    "license": "MIT",
     "authors": [
         {
             "name": "Wojciech Ciolko",
