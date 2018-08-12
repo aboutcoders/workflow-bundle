@@ -59,6 +59,8 @@ class Workflow implements WorkflowInterface
 
     /**
      * @var ArrayCollection
+     * @SerializedName("executions")
+     * @Expose
      */
     protected $executions;
 

@@ -94,4 +94,74 @@ class WorkflowManager extends BaseWorkflowManager
     {
         return $this->repository->findAll();
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function findByCount(array $criteria)
+    {
+        $queryBuilder = $this->createQueryBuilder();
+
+        $queryBuilder->select(sprintf('COUNT(%s)', $this->getAlias()));
+
+        $queryBuilder = $this->buildMatchingQueryForCriteria($queryBuilder, $criteria);
+
+        return $queryBuilder->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Creates a new QueryBuilder instance that is prepopulated for this entity name
+     *
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    protected function createQueryBuilder()
+    {
+        return $this->objectManager->getRepository($this->getClass())->createQueryBuilder($this->getAlias());
+    }
+
+    /**
+     * @param \Doctrine\ORM\QueryBuilder $queryBuilder
+     * @param array                      $criteria
+     *
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    protected function buildMatchingQueryForCriteria($queryBuilder, array $criteria)
+    {
+        foreach ($criteria as $key => $value) {
+
+            $operator = ' = :%s';
+
+            if (null === $value) {
+                $queryBuilder->andWhere($this->getAlias() . '.' . $key . ' IS NULL');
+            } else {
+                if (is_array($value)) {
+
+                    if (count($value) == 1 && array_keys($value)[0] === '$match') {
+
+                        $firstValue = reset($value);
+
+                        //Only like is supported here at the moment
+                        $operator = ' LIKE :%s';
+                        $value    = '%' . $firstValue . '%';
+
+                    } else {
+                        $operator = ' IN (:%s)';
+                    }
+                }
+
+                $queryBuilder->andWhere($this->getAlias() . '.' . $key . sprintf($operator, $key))
+                    ->setParameter($key, $value);
+            }
+        }
+
+        return $queryBuilder;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getAlias()
+    {
+        return 'workflow';
+    }
 }

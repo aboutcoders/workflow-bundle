@@ -2,231 +2,249 @@
 
 namespace Abc\Bundle\WorkflowBundle\Controller;
 
-use Abc\Bundle\WorkflowBundle\Doctrine\WorkflowManager;
 use Abc\Bundle\WorkflowBundle\Entity\Workflow;
-use Abc\Bundle\WorkflowBundle\Form\Type\WorkflowType;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Abc\Bundle\WorkflowBundle\Model\WorkflowList;
+use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations\Put;
+use FOS\RestBundle\Controller\Annotations as FOS;
+use FOS\RestBundle\Request\ParamFetcherInterface;
+use HttpException;
+use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Operation;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Workflow controller.
  *
- * @Route("/workflow")
+ * @FOS\RouteResource("Workflow")
  */
 class WorkflowController extends BaseController
 {
     /**
-     * Lists all Workflow entities.
+     * Returns a list of workflows
      *
-     * @Route("/", name="workflow")
-     * @Method("GET")
-     * @Template()
-     */
-    public function indexAction()
-    {
-        return array(
-            'entities' => $this->getWorkflowManager()->findAll()
-        );
-    }
-
-    /**
-     * Creates a new Workflow entity.
+     * @FOS\QueryParam(name="page", requirements="\d+", default="1", description="Page number of the result set")
+     * @FOS\QueryParam(name="limit", requirements="\d+", default="10", description="Page size")
+     * @FOS\QueryParam(name="sortCol", default="createdAt", description="Sort columns, valid values are [name|updatedAt|createdAt]")
+     * @FOS\QueryParam(name="sortDir", default="DESC", description="Sort direction, valid values are [ASC|DESC]")
+     * @FOS\QueryParam(name="criteria", description="Search criteria defined as array, valid array keys are [name|updatedAt|createdAt]")
      *
-     * @Route("/", name="workflow_create")
-     * @Method("POST")
-     * @Template("AbcWorkflowBundle:Workflow:new.html.twig")
+     * @Operation(
+     *     tags={"WorkflowBundle"},
+     *     summary="Returns a list of workflows",
+     *     @SWG\Parameter(
+     *         name="sortDir",
+     *         in="query",
+     *         description="Sort direction",
+     *         required=true,
+     *         type="string"
+     *     ),
+     *     @SWG\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Page number of the result set",
+     *         required=true,
+     *         type="string"
+     *     ),
+     *     @SWG\Parameter(
+     *         name="limit",
+     *         in="query",
+     *         description="Page size",
+     *         required=true,
+     *         type="string"
+     *     ),
+     *     @SWG\Parameter(
+     *         name="sortCol",
+     *         in="query",
+     *         description="Sort column",
+     *         required=true,
+     *         type="string"
+     *     ),
+     *     @SWG\Parameter(
+     *         name="criteria",
+     *         in="query",
+     *         description="Searching criteria",
+     *         required=true,
+     *         type="string"
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Returned when successful"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Returned when request is invalid"
+     *     )
+     * )
+     *
+     * @param ParamFetcherInterface $paramFetcher
+     * @return WorkflowList
+     * @throws HttpException
      */
-    public function createAction(Request $request)
+    public function cgetAction(ParamFetcherInterface $paramFetcher)
     {
-        $workflowManager = $this->getWorkflowManager();
-        $entity          = $workflowManager->create();
-        $form            = $this->createCreateForm($entity);
+        $page       = $paramFetcher->get('page');
+        $sortColumn = $paramFetcher->get('sortCol');
+        $sortDir    = $paramFetcher->get('sortDir');
+        $limit      = $paramFetcher->get('limit');
+        $page       = (int)$page - 1;
+        $offset     = ($page > 0) ? ($page) * $limit : 0;
+        $criteria   = $paramFetcher->get('criteria');
 
-        $form->handleRequest($request);
-
-        if($form->isValid())
-        {
-            $workflowManager->update($entity);
-
-            return $this->redirect($this->generateUrl('workflow_show', array('id' => $entity->getId())));
+        if (!$criteria) {
+            $criteria = [];
         }
 
-        return array(
-            'entity' => $entity,
-            'form' => $form->createView(),
-        );
+        $criteria = $this->filterCriteria($criteria);
+
+        $entities = $this->getWorkflowManager()->findBy($criteria, [$sortColumn => $sortDir], $limit, $offset);
+        $count    = $this->getWorkflowManager()->findByCount($criteria);
+
+        $list = new WorkflowList();
+        $list->setItems($entities);
+        $list->setTotalCount($count);
+
+        return $list;
     }
 
     /**
-     * Displays a form to create a new Workflow entity.
      *
-     * @Route("/new", name="workflow_new")
-     * @Method("GET")
-     * @Template()
-     */
-    public function newAction()
-    {
-        $workflowManager = $this->getWorkflowManager();
-        $entity          = $workflowManager->create();
-        $form            = $this->createCreateForm($entity);
-
-        return array(
-            'entity' => $entity,
-            'form' => $form->createView(),
-        );
-    }
-
-    /**
-     * Finds and displays a Workflow entity.
+     * @Operation(
+     *     tags={"WorkflowBundle"},
+     *     summary="Returns a Workflow",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Returned when successful",
+     *         @Model(type="Abc\Bundle\WorkflowBundle\Model\Workflow")
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Returned when entity not found"
+     *     )
+     * )
      *
-     * @Route("/{id}", name="workflow_show")
-     * @Method("GET")
-     * @Template()
-     * @throws NotFoundHttpException
+     * @param $id
+     * @return WorkflowInterface
      */
-    public function showAction($id)
+    public function getAction($id)
     {
-        $entity     = $this->findWorkflow($id);
-        $deleteForm = $this->createDeleteForm($id);
-
-        return array(
-            'entity' => $entity,
-            'delete_form' => $deleteForm->createView(),
-        );
-    }
-
-    /**
-     * Displays a form to edit an existing Workflow entity.
-     *
-     * @Route("/{id}/edit", name="workflow_edit")
-     * @Method("GET")
-     * @Template()
-     * @throws NotFoundHttpException
-     */
-    public function editAction($id)
-    {
-        $entity     = $this->findWorkflow($id);
-        $editForm   = $this->createEditForm($entity);
-        $deleteForm = $this->createDeleteForm($id);
-
-        return array(
-            'entity' => $entity,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        );
-    }
-
-    /**
-     * Edits an existing Workflow entity.
-     *
-     * @Route("/{id}", name="workflow_update")
-     * @Method("PUT")
-     * @Template("AbcWorkflowBundle:Workflow:edit.html.twig")
-     * @throws NotFoundHttpException
-     */
-    public function updateAction(Request $request, $id)
-    {
-        $entity     = $this->findWorkflow($id);
-        $deleteForm = $this->createDeleteForm($id);
-        $editForm   = $this->createEditForm($entity);
-
-        $editForm->handleRequest($request);
-
-        if($editForm->isValid())
-        {
-            $this->getWorkflowManager()->update($entity);
-            $this->get('session')->getFlashBag()->add('info', 'Workflow updated successfully');
-
-            return $this->redirect($this->generateUrl('workflow_edit', array('id' => $id)));
+        $workflow = $this->getWorkflowManager()->findById($id);
+        if (null == $workflow) {
+            $this->createNotFoundException(sprintf('Video with id "%s" not found.', $id));
         }
 
-        return array(
-            'entity' => $entity,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        );
+        return $workflow;
     }
 
     /**
-     * Deletes a Workflow entity.
+     * Adds a new Workflow.
      *
-     * @Route("/{id}", name="workflow_delete")
-     * @Method("DELETE")
-     * @throws NotFoundHttpException
+     * @Operation(
+     *     tags={"WorkflowBundle"},
+     *     summary="Adds a new Workflow",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Returned when successful",
+     *         @Model(type="Abc\Bundle\WorkflowBundle\Model\Workflow")
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Validation error"
+     *     )
+     * )
+     *
+     * @ParamConverter("workflow", converter="fos_rest.request_body")
+     * @param Workflow $workflow
+     * @return Response|WorkflowInterface
+     * @Post("/workflows")
      */
-    public function deleteAction(Request $request, $id)
+    public function postAction(Workflow $workflow)
     {
-        $form = $this->createDeleteForm($id);
-        $form->handleRequest($request);
 
-        if($form->isValid())
-        {
-            $entity          = $this->findWorkflow($id);
+        $validator = $this->get('validator');
+        $errors    = $validator->validate($workflow);
 
-            $this->getWorkflowManager()->delete($entity);
-            $this->get('session')->getFlashBag()->add('info', 'Workflow deleted successfully');
+        if (count($errors) > 0) {
+            $formattedErrors = [];
+            foreach ($errors as $error) {
+                $formattedErrors[$error->getPropertyPath()] = $error->getMessage();
+            }
+
+            return new JsonResponse($formattedErrors, 400);
         }
 
-        return $this->redirect($this->generateUrl('workflow'));
+        $this->getWorkflowManager()->save($workflow);
+
+        return $workflow;
     }
 
     /**
-     * Creates a form to edit a Workflow entity.
+     * Updates a new Workflow.
      *
-     * @param WorkflowInterface $entity The entity
-     * @return \Symfony\Component\Form\Form The form
+     * @Operation(
+     *     tags={"WorkflowBundle"},
+     *     summary="Updates a Workflow",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Returned when successful",
+     *         @Model(type="Abc\Bundle\WorkflowBundle\Model\Workflow")
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Validation error"
+     *     )
+     * )
+     *
+     *
+     * @ParamConverter("workflow", converter="fos_rest.request_body")
+     * @param string   $id
+     * @param Workflow $workflow
+     * @return Response|WorkflowInterface
+     * @Put("/workflows/{id}")
      */
-    private function createEditForm(WorkflowInterface $entity)
+    public function putAction($id, Workflow $workflow)
     {
-        $form = $this->createForm(
-            new WorkflowType(),
-            $entity,
-            array(
-                'action' => $this->generateUrl('workflow_update', array('id' => $entity->getId())),
-                'method' => 'PUT',
-            )
-        );
+        $entity    = $this->getWorkflowManager()->findById($id);
+        $validator = $this->get('validator');
+        $workflow->setCreatedAt($entity->getCreatedAt());
+        $this->getWorkflowManager()->save($workflow);
 
-        return $form;
+        return $workflow;
     }
 
     /**
-     * Creates a form to create a Workflow entity.
+     * Delete a Workflow.
      *
-     * @param WorkflowInterface $entity
-     * @return \Symfony\Component\Form\Form The form
+     *
+     * @Operation(
+     *     tags={"WorkflowBundle"},
+     *     summary="Deletes a Workflow",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="Returned when successful",
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Form validation error"
+     *     )
+     * )
+     *
+     * @return Response
      */
-    private function createCreateForm(WorkflowInterface $entity)
+    public function deleteAction($id)
     {
-        $form = $this->createForm(
-            new WorkflowType(),
-            $entity,
-            array(
-                'action' => $this->generateUrl('workflow_create'),
-                'method' => 'POST',
-            )
-        );
 
-        return $form;
-    }
+        $workflow = $this->getWorkflowManager()->findById($id);
+        if (null == $workflow) {
+            $this->createNotFoundException(sprintf('Workflow with id "%s" not found.', $id));
+        }
 
-    /**
-     * Creates a form to delete a Workflow entity by id.
-     *
-     * @param mixed $id The entity id
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('workflow_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete', 'icon' => 'trash', 'attr' => array('class' => 'btn-danger')))
-            ->getForm();
+        $this->getWorkflowManager()->delete($workflow);
+
+        return new Response('', 204);
     }
 }

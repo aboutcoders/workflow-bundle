@@ -1,0 +1,12 @@
+abc_workflow_tasks:
+    resource: "@AbcWorkflowBundle/Controller/TaskController.php"
+    type: rest
+    prefix: /
+abc_workflow_executions:
+    resource: "@AbcWorkflowBundle/Controller/ExecutionController.php"
+    type: rest
+    name_prefix: api_
+abc_workflow_workflows:
+    resource: "@AbcWorkflowBundle/Controller/WorkflowController.php"
+    type: rest
+    name_prefix: api_

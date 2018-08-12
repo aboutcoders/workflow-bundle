@@ -23,7 +23,6 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
-        new Knp\Bundle\MenuBundle\KnpMenuBundle(),
         new Abc\Bundle\WorkflowBundle\AbcWorkflowBundle(),
         // ...
     );
@@ -34,24 +33,14 @@ Configure routing
 
 ``` yaml
 # app/config/routing.yml
-abc_workflow_tasks:
-    resource: "@AbcWorkflowBundle/Resources/config/routing.yml"
-    prefix:   /
+abc-rest-workflow:
+    type: rest
+    resource: "@AbcWorkflowBundle/Resources/config/rest.yml"
+    prefix: /api    
 ```
 
-If you like to display workflow GUI you have to import optional routing rules
-
-``` yaml
-# app/config/routing.yml
-abc_workflow_workflows:
-    resource: "@AbcWorkflowBundle/Resources/config/routing_optional.yml"
-    prefix:   /
-```
- 
- 
 Follow the installation and configuration instructions of the third party bundles:
 
-* [KnpMenuBundle](https://github.com/KnpLabs/KnpMenuBundle/blob/master/Resources/doc/index.md)
 * [AbcJobBundleBundle](https://bitbucket.org/hasc/job-bundle)
 
 Configure the bundle

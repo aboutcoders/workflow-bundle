@@ -5,16 +5,16 @@ namespace Abc\Bundle\WorkflowBundle\Executable;
 use Abc\Bundle\JobBundle\Job\Executable;
 use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\WorkflowBundle\Workflow\CleanupDirectoryConfiguration;
-use Abc\Filesystem\FilesystemFactoryInterface;
+use League\Flysystem\MountManager;
 
 class CleanupDirectoryExecutable implements Executable
 {
-    /** @var FilesystemFactoryInterface */
-    protected $filesystemFactory;
+    /** @var MountManager */
+    protected $mountManager;
 
-    public function __construct(FilesystemFactoryInterface $filesystemFactory)
+    public function __construct(MountManager $mountManager)
     {
-        $this->filesystemFactory = $filesystemFactory;
+        $this->mountManager = $mountManager;
     }
 
     /**
@@ -30,7 +30,7 @@ class CleanupDirectoryExecutable implements Executable
 
         /** @var CleanupDirectoryConfiguration $parameters */
         $parameters = $job->getParameters();
-        $filesystem = $this->filesystemFactory->create($parameters->getFilesystemDefinition());
+        $filesystem = $this->mountManager->create($parameters->getFilesystemDefinition());
 
         $logger->debug('Remove directory {path}', array('path' => $parameters->getPath()));
         $filesystem->remove('/');

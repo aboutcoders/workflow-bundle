@@ -11,11 +11,26 @@ use Abc\Bundle\WorkflowBundle\Model\TaskTypeManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
 use Abc\Bundle\WorkflowBundle\Workflow\ManagerInterface;
+use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class BaseController extends Controller
+class BaseController extends FOSRestController
 {
+
+    /**
+     * @param $criteria
+     * @return array
+     * @throws HttpException
+     */
+    protected function filterCriteria($criteria)
+    {
+        if (!is_array($criteria)) {
+            throw new \HttpException(400, 'Invalid value for parameter criteria');
+        }
+
+        return $criteria;
+    }
 
     /**
      * @param $id

@@ -9,7 +9,7 @@ use Abc\Bundle\JobBundle\Job\Job;
 use Abc\Bundle\JobBundle\Job\Report\Report;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Abc\Bundle\WorkflowBundle\Workflow\Configuration;
-use Abc\Filesystem\FilesystemInterface;
+use League\Flysystem\FilesystemInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 

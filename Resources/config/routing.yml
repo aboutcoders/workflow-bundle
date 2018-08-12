@@ -1,8 +1,0 @@
-abc_workflow_tasks:
-    resource: "@AbcWorkflowBundle/Controller/TaskController.php"
-    type:     annotation
-    prefix:   /
-abc_workflow_executions:
-    resource: "@AbcWorkflowBundle/Controller/ExecutionController.php"
-    type:     annotation
-    prefix:   /

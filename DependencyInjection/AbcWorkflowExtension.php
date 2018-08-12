@@ -25,33 +25,30 @@ class AbcWorkflowExtension extends Extension
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config/services'));
 
-        if('custom' !== $config['db_driver'])
-        {
+        if ('custom' !== $config['db_driver']) {
             $loader->load(sprintf('%s.xml', $config['db_driver']));
         }
 
 
-        $container->setAlias('abc.workflow.filesystem', 'abc.file_distribution.filesystem.' . $config['filesystem']);
+        $container->setAlias('abc.workflow.filesystem', 'oneup_flysystem.' . $config['filesystem'] . '_filesystem');
 
         $loader->load('services.xml');
 
         $this->remapParametersNamespaces(
             $config,
             $container,
-            array(
-                '' => array(
+            [
+                '' => [
                     'model_manager_name' => 'abc.workflow.model_manager_name'
-                )
-            )
+                ]
+            ]
         );
 
-        if(!empty($config['workflow']))
-        {
+        if (!empty($config['workflow'])) {
             $this->loadWorkflow($config['workflow'], $container, $loader, $config['db_driver']);
         }
 
-        if(!empty($config['task']))
-        {
+        if (!empty($config['task'])) {
             $this->loadTask($config['task'], $container, $loader, $config['db_driver']);
         }
 
@@ -59,8 +56,7 @@ class AbcWorkflowExtension extends Extension
 
     private function loadWorkflow(array $config, ContainerBuilder $container, XmlFileLoader $loader, $dbDriver)
     {
-        if('custom' !== $dbDriver)
-        {
+        if ('custom' !== $dbDriver) {
             $loader->load(sprintf('%s_workflow.xml', $dbDriver));
         }
 
@@ -70,19 +66,18 @@ class AbcWorkflowExtension extends Extension
         $this->remapParametersNamespaces(
             $config,
             $container,
-            array(
-                '' => array(
-                    'workflow_class' => 'abc.workflow.model.workflow.class',
+            [
+                '' => [
+                    'workflow_class'  => 'abc.workflow.model.workflow.class',
                     'execution_class' => 'abc.workflow.model.execution.class',
-                )
-            )
+                ]
+            ]
         );
     }
 
     private function loadTask(array $config, ContainerBuilder $container, XmlFileLoader $loader, $dbDriver)
     {
-        if('custom' !== $dbDriver)
-        {
+        if ('custom' !== $dbDriver) {
             $loader->load(sprintf('%s_task.xml', $dbDriver));
             $loader->load(sprintf('%s_task_type.xml', $dbDriver));
         }
@@ -94,22 +89,20 @@ class AbcWorkflowExtension extends Extension
         $this->remapParametersNamespaces(
             $config,
             $container,
-            array(
-                '' => array(
-                    'task_class' => 'abc.workflow.model.task.class',
+            [
+                '' => [
+                    'task_class'      => 'abc.workflow.model.task.class',
                     'task_type_class' => 'abc.workflow.model.task_type.class',
-                    'category_class' => 'abc.workflow.model.category.class',
-                )
-            )
+                    'category_class'  => 'abc.workflow.model.category.class',
+                ]
+            ]
         );
     }
 
     protected function remapParameters(array $config, ContainerBuilder $container, array $map)
     {
-        foreach($map as $name => $paramName)
-        {
-            if(array_key_exists($name, $config))
-            {
+        foreach ($map as $name => $paramName) {
+            if (array_key_exists($name, $config)) {
                 $container->setParameter($paramName, $config[$name]);
             }
         }
@@ -117,28 +110,19 @@ class AbcWorkflowExtension extends Extension
 
     protected function remapParametersNamespaces(array $config, ContainerBuilder $container, array $namespaces)
     {
-        foreach($namespaces as $ns => $map)
-        {
-            if($ns)
-            {
-                if(!array_key_exists($ns, $config))
-                {
+        foreach ($namespaces as $ns => $map) {
+            if ($ns) {
+                if (!array_key_exists($ns, $config)) {
                     continue;
                 }
                 $namespaceConfig = $config[$ns];
-            }
-            else
-            {
+            } else {
                 $namespaceConfig = $config;
             }
-            if(is_array($map))
-            {
+            if (is_array($map)) {
                 $this->remapParameters($namespaceConfig, $container, $map);
-            }
-            else
-            {
-                foreach($namespaceConfig as $name => $value)
-                {
+            } else {
+                foreach ($namespaceConfig as $name => $value) {
                     $container->setParameter(sprintf($map, $name), $value);
                 }
             }

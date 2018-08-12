@@ -65,6 +65,14 @@ interface WorkflowManagerInterface
      */
     public function findAll();
 
+    /**
+     * Returns count of matching rows for that criteria
+     *
+     * @param array $criteria
+     *
+     * @return integer
+     */
+    public function findByCount(array $criteria);
 
     /**
      * Returns the Workflow's fully qualified class name.

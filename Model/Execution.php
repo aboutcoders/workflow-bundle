@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
 use JMS\Serializer\Annotation\SerializedName;
+use JMS\Serializer\Annotation\Type;
 
 /**
  * @author Wojciech Ciolko <w.ciolko@gmail.com>
@@ -43,6 +44,8 @@ class Execution implements ExecutionInterface
 
     /**
      * @var string
+     * @Type("string")
+     * @Expose
      */
     protected $ticket;
 
