@@ -12,6 +12,7 @@ use Abc\Bundle\WorkflowBundle\Model\ExecutionInterface;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
+use Abc\Bundle\WorkflowBundle\Model\WorkflowReport;
 use Abc\Bundle\WorkflowBundle\Workflow\Exception\WorkflowNotFoundException;
 
 /**
@@ -36,7 +37,12 @@ class Manager implements ManagerInterface
      * @param TaskManagerInterface     $taskManager
      * @param CategoryManagerInterface $categoryManager
      */
-    function __construct(Job\ManagerInterface $jobManager, WorkflowManagerInterface $workflowManager, TaskManagerInterface $taskManager, CategoryManagerInterface $categoryManager)
+    function __construct(
+        Job\ManagerInterface $jobManager,
+        WorkflowManagerInterface $workflowManager,
+        TaskManagerInterface $taskManager,
+        CategoryManagerInterface $categoryManager
+    )
     {
         $this->jobManager      = $jobManager;
         $this->workflowManager = $workflowManager;
@@ -70,7 +76,7 @@ class Manager implements ManagerInterface
      */
     public function cancel($ticket)
     {
-        $this->jobManager->cancelJob($ticket);
+        $this->jobManager->cancel($ticket);
     }
 
     /**
@@ -101,12 +107,12 @@ class Manager implements ManagerInterface
     {
         $report = $this->getReport($ticket);
 
-        if ($report->getStatus() == Status::PROCESSED() || $report->getStatus() == Status::CANCELLED() || $report->getStatus() == Status::ERROR()) {
+        if ($report->getJob()->getStatus() == Status::PROCESSED() || $report->getJob()->getStatus() == Status::CANCELLED() || $report->getJob()->getStatus() == Status::ERROR()) {
             return 100;
         }
 
         /** @var Configuration $configuration */
-        $configuration = $report->getParameters();
+        $configuration = $report->getJob()->getParameters();
         $index         = $configuration->getIndex();
         $tasks         = $this->taskManager->findWorkflowTasks($configuration->getId());
         $total         = count($tasks);
@@ -121,7 +127,8 @@ class Manager implements ManagerInterface
      */
     public function getReport($ticket)
     {
-        return [$this->jobManager->get($ticket), $this->jobManager->getLogs($ticket)];
+
+        return new WorkflowReport($this->jobManager->get($ticket), $this->jobManager->getLogs($ticket));
     }
 
     /**
