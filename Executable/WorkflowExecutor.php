@@ -2,19 +2,13 @@
 
 namespace Abc\Bundle\WorkflowBundle\Executable;
 
-use Abc\Bundle\JobBundle\Job\Exception\TerminateException;
-use Abc\Bundle\JobBundle\Job\Job;
-use Abc\Bundle\JobBundle\Job\Response\ErrorResponse;
-use Abc\Bundle\JobBundle\Job\Status;
-use Abc\Bundle\JobBundle\Model\JobInterface;
+use Abc\Bundle\JobBundle\Job\ManagerInterface;
 use Abc\Bundle\JobBundle\Annotation\ParamType;
 use Abc\Bundle\WorkflowBundle\Model\TaskInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
-use Abc\Bundle\WorkflowBundle\Model\TaskTypeInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
 use Abc\Bundle\WorkflowBundle\Workflow\Configuration;
 use Abc\Bundle\WorkflowBundle\Workflow\Response;
-use League\Flysystem\MountManager;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -45,50 +39,52 @@ class WorkflowExecutor implements LoggerAwareInterface
 
     /**
      * @ParamType("configuration", type="Abc\Bundle\WorkflowBundle\Workflow\Configuration")
+     * @ParamType("manager", type="@abc.manager")
+     * @param Configuration    $configuration
+     * @param ManagerInterface $manager
+     * @throws \Exception
      */
-    public function execute(Configuration $configuration)
+    public function execute(Configuration $configuration, ManagerInterface $manager)
     {
-        $this->executeSequentially($configuration);
+        $this->executeSequentially($configuration, $manager);
     }
 
     /**
-     * @param Job $job
+     * @param Configuration    $configuration
+     * @param ManagerInterface $manager
      * @return void
      * @codeCoverageIgnore
      */
-    protected function executeSimultaneously(Job $job)
+    protected function executeSimultaneously(Configuration $configuration, ManagerInterface $manager)
     {
-        if ($job->isTriggeredByCallback()) {
-            $job->getContext()->get('logger')->debug('Callback: {ticket}', array('ticket' => $job->getCallerJob()->getTicket()));
-        } else {
-            /** @var Configuration $configuration */
-            $configuration = $job->getParameters();
+//        if ($job->isTriggeredByCallback()) {
+//            $this->logger->debug('Callback: {ticket}', ['ticket' => $job->getCallerJob()->getTicket()]);
+//        } else {
+        $this->logger->debug('Workflow: {workflow} ', ['workflow' => $configuration->getId()]);
 
-            $job->getContext()->get('logger')->debug('Workflow: {workflow} ', array('workflow' => $configuration->getId()));
+        $tasks = $this->taskManager->findWorkflowTasks($configuration->getId());
 
-            $tasks = $this->taskManager->findWorkflowTasks($configuration->getId());
-
-            if (count($tasks) > 0) {
-                $job->getContext()->get('logger')->debug('Processing tasks...');
-                /** @var TaskInterface $task */
-                foreach ($tasks as $task) {
-                    $this->addTask($job, $task);
-                }
+        if (count($tasks) > 0) {
+            $this->logger->debug('Processing tasks...');
+            /** @var TaskInterface $task */
+            foreach ($tasks as $task) {
+                $this->addTask($manager, $task);
             }
         }
+//        }
     }
 
     /**
-     * @param Job $job
-     * @throws \Exception
+     * @param Configuration    $configuration
+     * @param ManagerInterface $manager
      * @return void
      */
-    protected function executeSequentially(Configuration $configuration)
+    protected function executeSequentially(Configuration $configuration, ManagerInterface $manager)
     {
         $workflowId = $configuration->getId();
 
 //        if (!$job->isTriggeredByCallback()) {
-//            $job->getContext()->get('logger')->debug('Start executing workflow with id {id}', array('id' => $workflowId));
+//            $this->logger->debug('Start executing workflow with id {id}', array('id' => $workflowId));
 //
 //            # store parameters in the context
 //            $job->getContext()->set('parameters', $configuration->getParameters());
@@ -99,7 +95,7 @@ class WorkflowExecutor implements LoggerAwareInterface
 //            }
 //
 //            if ($job->getCallerJob()->getStatus() != Status::PROCESSED()) {
-//                $job->getContext()->get('logger')->debug(
+//                $this->logger->debug(
 //                    'Child job {ticket} terminated with status {status}',
 //                    array('ticket', $job->getCallerJob()->getTicket(), 'status' => $job->getCallerJob()->getStatus()->getName())
 //                );
@@ -111,7 +107,7 @@ class WorkflowExecutor implements LoggerAwareInterface
 //                }
 //            }
 //
-//            $job->getContext()->get('logger')->debug('Callback by ticket {ticket}', array('ticket' => $job->getCallerJob()->getTicket()));
+//            $this->logger->debug('Callback by ticket {ticket}', array('ticket' => $job->getCallerJob()->getTicket()));
 //
 //            $configuration->setIndex($configuration->getIndex() + 1);
 //        }
@@ -119,28 +115,28 @@ class WorkflowExecutor implements LoggerAwareInterface
 //        if ($task = $this->taskManager->findNextWorkflowTask($workflowId, $configuration->getIndex())) {
 //            $this->addTask($job, $task);
 //        } else {
-//            $job->getContext()->get('logger')->debug('No tasks to execute');
+//            $this->logger->debug('No tasks to execute');
 //        }
 //
 //        $job->update();
     }
 
     /**
-     * @param Job           $job
-     * @param TaskInterface $task
+     * @param ManagerInterface $manager
+     * @param TaskInterface    $task
      */
-    protected function addTask(Job $job, TaskInterface $task)
+    protected function addTask(ManagerInterface $manager, TaskInterface $task)
     {
-        $response = $job->getResponseBody();
-        if ($response instanceof Response) {
-            $response->addAction(strtoupper($task->getType()->getName()));
-        }
+//        $response = $job->getResponseBody();
+//        if ($response instanceof Response) {
+//            $response->addAction(strtoupper($task->getType()->getName()));
+//        }
 
-        $ticket = $job->addChildJob($task->getType()->getJobType(), $task->getParameters(), $task->getSchedule());
+        $ticket = $manager->addJob($task->getType()->getJobType(), $task->getParameters(), $task->getSchedule());
 
-        $job->getContext()->get('logger')->debug(
+        $this->logger->debug(
             'Added child job {ticket} {type} {parameters} {schedule}',
-            array('ticket' => $ticket, 'type' => $task->getType()->getJobType(), 'parameters' => $task->getParameters(), 'schedule' => $task->getSchedule())
+            ['ticket' => $ticket, 'type' => $task->getType()->getJobType(), 'parameters' => $task->getParameters(), 'schedule' => $task->getSchedule()]
         );
     }
 

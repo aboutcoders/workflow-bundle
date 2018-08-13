@@ -2,13 +2,12 @@
 
 namespace Abc\Bundle\WorkflowBundle\Workflow;
 
-use JMS\Serializer\SerializerBuilder;
 use JMS\Serializer\Annotation\Type;
 
 /**
  * @author Hannes Schulz <schulz@daten-bahn.de>
  */
-class Configuration implements \Serializable
+class Configuration
 {
     /**
      * @var int
@@ -22,7 +21,7 @@ class Configuration implements \Serializable
     private $index = 0;
 
     /**
-     * @var null|\Serializable
+     * @var null|array
      * @Type("string")
      */
     private $parameters;
@@ -42,12 +41,12 @@ class Configuration implements \Serializable
     private $serializedParameters;
 
     /**
-     * @param int                $id
-     * @param \Serializable|null $parameters
-     * @param bool               $createDirectory Whether to create a working directory (optional, true by default)
-     * @param bool               $removeDirectory Whether to remove the working directory after execution (optional, true by default)
+     * @param int        $id
+     * @param array|null $parameters
+     * @param bool       $createDirectory Whether to create a working directory (optional, true by default)
+     * @param bool       $removeDirectory Whether to remove the working directory after execution (optional, true by default)
      */
-    public function __construct($id, \Serializable $parameters = null, $createDirectory = true, $removeDirectory = true)
+    public function __construct($id, array $parameters = null, $createDirectory = true, $removeDirectory = true)
     {
         $this->id              = $id;
         $this->index           = 0;
@@ -90,7 +89,7 @@ class Configuration implements \Serializable
     }
 
     /**
-     * @return \Serializable|null
+     * @return array|null
      */
     public function getParameters()
     {
@@ -98,9 +97,9 @@ class Configuration implements \Serializable
     }
 
     /**
-     * @param \Serializable|null $parameters
+     * @param array|null $parameters
      */
-    public function setParameters(\Serializable $parameters = null)
+    public function setParameters(array $parameters = null)
     {
         $this->parameters = $parameters;
     }
@@ -135,44 +134,5 @@ class Configuration implements \Serializable
     public function getRemoveDirectory()
     {
         return $this->removeDirectory;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function serialize()
-    {
-        $tmp = $this->parameters;
-        $this->parameters = serialize($this->parameters);
-
-        try
-        {
-            $data = SerializerBuilder::create()->build()->serialize($this, 'json');
-
-            $this->parameters = $tmp;
-
-            return $data;
-        }
-        catch(\Exception $e)
-        {
-            $this->parameters = $tmp;
-
-            throw $e;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function unserialize($serialized)
-    {
-        /** @var Configuration $object */
-        $object = SerializerBuilder::create()->build()->deserialize($serialized, 'Abc\Bundle\WorkflowBundle\Workflow\Configuration', 'json');
-
-        $this->id = $object->getId();
-        $this->index = $object->getIndex();
-        $this->parameters = unserialize($object->getParameters());
-        $this->createDirectory = $object->getCreateDirectory();
-        $this->removeDirectory = $object->getRemoveDirectory();
     }
 }
