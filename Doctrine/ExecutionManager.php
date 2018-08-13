@@ -142,8 +142,8 @@ class ExecutionManager extends BaseExecutionManager
         if(!in_array($execution->getStatus(), Status::getTerminatedStatus()))
         {
             $report = $this->manager->getReport($execution->getTicket());
-            $execution->setStatus($report->getStatus());
-            $execution->setExecutionTime($report->getExecutionTime());
+            $execution->setStatus($report->getJob()->getStatus());
+            $execution->setExecutionTime($report->getJob()->getExecutionTime());
         }
 
         return $execution;
