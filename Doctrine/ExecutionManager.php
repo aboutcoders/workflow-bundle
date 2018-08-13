@@ -139,7 +139,7 @@ class ExecutionManager extends BaseExecutionManager
     {
         $execution = $this->repository->find($id);
 
-        if(!in_array($execution->getStatus()->getValue(), Status::getTerminatedStatusValues()))
+        if(!in_array($execution->getStatus(), Status::getTerminatedStatus()))
         {
             $report = $this->manager->getReport($execution->getTicket());
             $execution->setStatus($report->getStatus());

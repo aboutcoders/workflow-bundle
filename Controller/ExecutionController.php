@@ -7,6 +7,7 @@ use Abc\Bundle\WorkflowBundle\Model\WorkflowInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Put;
@@ -72,31 +73,47 @@ class ExecutionController extends BaseController
     }
 
     /**
-     * Execution of a Workflow.
+     * Get Workflow execution.
      *
-     * @Route("/{id}/execution", name="workflow_execution")
-     * @Method("GET")
-     * @Template()
+     * @Operation(
+     *     tags={"WorkflowBundle"},
+     *     summary="Get Workflow execution details",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Returned when successful"
+     *     )
+     * )
+     * @param $id
+     * @return array
+     * @throws \Abc\Bundle\JobBundle\Job\Exception\TicketNotFoundException
      */
-    public function executionAction($id)
+    public function getAction($id)
     {
         $entity = $this->findExecution($id);
 
         $report   = $this->getManager()->getReport($entity->getTicket());
         $progress = $this->getManager()->getProgress($entity->getTicket());
 
-        return array(
+        return [
             'entity'   => $entity,
             'progress' => $progress,
             'report'   => $report
-        );
+        ];
     }
 
     /**
      * Status of a Workflow execution.
      *
-     * @Route("/{id}/execution-status", name="workflow_execution_status")
-     * @Method("GET")
+     * @Operation(
+     *     tags={"WorkflowBundle"},
+     *     summary="Get Status of a Workflow execution",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Returned when successful"
+     *     )
+     * )
+     * @param $id
+     * @return Response
      */
     public function statusAction($id)
     {
@@ -104,14 +121,12 @@ class ExecutionController extends BaseController
 
         $progress = $this->getManager()->getProgress($entity->getTicket());
 
-        $response = new Response(json_encode(
-                array(
-                    'progress' => $progress,
-                    'message'  => 'Processing'
-                ))
+        $response = new JsonResponse(
+            [
+                'progress' => $progress,
+                'message'  => 'Processing'
+            ]
         );
-        $response->headers->set('Content-Type', 'application/json');
-
         return $response;
     }
 

@@ -53,7 +53,7 @@ class Task implements TaskInterface
      */
     protected $scheduled;
 
-    /** @var string */
+    /** @var array */
     protected $parameters;
 
     /** @var ScheduleInterface */
@@ -164,7 +164,7 @@ class Task implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function setParameters(\Serializable $parameters = null)
+    public function setParameters(array $parameters = null)
     {
         $this->parameters = $parameters;
     }

@@ -3,7 +3,7 @@
 namespace Abc\Bundle\WorkflowBundle\Workflow;
 
 use Abc\Bundle\JobBundle\Job\Exception\TicketNotFoundException;
-use Abc\Bundle\JobBundle\Job\Report\ReportInterface;
+use Abc\Bundle\JobBundle\Job\JobInterface;
 use Abc\Bundle\JobBundle\Job\Status;
 use Abc\Bundle\SchedulerBundle\Model\ScheduleInterface;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionInterface;
@@ -50,7 +50,7 @@ interface ManagerInterface
 
     /**
      * @param string $ticket
-     * @return ReportInterface
+     * @return array
      * @throws TicketNotFoundException
      */
     public function getReport($ticket);

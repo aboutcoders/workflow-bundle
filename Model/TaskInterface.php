@@ -75,15 +75,15 @@ interface TaskInterface
     public function setScheduled($scheduled);
 
     /**
-     * @return \Serializable|null
+     * @return array|null
      */
     public function getParameters();
 
     /**
-     * @param \Serializable|null $parameters
+     * @param array|null $parameters
      * @return void
      */
-    public function setParameters(\Serializable $parameters = null);
+    public function setParameters(array $parameters = null);
 
     /**
      * @return ScheduleInterface

@@ -49,8 +49,7 @@ class Manager implements ManagerInterface
      */
     public function create($name, $categoryName = null, $createDirectory = true, $removeDirectory = true)
     {
-        if($categoryName != null && !$this->categoryManager->exists($categoryName))
-        {
+        if ($categoryName != null && !$this->categoryManager->exists($categoryName)) {
             $category = $this->categoryManager->create();
             $category->setName($categoryName);
             $this->categoryManager->update($category);
@@ -81,19 +80,13 @@ class Manager implements ManagerInterface
     {
         $workflow = $this->workflowManager->findById($id);
 
-        if($workflow == null)
-        {
+        if ($workflow == null) {
             throw new WorkflowNotFoundException($id);
-        }
-
-        if($response == null)
-        {
-            $response = new Response();
         }
 
         $configuration = new Configuration($id, $parameters, $workflow->getCreateDirectory(), $workflow->getRemoveDirectory());
 
-        $ticket = $this->jobManager->addJob('workflow', $configuration, $schedule, $response);
+        $ticket = $this->jobManager->addJob('workflow', [$configuration], $schedule);
 
         $execution = $this->executionManager->create($ticket, $workflow);
         $this->executionManager->update($execution);
@@ -108,8 +101,7 @@ class Manager implements ManagerInterface
     {
         $report = $this->getReport($ticket);
 
-        if($report->getStatus() == Status::PROCESSED() || $report->getStatus() == Status::CANCELLED() || $report->getStatus() == Status::ERROR())
-        {
+        if ($report->getStatus() == Status::PROCESSED() || $report->getStatus() == Status::CANCELLED() || $report->getStatus() == Status::ERROR()) {
             return 100;
         }
 
@@ -129,7 +121,7 @@ class Manager implements ManagerInterface
      */
     public function getReport($ticket)
     {
-        return $this->jobManager->getReport($ticket);
+        return [$this->jobManager->get($ticket), $this->jobManager->getLogs($ticket)];
     }
 
     /**
@@ -137,7 +129,7 @@ class Manager implements ManagerInterface
      */
     public function getStatus($ticket)
     {
-        return $this->jobManager->getStatus($ticket);
+        return $this->jobManager->get($ticket)->getStatus();
     }
 
     /**
