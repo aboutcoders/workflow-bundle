@@ -58,7 +58,7 @@ class Execution implements ExecutionInterface
 
     /**
      * @var double
-     * @Type("double")
+     * @Type("integer")
      * @Expose
      */
     protected $executionTime;
@@ -69,6 +69,13 @@ class Execution implements ExecutionInterface
      * @Expose
      */
     protected $executionNumber;
+
+    /**
+     * @var array
+     * @Type("array")
+     * @Expose
+     */
+    protected $context;
 
     function __construct()
     {
@@ -201,5 +208,21 @@ class Execution implements ExecutionInterface
     public function getExecutionNumber()
     {
         return $this->executionNumber;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setContext($context)
+    {
+        $this->context = $context;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getContext()
+    {
+        return $this->context;
     }
 }

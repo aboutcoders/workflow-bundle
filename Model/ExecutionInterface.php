@@ -68,4 +68,15 @@ interface ExecutionInterface
      */
     public function getExecutionNumber();
 
+    /**
+     * @param array $context
+     * @return void
+     */
+    public function setContext($context);
+
+    /**
+     * @return array
+     */
+    public function getContext();
+
 }

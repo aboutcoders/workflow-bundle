@@ -2,10 +2,12 @@
 
 namespace Abc\Bundle\WorkflowBundle\Listener;
 
-use Abc\Bundle\JobBundle\Event\JobEvent;
+use Abc\Bundle\JobBundle\Event\ExecutionEvent;
 use Abc\Bundle\JobBundle\Event\JobEvents;
 use Abc\Bundle\JobBundle\Event\ReportEvent;
+use Abc\Bundle\JobBundle\Event\TerminationEvent;
 use Abc\Bundle\JobBundle\Job\Job;
+use Abc\Bundle\JobBundle\Job\JobInterface;
 use Abc\Bundle\JobBundle\Job\Report\Report;
 use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Abc\Bundle\WorkflowBundle\Workflow\Configuration;
@@ -42,100 +44,99 @@ class JobListener
      *
      * @param JobEvent $event
      */
-    public function onPrepare(JobEvent $event)
+    public function onPrepare(ExecutionEvent $event)
     {
-        if($event->getRootJob()->getType() != 'workflow')
-        {
+        if ($event->getJob()->getType() != 'workflow') {
             return;
         }
 
-        $this->logger->debug('Handle event {name}', array('name' => JobEvents::JOB_PREPARE));
+        $this->logger->debug('Handle event {name}', ['name' => JobEvents::JOB_PRE_EXECUTE]);
 
-        $configuration = $event->getRootJob()->getParameters();
-        if(!$configuration instanceof Configuration)
-        {
+        $configuration = $event->getJob()->getParameters()[0];
+        $this->logger->debug('Check workflow Configuration for {ticket}', ['ticket' => $event->getJob()->getTicket()]);
+        if (!$configuration instanceof Configuration) {
             $this->logger->error(
                 'Failed to set filesystem into context for job {ticket} since job contains unexpected parameter ' . null == $configuration || !is_object(
                     $configuration
                 ) ? $configuration : get_class($configuration),
-                array('ticket' => $event->getTicket())
+                ['ticket' => $event->getTicket()]
             );
 
             return;
         }
 
-        if($configuration->getCreateDirectory())
-        {
-            try
-            {
-                $this->logger->debug('Add filesystem to context of job {ticket}', array('ticket' => $event->getTicket()));
+        if ($configuration->getCreateDirectory()) {
+            try {
+                $this->logger->debug('Add filesystem to context of job {ticket}', ['ticket' => $event->getJob()->getTicket()]);
 
-                $filesystem = $this->filesystem->createFilesystem($event->getRootJob()->getTicket(), true);
+                $filesystem = $this->filesystem->createDir($event->getJob()->getTicket());
                 $event->getContext()->set('filesystem', $filesystem);
-            }
-            catch(\Exception $e)
-            {
-                $this->logger->error('Failed to set filesystem in context for job {ticket} ({exception})', array('ticket', $event->getTicket(), 'exception' => $e));
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to set filesystem in context for job {ticket} ({exception})',
+                    ['ticket', $event->getTicket(), 'exception' => $e]);
             }
         }
     }
 
-    public function onTerminated(ReportEvent $event)
+    public function onTerminated(TerminationEvent $event)
     {
-        if($event->getReport()->getType() != 'workflow')
-        {
+        if ($event->getJob()->getType() != 'workflow') {
             return;
         }
 
-        $this->logger->debug('Handle event {name}', array('name' => JobEvents::JOB_TERMINATED));
+        $this->logger->debug('Handle event {name}', ['name' => JobEvents::JOB_TERMINATED]);
 
-        $configuration = $event->getReport()->getParameters();
+        $configuration = $event->getJob()->getParameters()[0];
 
-        $this->updateExecution($event->getReport());
+        $this->updateExecution($event->getJob());
 
-        if(!$configuration instanceof Configuration)
-        {
+        if (!$configuration instanceof Configuration) {
             $this->logger->error(
                 'Failed to process report of job {ticket} since job contains unexpected parameter ' . null == $configuration || !is_object(
                     $configuration
                 ) ? $configuration : get_class($configuration),
-                array('ticket' => $event->getReport()->getTicket())
+                ['ticket' => $event->getJob()->getTicket()]
             );
 
             return;
         }
 
-        if($configuration->getRemoveDirectory() && $this->filesystem->exists($event->getReport()->getTicket()))
-        {
-            try
-            {
-                $this->logger->debug('Remove {path} from filesystem', array('path' => $event->getReport()->getTicket()));
+        if ($configuration->getRemoveDirectory() && $this->filesystem->exists($event->getJob()->getTicket())) {
+            try {
+                $this->logger->debug('Remove {path} from filesystem', ['path' => $event->getJob()->getTicket()]);
 
-                $this->filesystem->remove($event->getReport()->getTicket());
+                $this->filesystem->remove($event->getJob()->getTicket());
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to remove working directory for job {ticket} ({exception})',
+                    ['ticket', $event->getJob()->getTicket(), 'exception' => $e]);
             }
-            catch(\Exception $e)
-            {
-                $this->logger->error('Failed to remove working directory for job {ticket} ({exception})', array('ticket', $event->getReport()->getTicket(), 'exception' => $e));
-            }
+        } else {
+            $this->logger->debug('Removal of filesystem for job {ticket} is disabled', ['ticket' => $event->getReport()->getTicket()]);
         }
-        else
-        {
-            $this->logger->debug('Removal of filesystem for job {ticket} is disabled', array('ticket' => $event->getReport()->getTicket()));
+    }
+
+    public function onPostExecute(ExecutionEvent $event)
+    {
+        if ($event->getJob()->getType() != 'workflow') {
+            return;
         }
+
+        $this->logger->debug('Handle event {name}', ['name' => JobEvents::JOB_POST_EXECUTE]);
+
+        $this->updateExecution($event->getJob());
     }
 
     /**
      * Update execution data after finished job
      *
-     * @param Report $report
+     * @param Job $job
      */
-    protected function updateExecution(Report $report)
+    protected function updateExecution(JobInterface $job)
     {
-        $execution = $this->executionManager->findOneBy(array('ticket' => $report->getTicket()));
-        if($execution)
-        {
-            $execution->setExecutionTime($report->getExecutionTime());
-            $execution->setStatus($report->getStatus());
+        $execution = $this->executionManager->findOneBy(['ticket' => $job->getTicket()]);
+        if ($execution) {
+            $execution->setExecutionTime($job->getExecutionTime());
+            $execution->setStatus($job->getStatus());
             $this->executionManager->update($execution);
         }
     }

@@ -112,7 +112,7 @@ class Manager implements ManagerInterface
         }
 
         /** @var Configuration $configuration */
-        $configuration = $report->getJob()->getParameters();
+        $configuration = $report->getJob()->getParameters()[0];
         $index         = $configuration->getIndex();
         $tasks         = $this->taskManager->findWorkflowTasks($configuration->getId());
         $total         = count($tasks);

@@ -2,13 +2,18 @@
 
 namespace Abc\Bundle\WorkflowBundle\Executable;
 
+use Abc\Bundle\JobBundle\Job\JobInterface;
+use Abc\ProcessControl\ControllerInterface;
 use Abc\Bundle\JobBundle\Job\ManagerInterface;
 use Abc\Bundle\JobBundle\Annotation\ParamType;
+use Abc\Bundle\WorkflowBundle\Model\ExecutionManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskInterface;
 use Abc\Bundle\WorkflowBundle\Model\TaskManagerInterface;
 use Abc\Bundle\WorkflowBundle\Model\WorkflowManagerInterface;
 use Abc\Bundle\WorkflowBundle\Workflow\Configuration;
 use Abc\Bundle\WorkflowBundle\Workflow\Response;
+use Abc\ProcessControl\ControllerAwareInterface;
+use Abc\Bundle\JobBundle\Job\JobAwareInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -17,14 +22,20 @@ use Psr\Log\NullLogger;
  * @author Wojciech Ciolko <w.ciolko@gmail.com>
  * @author Hannes Schulz <schulz@daten-bahn.de>
  */
-class WorkflowExecutor implements LoggerAwareInterface
+class WorkflowExecutor implements LoggerAwareInterface, ControllerAwareInterface, JobAwareInterface
 {
+    /** @var LoggerInterface */
+    private $logger;
+    /** @var ControllerInterface */
+    private $controller;
+    /** @var JobInterface */
+    private $job;
+
     /** @var TaskManagerInterface */
     protected $taskManager;
     /** @var WorkflowManagerInterface */
     protected $workflowManager;
-    /** @var LoggerInterface */
-    private $logger;
+
 
     /**
      * @param WorkflowManagerInterface $workflowManager
@@ -46,7 +57,7 @@ class WorkflowExecutor implements LoggerAwareInterface
      */
     public function execute(Configuration $configuration, ManagerInterface $manager)
     {
-        $this->executeSequentially($configuration, $manager);
+        return $this->executeSequentially($configuration, $manager);
     }
 
     /**
@@ -83,6 +94,9 @@ class WorkflowExecutor implements LoggerAwareInterface
     {
         $workflowId = $configuration->getId();
 
+        $this->logger->debug('Start executing workflow with id {id} {ticket}',
+            ['id' => $configuration->getId(), 'ticket' => $this->job->getTicket()]);
+
 //        if (!$job->isTriggeredByCallback()) {
 //            $this->logger->debug('Start executing workflow with id {id}', array('id' => $workflowId));
 //
@@ -109,16 +123,20 @@ class WorkflowExecutor implements LoggerAwareInterface
 //
 //            $this->logger->debug('Callback by ticket {ticket}', array('ticket' => $job->getCallerJob()->getTicket()));
 //
-//            $configuration->setIndex($configuration->getIndex() + 1);
+        $configuration->setIndex($configuration->getIndex() + 1);
 //        }
-//
-//        if ($task = $this->taskManager->findNextWorkflowTask($workflowId, $configuration->getIndex())) {
-//            $this->addTask($job, $task);
-//        } else {
-//            $this->logger->debug('No tasks to execute');
-//        }
-//
+
+//        $this->controller->doPause();
+
+        if ($task = $this->taskManager->findNextWorkflowTask($workflowId, $configuration->getIndex())) {
+            $this->addTask($manager, $task);
+        } else {
+            $this->logger->debug('No tasks to execute');
+        }
+
+//        return $this->controller->doStop();
 //        $job->update();
+        $manager->update($this->job);
     }
 
     /**
@@ -146,5 +164,21 @@ class WorkflowExecutor implements LoggerAwareInterface
     public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setController(ControllerInterface $controller)
+    {
+        $this->controller = $controller;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setJob(JobInterface $job)
+    {
+        $this->job = $job;
     }
 }

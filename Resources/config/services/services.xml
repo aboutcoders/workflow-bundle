@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
         <parameter key="abc.workflow.twig.workflow_extension.class">Abc\Bundle\WorkflowBundle\Twig\WorkflowExtension</parameter>
@@ -30,8 +30,8 @@
         </service>
 
         <!--<service id="abc.workflow.task.form.distribute_artifacts" class="%abc.workflow.task.form.distribute_artifacts.class%">-->
-            <!--<argument type="service" id="abc.file_distribution.definition_manager" />-->
-            <!--<tag name="abc.workflow.task.form" />-->
+        <!--<argument type="service" id="abc.file_distribution.definition_manager" />-->
+        <!--<tag name="abc.workflow.task.form" />-->
         <!--</service>-->
 
         <service id="abc.workflow.executable.workflow_executor" class="%abc.workflow.executable.workflow.class%">
@@ -41,15 +41,15 @@
         </service>
 
         <!--<service id="abc.workflow.executable.cleanup_directory" class="%abc.workflow.executable.cleanup_directory.class%">-->
-            <!--<argument type="service" id="abc.file_distribution.filesystem_factory" />-->
-            <!--<tag name="abc.job.listener" type="abc.workflow.task.cleanup_directory" />-->
+        <!--<argument type="service" id="abc.file_distribution.filesystem_factory" />-->
+        <!--<tag name="abc.job.listener" type="abc.workflow.task.cleanup_directory" />-->
         <!--</service>-->
 
         <!--<service id="abc.workflow.executable.distribute_artifacts" class="%abc.workflow.executable.distribute_artifacts.class%">-->
-            <!--<argument type="service" id="abc.file_distribution.definition_manager" />-->
-            <!--<argument type="service" id="abc.file_distribution.filesystem_factory" />-->
-            <!--<argument type="service" id="abc.job.manager"/>-->
-            <!--<tag name="abc.job.listener" type="workflow_distribute_artifacts" />-->
+        <!--<argument type="service" id="abc.file_distribution.definition_manager" />-->
+        <!--<argument type="service" id="abc.file_distribution.filesystem_factory" />-->
+        <!--<argument type="service" id="abc.job.manager"/>-->
+        <!--<tag name="abc.job.listener" type="workflow_distribute_artifacts" />-->
         <!--</service>-->
 
         <service id="abc.workflow.job_listener" class="Abc\Bundle\WorkflowBundle\Listener\JobListener" public="true">
@@ -57,8 +57,9 @@
             <argument type="service" id="abc.workflow.execution_manager" />
             <argument type="service" id="logger" on-invalid="null"/>
 
-            <tag name="abc.job.event_listener" event="abc.job.prepare" method="onPrepare"/>
+            <tag name="abc.job.event_listener" event="abc.job.pre_execute" method="onPrepare"/>
             <tag name="abc.job.event_listener" event="abc.job.terminated" method="onTerminated"/>
+            <tag name="abc.job.event_listener" event="abc.job.post_execute" method="onPostExecute"/>
             <tag name="monolog.logger" channel="abc.workflow.listener.job"/>
         </service>
 
